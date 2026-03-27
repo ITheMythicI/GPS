@@ -2,7 +2,7 @@
 
 function obtener_tabla(){
     try {
-        require 'database.php';
+        require __DIR__ . '/database.php';
         $consulta = "SELECT * FROM contenedores;";
         return $resultado = mysqli_query($db, $consulta);
     } catch (\Throwable $th) {
