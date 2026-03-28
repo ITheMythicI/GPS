@@ -56,7 +56,7 @@
             </div>
 
             <div class="user-profile-circle">
-                <img src="https://ui-avatars.com/api/?name=Hernan+Martinez&background=217346&color=fff" width="100%">
+                <i class="fa-solid fa-user"></i>
             </div>
 
         </div>
@@ -280,23 +280,23 @@
                     </div>
 
                     <div class="servicio-item">
-                        <span></span>
+                        <span>Recalibración</span>
                         <span>$600</span>
                     </div>
 
                     <div class="servicio-item">
-                        <span>Diagnóstico general</span>
+                        <span>Diagnóstico general del equipo</span>
                         <span>$750</span>
                     </div>
 
                     <div class="servicio-item">
-                        <span>Revisión de frenos</span>
-                        <span>$650</span>
+                        <span>Reparación del equipo</span>
+                        <span>$1650</span>
                     </div>
 
                     <div class="servicio-item">
-                        <span>Escaneo OBD</span>
-                        <span>$400</span>
+                        <span>Gestión final de residuos</span>
+                        <span>$1400</span>
                     </div>
 
                 </div>
