@@ -29,8 +29,10 @@ jobs:
           key: ${{ secrets.SSH_KEY }}
           script: |
             ssh -i /home/ubuntu/ssh-key-2026-03-13.key -o StrictHostKeyChecking=no ubuntu@10.0.2.8 << 'EOF'
-            cd /var/www/html/backend/backend
-            git fetch origin
-            git reset --hard origin/main
-            cp -r /var/www/html/backup/config .
+              sudo chown -R ubuntu:ubuntu /var/www/html/backend
+              git config --global --add safe.directory /var/www/html/backend/backend
+              cd /var/www/html/backend/backend
+              git fetch origin
+              git reset --hard origin/main
+              cp -r /var/www/html/backup/config .
             EOF
