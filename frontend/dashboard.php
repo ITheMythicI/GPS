@@ -1,3 +1,8 @@
+<?php
+    require __DIR__ . '/../backend/includes/funciones.php';
+    $consulta = obtener_tabla();
+?>
+
 <!DOCTYPE html>
 <html lang="es">
 
@@ -304,55 +309,30 @@
         <section class="table-box">
 
             <table>
-
                 <thead>
-
                     <tr>
-                        <th>ID Orden</th>
-                        <th>Cliente</th>
-                        <th>Vehículo</th>
+                        <th>Ubicación</th>
+                        <th>Latitud</th>
+                        <th>Longitud</th>
+                        <th>Capacidad</th>
                         <th>Estado</th>
-                        <th>Monto</th>
                     </tr>
-
                 </thead>
-
                 <tbody>
-
-                    <tr>
-                        <td>#1001</td>
-                        <td>Juan Pérez</td>
-                        <td>Nissan Sentra</td>
-                        <td><span class="status st-nuevo">Nuevo</span></td>
-                        <td>$4500</td>
-                    </tr>
-
-                    <tr>
-                        <td>#1002</td>
-                        <td>María López</td>
-                        <td>Toyota Corolla</td>
-                        <td><span class="status st-pendiente">Pendiente</span></td>
-                        <td>$1200</td>
-                    </tr>
-
-                    <tr>
-                        <td>#1003</td>
-                        <td>Carlos Ruiz</td>
-                        <td>Honda Civic</td>
-                        <td><span class="status st-terminado">Terminado</span></td>
-                        <td>$13000</td>
-                    </tr>
-
-                    <tr>
-                        <td>#1004</td>
-                        <td>Ana Torres</td>
-                        <td>Chevrolet Aveo</td>
-                        <td><span class="status st-cancelado">Cancelado</span></td>
-                        <td>$0</td>
-                    </tr>
-
+                    <?php while($contenedor = mysqli_fetch_assoc($consulta)): ?>
+                        <tr>
+                            <td><?php echo $contenedor['ubicacion']; ?></td>
+                            <td><?php echo $contenedor['latitud']; ?></td>
+                            <td><?php echo $contenedor['longitud']; ?></td>
+                            <td><?php echo $contenedor['capacidad']; ?></td>
+                            <td>
+                                <span class="status <?php echo 'st-' . strtolower($contenedor['estado']); ?>">
+                                    <?php echo $contenedor['estado']; ?>
+                                </span>
+                            </td>
+                        </tr>
+                    <?php endwhile; ?>
                 </tbody>
-
             </table>
 
         </section>
