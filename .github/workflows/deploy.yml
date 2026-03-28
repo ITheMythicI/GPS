@@ -18,18 +18,20 @@ jobs:
           key: ${{ secrets.SSH_KEY }}
           script: |
             cd /var/www/html/frontend
-            git pull origin main
+            git fetch origin
+            git reset --hard origin/main
 
-      - name: Deploy Backend
+      - name: Deploy Backend (via frontend)
         uses: appleboy/ssh-action@v1.0.0
         with:
-          host: ${{ secrets.VM_BACK_IP }}
+          host: ${{ secrets.VM_FRONT_IP }}
           username: ${{ secrets.VM_USER }}
           key: ${{ secrets.SSH_KEY }}
           script: |
+            ssh -i /home/ubuntu/ssh-key-2026-03-13.key -o StrictHostKeyChecking=no ubuntu@10.0.2.8 << 'EOF'
             cd /var/www/html/backend
-            git pull origin main
+            git fetch origin
+            git reset --hard origin/main
             npm install
             pm2 restart all || pm2 start app.js
-
-            
+            EOF
