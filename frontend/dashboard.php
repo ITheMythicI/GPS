@@ -30,11 +30,11 @@
         <div class="logo-area">
 
             <div class="logo-box">
-                <img src="assets/img/logo-nexus.png" alt="Nexus Solutions Logo">
+                <img src="BIN.png" alt="Nexus Solutions Logo">
             </div>
 
             <div>
-                <h1>Nexus Solutions</h1>
+                <h1>PORTAL BIN</h1>
                 <p>Bienvenido</p>
             </div>
 
@@ -71,7 +71,13 @@
         <div class="nav-section">GENERAL</div>
 
         <div class="menu-item">
-            <a href="Dashboard.php" class="menu-btn active">
+            <a href="index.html" class="menu-btn active">
+                <span><i class="fa-solid fa-gauge-high"></i> Página Principal </span>
+            </a>
+        </div>
+        
+        <div class="menu-item">
+            <a href="dashboard.php" class="menu-btn active">
                 <span><i class="fa-solid fa-gauge-high"></i> Dashboard</span>
             </a>
         </div>
@@ -277,26 +283,6 @@
                     <div class="servicio-item">
                         <span>Servicio de recolección</span>
                         <span>$850</span>
-                    </div>
-
-                    <div class="servicio-item">
-                        <span>Recalibración</span>
-                        <span>$600</span>
-                    </div>
-
-                    <div class="servicio-item">
-                        <span>Diagnóstico general del equipo</span>
-                        <span>$750</span>
-                    </div>
-
-                    <div class="servicio-item">
-                        <span>Reparación del equipo</span>
-                        <span>$1650</span>
-                    </div>
-
-                    <div class="servicio-item">
-                        <span>Gestión final de residuos</span>
-                        <span>$1400</span>
                     </div>
 
                 </div>
