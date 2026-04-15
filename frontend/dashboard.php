@@ -96,7 +96,7 @@
             <ul class="submenu">
                 <li><a href="#">Contenedores</a></li>
                 <li><a href="#">Camiones</a></li>
-                <li><a href="#">Mapa Interactivo</a></li>
+                <li><a href="/frontend/dashboardMapa.php">Mapa Interactivo</a></li>
             </ul>
 
         </div>
