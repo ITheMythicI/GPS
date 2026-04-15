@@ -96,7 +96,7 @@
 
             <input type="checkbox" id="inventario" class="menu-check">
 
-            <label for="inventario" class="menu-btn">
+            <label for="inventario" class="menu-btn active">
                 <span><i class="fa-solid fa-box"></i> Inventario</span>
                 <i class="fa-solid fa-chevron-right chevron"></i>
             </label>
@@ -168,7 +168,7 @@
 
         </div>
         <script>
-        var map = L.map('map').setView([51.505, -0.09], 13);
+        var map = L.map('map').setView([25.5333679301397, -103.4360896883533], 13);
 
         L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
         maxZoom: 19,
