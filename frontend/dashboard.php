@@ -77,7 +77,7 @@
         </div>
         
         <div class="menu-item">
-            <a href="dashboard.php" class="menu-btn active">
+            <a href="dashboard.php" class="menu-btn">
                 <span><i class="fa-solid fa-gauge-high"></i> Dashboard</span>
             </a>
         </div>
@@ -96,7 +96,7 @@
             <ul class="submenu">
                 <li><a href="#">Contenedores</a></li>
                 <li><a href="#">Camiones</a></li>
-                <li><a href="/frontend/dashboardMapa.php">Mapa Interactivo</a></li>
+                <li><a href="dashboardMapa.php">Mapa Interactivo</a></li>
             </ul>
 
         </div>
