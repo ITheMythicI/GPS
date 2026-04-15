@@ -167,13 +167,43 @@
         <div id="map">
 
         </div>
-        <script>
-        var map = L.map('map').setView([25.5333679301397, -103.4360896883533], 13);
+        <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+     integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
+     crossorigin=""></script>
 
-        L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        maxZoom: 19,
-        attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
-        }).addTo(map);
+      <div id="map">
+
+        <script>
+            var map = L.map('map').setView([25.5333679301397, -103.4360896883533], 50);
+
+            L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    maxZoom: 19,
+    attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+}).addTo(map);
+
+        var polygonS = L.polygon([
+    [25.533517258469256, -103.43583979606757],
+    [25.5335427070657, -103.4365247285743],
+    [25.533248230119426, -103.4365247285743],
+    [25.533244594597054, -103.43624269754213],
+    [25.53257202106215, -103.43612988512923],
+    [25.53256111443319, -103.43581965099384]
+]).addTo(map);
+
+polygonS.bindPopup("Area de Sistemas 💻 <br> # Contenedores: 3");
+
+var contenedor1 = L.marker([25.53325473741156, -103.43615162624685]).addTo(map);
+contenedor1.bindPopup("<b>Contenedor #1</b><br>Datos:<br>Humedad:");
+
+var contenedor2 = L.marker([25.53302137700257, -103.43608906379036]).addTo(map);
+contenedor2.bindPopup("<b>Contenedor #2</b><br>Datos:<br>Humedad:");
+
+var contenedor3 = L.marker([25.532825452679557, -103.43608765385599]).addTo(map);
+contenedor3.bindPopup("<b>Contenedor #3</b><br>Datos:<br>Humedad:");
+
+var contenedor4 = L.marker([25.532955220770614, -103.43588744336321]).addTo(map);
+contenedor4.bindPopup("<b>Contenedor #4</b><br>Datos:<br>Humedad:");
+
         </script>
 
     </main>
