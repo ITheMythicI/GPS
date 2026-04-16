@@ -192,6 +192,14 @@
 
 polygonS.bindPopup("Area de Sistemas 💻 <br> # Contenedores: 3");
 
+
+//Uso de consulta de contenedor para mostrar en mapa
+<?php while ($contenedor = mysqli_fetch_assoc($consulta)): ?>
+    L.marker([<?php echo $contenedor['latitud']; ?>, <?php echo $contenedor['longitud']; ?>]).addTo(map)
+    .bindPopup("<b>Contenedor #<?php echo $contenedor['id']; ?></b><br>" +
+               "Estado: <?php echo $contenedor['estado']; ?>");
+<?php endwhile; ?>
+
 var contenedor1 = L.marker([25.53325473741156, -103.43615162624685]).addTo(map);
 contenedor1.bindPopup("<b>Contenedor #1</b><br>Datos:<br>Humedad:");
 
