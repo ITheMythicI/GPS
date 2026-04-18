@@ -851,6 +851,18 @@ border:1px solid var(--border);
 border-radius:6px;
 }
 
+/* ======================
+MAPA
+====================== */
+
+#map {
+
+height: 600px;
+  
+width: 100%;
+
+}
+
 .st-nuevo{background:var(--bg-nuevo);color:var(--st-nuevo);}
 .st-cotizado{background:var(--bg-cotizado);color:var(--st-cotizado);}
 .st-pendiente{background:var(--bg-pendiente);color:var(--st-pendiente);}
