@@ -27,7 +27,7 @@ if (Array.isArray(datosContenedores)) {
             var marker = L.marker([parseFloat(c.latitud), parseFloat(c.longitud)])
                 .addTo(map)
                 .bindPopup(
-                    "<b>Contenedor #" + c.id + "</b><br>" +
+                    "<b>Contenedor #" + c.id_contenedor + "</b><br>" +
                     "Estado: " + (c.estado || 'Desconocido') + "<br>" +
                     "Humedad: " + (c.humedad || '0') + "%"
                 );
