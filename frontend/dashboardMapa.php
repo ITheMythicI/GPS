@@ -182,7 +182,7 @@
         const datosContenedores = <?php echo json_encode($datos_contenedores); ?>;
     </script>
 
-    <script src="../backend/js/mapaContenedores.js"></script>
+    <script src="backend/js/mapaContenedores.js"></script>
 
 </body>
 
