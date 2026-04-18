@@ -18,19 +18,28 @@ var polygonS = L.polygon([
 
 polygonS.bindPopup(`Area de Sistemas 💻- Tec Laguna</br>Contenedores encontrados: ${totalContenedoresBD}`);
 
+var markers = [];
+
 if (Array.isArray(datosContenedores)) {
     datosContenedores.forEach(function(c) {
         // Verificamos que existan coordenadas válidas
         if (c.latitud && c.longitud) {
-            L.marker([parseFloat(c.latitud), parseFloat(c.longitud)])
+            var marker = L.marker([parseFloat(c.latitud), parseFloat(c.longitud)])
                 .addTo(map)
                 .bindPopup(
                     "<b>Contenedor #" + c.id + "</b><br>" +
                     "Estado: " + (c.estado || 'Desconocido') + "<br>" +
                     "Humedad: " + (c.humedad || '0') + "%"
                 );
+                markers.push(marker);
         }
     });
+
+    if (markers.length > 0) {
+        var group = new L.featureGroup(markers);
+        map.fitBounds(group.getBounds().pad(0.1));
+    }
+
 } else {
     console.error("No se recibieron datos de los contenedores.");
 }
