@@ -34,3 +34,7 @@ if (Array.isArray(datosContenedores)) {
 } else {
     console.error("No se recibieron datos de los contenedores.");
 }
+
+setTimeout(function(){ 
+    map.invalidateSize(); 
+}, 500);
