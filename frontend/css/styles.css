@@ -856,11 +856,14 @@ MAPA
 ====================== */
 
 #map {
+    
+height: 600px !important;
 
-height: 600px;
-  
 width: 100%;
 
+display: block;
+
+background-color: #eee;
 }
 
 .st-nuevo{background:var(--bg-nuevo);color:var(--st-nuevo);}
