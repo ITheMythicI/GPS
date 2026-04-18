@@ -2,39 +2,169 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <title>Mi Página</title>
-<link rel="stylesheet" href="css/stylesIndex.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mi primera pagina</title>
+    <link rel="stylesheet" href="css/stylesIndex.css">
 </head>
 <body>
-
+    <!-- ===Baraa supeior con el logo ==== -->
     <header class="navbar">
-        <div class="logo">NEXUS</div>
-        <nav>
+        <div class="brand">
+            NEXUS <span style="color:#4CAF50;"></span> SOLUTIONS
+        </div>
             <ul>
-                <li><a href="dashboard.php">Dashboard</a></li>
-                <li>Contacto</li>
+                <li>
+                    <a href="landing.html" style="text-decoration:none; color:#555;" >Login</a>
+                </li>
             </ul>
-        </nav>
     </header>
-    
+    <!-- ===Lo verde, el logo y la imagen ==== -->
+
     <section class="hero">
         <div class="hero-text">
-            <h1>NUESTRA<br>EMPRESA<br> UWU?</h1>
-            <p>
-                Somos una empresa especializada DURITA
-            </p>
+             <div class="logo">
+                <img src="logo_gestion_blanco.png" alt="Logo">
+            </div>
+            <div class="bin-logo">
+                <p>“Hacerlo bien, hacerlo claro, hacerlo mejor”</p>
+                <span class="leaf"></span>
+            </div>
             <button>Contactar</button>
         </div>
+        
         <div class="hero-img">
-            <img src="camion.png" alt="CAMION DURITO">
+            <img src="camion_t.png" alt="Camión BIN">
+        </div>
+        
+    </section>
+
+    <!-- ===SERVICIOS ==== -->
+    <section class="services">
+        <h2>SERVICIOS</h2>
+        <div class="services-container">
+
+            <div class="service-card">
+                <div class="circle">
+                    <div class="iconos">
+                        <img src="ojo.png" alt="Ojo">
+                    </div>
+                </div>
+                <h3>MONITORIZAR<h3>
+                <p>Monitoreo en tiempo real de los contenedores</p>
+            </div>
+
+            <div class="service-card">
+                <div class="circle">
+                        <div class="iconos">
+                        <img src="ruta.png" alt="Rutas">
+                    </div>
+                </div>
+                <h3>RUTAS<h3>
+                <p>Rutas de recolección dinámicas y optimizadas</p>
+            </div>
+
+            <div class="service-card">
+                <div class="circle">
+                    <div class="iconos">
+                        <img src="reporte.png" alt="Reporte">
+                    </div>
+                </div>
+                <h3>REPORTES<h3>
+                <p>Reportes ciudadanos con geolocalización</p>
+            </div>
+
+            <div class="service-card">
+                <div class="circle">
+                    <div class="iconos">
+                        <img src="dash.png" alt="Dashboard">
+                    </div>
+                </div>
+                <h3>DASHBOARD<h3>
+                <p>Dashboard interactivo para toma de decisiones</p>
+            </div>
+
         </div>
     </section>
 
-    <div class="menu">
-    <button class="menu-btn">Opciones</button>
-    <div class="menu-contenido">
-      <a href="#">Inicio sesión</a>
+ <!-- SECCION DE RESPONSABILIDAD-->
+    <section class="responsabilidad">
+        <div class="responsabilidad-contenedor">
+            
+            <!-- Parte superior -->
+            <div class="responsabilidad-superior">
+                <div class="responsabilidad-izquierda">
+                    <h2>Responsabilidad y<br>cumplimiento social</h2>
+                </div>
+                <div class="responsabilidad-derecha">
+                    <div class="item-check">
+                        <span class="check">✔</span>
+                        <p>Fomentamos la cooperación entre gobiernos reduciendo riesgos
+                            ecológicos y sanitarios, mejorando la participación ciudadana
+                            en comunidades locales y grandes ciudades.</p>
+                    </div>
+                    <div class="item-check">
+                        <span class="check">✔</span>
+                        <p>Operamos bajo las Normas Oficiales Mexicanas(NOM) para equipos
+                            electrónicos en espacios públicos y gestionamos proactivamente
+                            los conflictos de jurisdicción entre gobierno y sector privado.
+                            Ninguno de estos riesgos se materializó durante el desarrollo, 
+                            garantizando total conformidad legal.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Parte inferior oscura -->
+            <div class="responsabilidad-inferior">
+                <h3>¿Qué medimos y controlamos?</h3>
+                
+                <div class="mediciones-grid">
+                    <div class="columna-medicion">
+                        <p><strong>Nivel de llenado</strong></p>
+                        <p><strong>Peso</strong></p>
+                        <p><strong>Humedad</strong></p>
+                        <p><strong>Datos de saturación</strong></p>
+                    </div>
+                    <div class="columna-medicion">
+                        <p>Ultrasonido o infrarrojo</p>
+                        <p>Sensores de peso</p>
+                        <p>Sensor de humedad</p>
+                        <p>Inteligencia artificial</p>
+                    </div>
+                    <div class="columna-medicion">
+                        <p>Sabemos exactamente cuando realizar la recolección</p>
+                        <p>Detectamos saturación por peso real</p>
+                        <p>Evitamos riesgos sanitarios y olores</p>
+                        <p>Predice cuándo se llenará el contenedor</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>   
+
+    <div class="bottom">
+
+        <!--clientes -->
+        <div class="portfolio">
+            <h3>PORTAFOLIO DE CLIENTES</h3>
+            <img src="logo-tec.png" alt="Logo Tec" style="margin-top:20px;">
+        </div>
+
+        <!-- Formulario -->
+        <div class="cotizacion">
+            <h3>COTIZACIÓN</h3>
+            
+            <input type="text" placeholder="Nombre">
+            <input type="email" placeholder="Email">
+            <input type="tel" placeholder="Teléfono">
+            
+            <button>Solicitar</button>
+            
+            <p style="margin-top:30px; font-size:15px; color:#555;">
+                bin_nexus_solutions@gmail.com<br>
+                Avenida XYZ, Torreón, Coahuila.
+            </p>
+        </div>
     </div>
-    </div>
+
 </body>
 </html>
