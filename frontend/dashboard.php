@@ -34,7 +34,7 @@
             </div>
 
             <div>
-                <h1>Portal BIN</h1>
+                <h1>PORTAL BIN</h1>
                 <p>Bienvenido</p>
             </div>
 
@@ -75,9 +75,9 @@
                 <span><i class="fa-solid fa-gauge-high"></i> Página Principal </span>
             </a>
         </div>
-
+        
         <div class="menu-item">
-            <a href="dashboard.php" class="menu-btn active">
+            <a href="dashboard.php" class="menu-btn">
                 <span><i class="fa-solid fa-gauge-high"></i> Dashboard</span>
             </a>
         </div>
@@ -96,7 +96,7 @@
             <ul class="submenu">
                 <li><a href="#">Contenedores</a></li>
                 <li><a href="#">Camiones</a></li>
-                <li><a href="#">Mapa Interactivo</a></li>
+                <li><a href="dashboardMapa.php">Mapa Interactivo</a></li>
             </ul>
 
         </div>
@@ -283,26 +283,6 @@
                     <div class="servicio-item">
                         <span>Servicio de recolección</span>
                         <span>$850</span>
-                    </div>
-
-                    <div class="servicio-item">
-                        <span>Recalibración</span>
-                        <span>$600</span>
-                    </div>
-
-                    <div class="servicio-item">
-                        <span>Diagnóstico general del equipo</span>
-                        <span>$750</span>
-                    </div>
-
-                    <div class="servicio-item">
-                        <span>Reparación del equipo</span>
-                        <span>$1650</span>
-                    </div>
-
-                    <div class="servicio-item">
-                        <span>Gestión final de residuos</span>
-                        <span>$1400</span>
                     </div>
 
                 </div>

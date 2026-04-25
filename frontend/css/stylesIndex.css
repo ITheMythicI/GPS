@@ -45,7 +45,7 @@
     justify-content: space-between;
     align-items: center;
     padding: 15px 50px;
-    background: white;
+    background: #F8F8EE;
     border-bottom: 3px solid #4CAF50;
 }
 
@@ -83,7 +83,7 @@
     position: absolute;
     left: 0;
     top: 0;
-    width: 60%;
+    width: 100%;
     height: 100%;
     background: linear-gradient(135deg, #4CAF50, #2e7d32);
     z-index: 0;
@@ -125,4 +125,358 @@
 
 .hero-img img {
     width: 500px;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: Arial, Helvetica, sans-serif;
+}
+/* ====la barra balnaca de arriba ===== */
+
+.navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 50px;
+    background: white;
+    border-bottom: 3px solid #4CAF50;
+}
+
+
+/* === el logo====== */
+.brand {
+    font-size: 22px;
+    font-weight: bold;
+    color: #2e7d32;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+/* === el menu====== */
+
+.navbar ul {
+    display: flex;
+    list-style: none;
+    gap: 25px;
+}
+
+.navbar li {
+    cursor: pointer;
+    color: #555;
+    font-size: 16px;
+}
+
+/* === el fondo verde====== */
+
+.hero {
+    background: #4CAF50;
+    min-height: 55vh;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0px 50px;
+    height: 95%;
+    color: white;
+}
+
+/* === logo====== */
+/*
+.bin-logo {
+    font-size: 140px;
+    font-weight: 900;
+    line-height: 0.9;
+}*/
+
+
+/* === BOTON ====== */
+/* === CONTACTAR====== */
+
+.hero button {
+    margin-top: 30px;
+    padding: 14px 40px;
+    background: #1b5e20;
+    color: white;
+    border: none;
+    border-radius: 50px;
+    font-size: 18px;
+    cursor: pointer;
+}
+
+/* === EL CCAMION====== */
+
+.hero-img img {
+    width: 800px;
+    /*border-radius: 10px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.3);*/
+}
+
+
+/* logo*/
+.logo img{
+    width: 300px;
+}
+
+/* == SERVICIOS FONDO NEGRO== */
+.services {
+    background: #1f1f1f;
+    padding: 80px 50px;
+    color: white;
+}
+/* === TUTILO SERVICIOS====== */
+
+.services h2 {
+    text-align: center;
+    font-size: 42px;
+    margin-bottom: 60px;
+    color: #4CAF50;
+}
+/* === LAS 3 BOLAS ENTAN EN UN CONTENDOR====== */
+
+.services-container {
+    display: flex;
+    justify-content: center;
+    gap: 40px;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+  /* === ESTILON====== */
+
+.service-card {
+    background: #2a2a2a;
+    border-radius: 20px;
+    padding: 30px 20px;
+    width: 320px;
+    text-align: center;
+    transition: 0.3s;
+}
+/* === EFECTO AL PASAR EL MOUSE====== */
+
+.service-card:hover {
+    transform: translateY(-10px);
+}
+
+/* === lOS CIRCULOS EN BLANCO====== */
+
+.circle {
+    width: 160px;
+    height: 160px;
+    margin: 0 auto 25px;
+    background: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 70px;
+    border: 6px solid #4CAF50;
+}
+ /* === TITULOS====== */
+
+.service-card h3 {
+    font-size: 24px;
+    margin-bottom: 15px;
+    color: #4CAF50;
+}
+ /* === DESCRIPCION====== */
+
+.service-card p {
+    color: #ccc;
+    line-height: 1.5;
+}
+
+/* ===Bonton inferiorr== */
+.bottom {
+    display: flex;
+    padding: 80px 50px;
+    max-width: 1200px;
+    margin: 0 auto;
+    gap: 80px;
+}
+
+/* Hace que las dos columnas ocupen el mismo espacio */
+.portfolio, .cotizacion {
+    flex: 1;
+}
+/* Títulos de las secciones inferiores */
+.portfolio h3, .cotizacion h3 {
+    font-size: 22px;
+    margin-bottom: 20px;
+}
+/* formulario de cotizaciON UWU */
+.cotizacion input {
+    width: 100%;
+    padding: 14px;
+    margin-bottom: 15px;
+    border: 2px solid #4CAF50;
+    border-radius: 8px;
+    font-size: 16px;
+}
+/* EL BOTON DE COTIZACION */
+.cotizacion button {
+    width: 100%;
+    padding: 14px;
+    background: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 18px;
+    cursor: pointer;
+}
+
+/* LA INFO DE CONTAXTO*/
+.contact-info {
+    margin-top: 30px;
+    font-size: 15px;
+    color: #555;
+}
+
+/*HREF SIN COLOR AZUL O SUBRAYADO*/
+.iconos img{
+    align-items: center;
+    width: 120px;
+    height:80px;
+}
+
+/* ==================== RESPONSABILIDAD Y CUMPLIMIENTO SOCIAL ==================== */
+
+/* Contenedor principal de toda la sección */
+.responsabilidad {
+    background: #0f0f0f;        /* Fondo oscuro general */
+    padding: 100px 50px;        /* Espacio arriba y abajo */
+    color: white;
+}
+.responsabilidad-contenedor {
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+/* ================================================
+   PARTE SUPERIOR - Fondo dividido (blanco y verde)
+   ================================================ */
+.responsabilidad-superior {
+    display: flex;                          /* Coloca los dos lados uno al lado del otro */
+    background: linear-gradient(90deg, #ffffff 50%, #4CAF50 50%); /* Mitad blanco, mitad verde */
+    border-radius: 20px 20px 0 0;           /* Bordes redondeados solo arriba */
+    overflow: hidden;                       /* Para que los bordes redondeados se vean bien */
+}
+
+/* Lado izquierdo - Fondo blanco con el título grande */
+.responsabilidad-izquierda {
+    flex: 1;                                /* Ocupa la mitad del espacio */
+    padding: 60px 50px;
+    background: white;
+    color: #1f1f1f;
+}
+
+.responsabilidad-izquierda h2 {
+    font-size: 2.8rem;                      /* Tamaño grande del título */
+    line-height: 1.1;
+    font-weight: 900;
+}
+
+/* Lado derecho - Fondo verde con los checks */
+.responsabilidad-derecha {
+    flex: 1;
+    padding: 60px 50px;
+    background: #4CAF50;
+    color: white;
+}
+
+/* Cada fila con el check verde */
+.item-check {
+    display: flex;
+    gap: 15px;
+    margin-bottom: 25px;
+    align-items: flex-start;
+}
+
+/* El círculo verde con el check */
+.check {
+    font-size: 28px;
+    color: white;
+    background: rgba(255,255,255,0.3);     /* Fondo semi-transparente */
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    margin-top: 3px;
+}
+
+/* Texto que va al lado del check */
+.item-check p {
+    margin: 0;
+    line-height: 1.5;
+}
+
+/* ================================================
+   PARTE INFERIOR - Fondo oscuro con la tabla
+   ================================================ */
+.responsabilidad-inferior {
+    background: #1a1a1a;                    /* Fondo gris oscuro */
+    padding: 70px 50px;
+    border-radius: 0 0 20px 20px;           /* Bordes redondeados solo abajo */
+    text-align: center;
+}
+
+.responsabilidad-inferior h3 {
+    font-size: 28px;
+    margin-bottom: 50px;
+    color: #4CAF50;
+}
+
+.mediciones-grid {
+    display: flex;
+    justify-content: space-between;
+    max-width: 1000px;
+    margin: 0 auto;
+    gap: 40px;
+    text-align: left;
+}
+
+.columna-medicion p {
+    margin-bottom: 18px;
+    font-size: 17px;
+    line-height: 1.6;
+}
+
+.columna-medicion strong {
+    color: #4CAF50;
+}
+
+.registro div{
+    align-items:center;
+}
+/* formulario de registro  */
+.registro input {
+    width:40%;
+    padding: 14px;
+    margin-bottom: 15px;
+    border: 2px solid #4CAF50;
+    border-radius: 8px;
+    font-size: 16px;
+    align-items: center;
+}
+/* EL BOTON DE registro */
+.registro button {
+    width: 150px;
+    padding: 14px;
+    background: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 30px;
+    font-size: 18px;
+    cursor: pointer;
+}
+
+/*registro*/
+.registro {
+    background: #1f1f1f;
+    padding: 80px 50px;
+    color: white;
+    align-items: center;
 }
