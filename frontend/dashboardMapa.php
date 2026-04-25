@@ -170,41 +170,40 @@
     <!-- CONTENIDO -->
 
     <main id="content">
+        
         <div id="ui-controls" class="ui-container">
-    <div id="selector-card" class="header-card" onclick="toggleAreaList()">
-        <span id="zone-name">📍 Seleccionar Área</span>
-        <i class="fa-solid fa-chevron-down" id="arrow-icon"></i>
-    </div>
+            <div id="selector-card" class="header-card" onclick="toggleAreaList()">
+                <span id="zone-name">📍 Seleccionar Área</span>
+                <i class="fa-solid fa-chevron-down" id="arrow-icon"></i>
+            </div>
 
-    <div id="area-list" class="area-list collapsed">
-        <div class="area-item" onclick="selectArea('sistemas')">Área de Sistemas</div>
-        <div class="area-item" onclick="selectArea('quimica')">Área de Química</div>
-    </div>
+            <div id="area-list" class="area-list collapsed">
+                <div class="area-item" onclick="selectArea('sistemas')">Área de Sistemas</div>
+                    <div class="area-item" onclick="selectArea('quimica')">Área de Química</div>
+            </div>
 
-    <div id="info-card" class="info-card hidden">
-        <div class="info-header">
-            <h4 id="card-title"></h4>
-            <button class="btn-back" onclick="resetUI()">⬅ Volver</button>
+            <div id="info-card" class="info-card hidden">
+                <div class="info-header">
+                    <h4 id="card-title"></h4>
+                    <button class="btn-back" onclick="resetUI()">⬅ Volver</button>
+                </div>
+                <hr id="card-hr" class="card-hr">
+                <div class="info-body">
+                    <p><strong>📦 Contenedores:</strong> <span id="card-cont"></span></p>
+                    <p><strong>📋 Registros:</strong> <span id="card-reg"></span></p>
+                    <p><strong>⚠️ Prioridad:</strong> <span id="card-prior" class="priority-badge"></span></p>
+                </div>
+            </div>
         </div>
-        <hr id="card-hr" class="card-hr">
-        <div class="info-body">
-            <p><strong>📦 Contenedores:</strong> <span id="card-cont"></span></p>
-            <p><strong>📋 Registros:</strong> <span id="card-reg"></span></p>
-            <p><strong>⚠️ Prioridad:</strong> <span id="card-prior" class="priority-badge"></span></p>
-        </div>
-    </div>
-</div>
+    <div id="map">
 
-      <div id="map">
+    <script>
+        var map = L.map('map').setView([25.5334, -103.4358], 18);
 
-
-        <script>
-    var map = L.map('map').setView([25.5334, -103.4358], 18);
-
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        maxZoom: 19,
-        attribution: '&copy; OpenStreetMap'
-    }).addTo(map);
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            maxZoom: 19,
+            attribution: '&copy; OpenStreetMap'
+        }).addTo(map);
 
     // --- PALETA DE COLORES ---
     const colors = {

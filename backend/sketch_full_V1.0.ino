@@ -5,6 +5,7 @@
 // - Adafruit Unified Sensor Lib: https://github.com/adafruit/Adafruit_Sensor
 // - WiFi y HTTPClient, vienen por defecto
 #include "DHT.h"
+#include "HX711.h" // Asegúrate de incluir la librería para las celdas de carga
 
 #define DHTPIN 4     
 #define DHTTYPE DHT22   // DHT 22  
@@ -21,8 +22,11 @@ const char* password = "SQUHKDKT";
 //ssid -> "";
 //pass -> "";
 
-// IP de envio
-const char* serverName = "http://129.146.115.127/(direccion del archivo php aqui)"; // CAMBIAR ESTO, PONER LA DIRECCION DEL FRONTEND EN EL QUE SE ALOJA EL PHP DE ENVIO DE DATOS
+// IP de envio - ACTUALIZADO con la ruta del backend
+const char* serverName = "http://129.146.115.127/backend/includes/envioArchivos.php";
+
+// Id del contenedor de pruebas - IMPLEMENTADO para vincular con la BD
+int idContenedorActual = 1;
 
 // HX711 #1
 const int LOADCELL_A_DOUT = 16;
@@ -110,7 +114,7 @@ void loop() {
   //valores del sensor infrarojo
   int distancia = sensor.readRangeSingleMillimeters(); 
   float distanciaCalibrada = distancia * 0.6;
-  distanciaCalibrada * 10; //mm a cm
+  distanciaCalibrada = distanciaCalibrada * 10; //mm a cm - CORREGIDO: ahora asigna el valor
   float suma=0;
 
   //valores del sensor humedad
@@ -176,9 +180,11 @@ void loop() {
 
       http.begin(serverName);
       http.addHeader("Content-Type", "application/x-www-form-urlencoded");
-      //Variables a enviar
+      
+      //Variables a enviar - ACTUALIZADO: Se agregó idContenedor para la nueva estructura de la BD
       String httpRequestData = 
-      "tempCelsius=" + String(t, 2) + //temperatura en Celsius
+      "idContenedor=" + String(idContenedorActual) +
+      "&tempCelsius=" + String(t, 2) + //temperatura en Celsius
       "&humedad=" + String(h, 2) + //% de humedad
       "&distanciaBoteTapa=" + String(distanciaCalibrada, 2) + //distancia de la tapa hacia el bote
       "&pesoKg=" + String(peso, 2); //peso en Kg
