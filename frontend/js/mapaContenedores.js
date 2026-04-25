@@ -1,49 +1,62 @@
-var map = L.map('map').setView([25.533367, -103.436089], 18);
-
-L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
-    maxZoom: 19, 
-    attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
-}).addTo(map);
-
-var totalContenedoresBD = datosContenedores.length;
-
-var polygonS = L.polygon([
-    [25.533517258469256, -103.43583979606757],
-    [25.5335427070657, -103.4365247285743],
-    [25.533248230119426, -103.4365247285743],
-    [25.533244594597054, -103.43624269754213],
-    [25.53257202106215, -103.43612988512923],
-    [25.53256111443319, -103.43581965099384]
-]).addTo(map);
-
-polygonS.bindPopup(`Area de Sistemas 💻- Tec Laguna</br>Contenedores encontrados: ${totalContenedoresBD}`);
-
-var markers = [];
-
-if (Array.isArray(datosContenedores)) {
-    datosContenedores.forEach(function(c) {
-        // Verificamos que existan coordenadas válidas
-        if (c.latitud && c.longitud) {
-            var marker = L.marker([parseFloat(c.latitud), parseFloat(c.longitud)])
-                .addTo(map)
-                .bindPopup(
-                    "<b>Contenedor #" + c.id_contenedor + "</b><br>" +
-                    "Estado: " + (c.estado || 'Desconocido') + "<br>" +
-                    "Humedad: " + (c.humedad || '0') + "%"
-                );
-                markers.push(marker);
-        }
-    });
-
-    if (markers.length > 0) {
-        var group = new L.featureGroup(markers);
-        map.fitBounds(group.getBounds().pad(0.1));
+// Datos de ejemplo
+const areaData = {
+    sistemas: {
+        coords: [25.5330, -103.4361],
+        title: "Área de Sistemas",
+        contenedores: 4,
+        registros: "24 hoy",
+        prioridad: "Alta",
+        color: "#e74c3c",
+        colorArea: "#34495e"
+    },
+    quimica: {
+        coords: [25.5340, -103.4355],
+        title: "Área de Química",
+        contenedores: 5,
+        registros: "12 hoy",
+        prioridad: "Media",
+        color: "#f39c12",
+        colorArea: "#27ae60"
     }
+};
 
-} else {
-    console.error("No se recibieron datos de los contenedores.");
+function toggleAreaList() {
+    const list = document.getElementById('area-list');
+    const arrow = document.getElementById('arrow-icon');
+    list.classList.toggle('collapsed');
+    arrow.classList.toggle('rotated');
+    
+    // Si abrimos la lista, ocultamos la tarjeta de info (si estaba abierta)
+    document.getElementById('info-card').classList.add('hidden');
 }
 
-setTimeout(function(){ 
-    map.invalidateSize(); 
-}, 500);
+function selectArea(key) {
+    const data = areaData[key];
+
+    // 1. "Retraer" la lista y actualizar cabecera
+    document.getElementById('area-list').classList.add('collapsed');
+    document.getElementById('arrow-icon').classList.remove('rotated');
+    document.getElementById('zone-name').innerText = "📍 " + data.title;
+
+    // 2. Llenar y mostrar la tarjeta de información debajo
+    document.getElementById('card-title').innerText = data.title;
+    document.getElementById('card-cont').innerText = data.contenedores;
+    document.getElementById('card-reg').innerText = data.registros;
+    
+    // Usando borderColor
+    document.getElementById('card-hr').style.borderColor = data.colorArea;
+    
+    const badge = document.getElementById('card-prior');
+    badge.innerText = data.prioridad;
+    badge.style.backgroundColor = data.color;
+
+    document.getElementById('info-card').classList.remove('hidden');
+
+    // 3. Mover mapa
+    map.flyTo(data.coords, 19);
+}
+
+function resetUI() {
+    document.getElementById('info-card').classList.add('hidden');
+    document.getElementById('zone-name').innerText = "📍 Seleccionar Área";
+}
