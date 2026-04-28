@@ -10,16 +10,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Deploy Frontend
-        uses: appleboy/ssh-action@v1.0.0
-        with:
-          host: ${{ secrets.VM_FRONT_IP }}
-          username: ${{ secrets.VM_USER }}
-          key: ${{ secrets.SSH_KEY }}
-          script: |
-            cd /home/ubuntu
-            ./deploy_frontend.sh
-
+      # 🔵 DEPLOY BACKEND (primero)
       - name: Deploy Backend
         uses: appleboy/ssh-action@v1.0.0
         with:
@@ -27,5 +18,16 @@ jobs:
           username: ${{ secrets.VM_USER }}
           key: ${{ secrets.SSH_KEY }}
           script: |
-            cd /home/ubuntu
-            ./deploy_backend.sh
+            ssh -i /home/ubuntu/ssh-key-2026-03-13.key -o StrictHostKeyChecking=no ubuntu@10.0.2.8 << 'EOF'
+              /home/ubuntu/deploy_backend.sh
+            EOF
+
+      # 🟢 DEPLOY FRONTEND
+      - name: Deploy Frontend
+        uses: appleboy/ssh-action@v1.0.0
+        with:
+          host: ${{ secrets.VM_FRONT_IP }}
+          username: ${{ secrets.VM_USER }}
+          key: ${{ secrets.SSH_KEY }}
+          script: |
+            /home/ubuntu/deploy_frontend.sh
