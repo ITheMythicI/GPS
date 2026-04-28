@@ -1,8 +1,11 @@
 <?php
 
+ini_set('display_errors', 1);
+error_reporting(E_ALL);
+
 $url = "http://10.0.2.8/obtenerContenedores.php";
 
-$response = @file_get_contents($url);
+$response = file_get_contents($url);
 
 if ($response === false) {
     die("No se pudo conectar con el backend");
