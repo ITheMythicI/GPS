@@ -1,12 +1,30 @@
 <?php
-    require __DIR__ . '/../backend/includes/funciones.php';
-    $consulta = obtener_tabla();
 
-    // Arreglo de datos contenedores desde la BD
-    $datos_contenedores = [];
-    while ($fila = mysqli_fetch_assoc($consulta)){
-        $datos_containers[] = $fila; 
-    }
+ini_set('display_errors', 1);
+error_reporting(E_ALL);
+
+$url = "http://10.0.2.8/obtenerContenedores.php";
+
+$ch = curl_init($url);
+curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+curl_setopt($ch, CURLOPT_TIMEOUT, 5);
+
+$response = curl_exec($ch);
+
+if ($response === false) {
+    die("cURL error: " . curl_error($ch));
+}
+
+curl_close($ch);
+
+$data = json_decode($response, true);
+
+if (!$data || $data['status'] !== 'ok') {
+    die("Error en respuesta del backend");
+}
+
+$datos_contenedores = $data['data'];
+
 ?>
 
 <!DOCTYPE html>
@@ -103,10 +121,12 @@
         </div>
     </main>
 
+    
+
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script>
         // Pasar datos de PHP a una variable Global de JS
-        const datosContenedores = <?php echo json_encode($datos_containers); ?>;
+       const datosContenedores = <?php echo json_encode($datos_contenedores); ?>;
     </script>
     <script src="js/mapaContenedores.js"></script>
 </body>
