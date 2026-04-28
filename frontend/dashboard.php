@@ -5,7 +5,17 @@ error_reporting(E_ALL);
 
 $url = "http://10.0.2.8/obtenerContenedores.php";
 
-$response = file_get_contents($url);
+$ch = curl_init($url);
+curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+curl_setopt($ch, CURLOPT_TIMEOUT, 5);
+
+$response = curl_exec($ch);
+
+if ($response === false) {
+    die("cURL error: " . curl_error($ch));
+}
+
+curl_close($ch);
 
 if ($response === false) {
     die("No se pudo conectar con el backend");
