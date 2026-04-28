@@ -1,6 +1,6 @@
 <?php
 
-$url = "http://10.0.2.8/public/obtenerContenedores.php";
+$url = "http://10.0.2.8/obtenerContenedores.php";
 
 $response = @file_get_contents($url);
 
