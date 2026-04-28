@@ -1,6 +1,21 @@
 <?php
-    require __DIR__ . '/../backend/includes/funciones.php';
-    $consulta = obtener_tabla();
+
+$url = "http://10.0.2.8/public/obtenerContenedores.php";
+
+$response = @file_get_contents($url);
+
+if ($response === false) {
+    die("No se pudo conectar con el backend");
+}
+
+$data = json_decode($response, true);
+
+if (!$data || $data['status'] !== 'ok') {
+    die("Respuesta inválida del backend");
+}
+
+$datos_contenedores = $data['data'] ?? [];
+
 ?>
 
 <!DOCTYPE html>
@@ -305,20 +320,16 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <?php while($contenedor = mysqli_fetch_assoc($consulta)): ?>
-                        <tr>
-                            <td><?php echo $contenedor['ubicacion']; ?></td>
-                            <td><?php echo $contenedor['latitud']; ?></td>
-                            <td><?php echo $contenedor['longitud']; ?></td>
-                            <td><?php echo $contenedor['capacidad']; ?></td>
-                            <td>
-                                <span class="status <?php echo 'st-' . strtolower($contenedor['estado']); ?>">
-                                    <?php echo $contenedor['estado']; ?>
-                                </span>
-                            </td>
-                        </tr>
-                    <?php endwhile; ?>
-                </tbody>
+<?php foreach($datos_contenedores as $contenedor): ?>
+    <tr>
+        <td><?= $contenedor['ubicacion'] ?></td>
+        <td><?= $contenedor['latitud'] ?></td>
+        <td><?= $contenedor['longitud'] ?></td>
+        <td><?= $contenedor['capacidad'] ?></td>
+        <td><?= $contenedor['estado'] ?></td>
+    </tr>
+<?php endforeach; ?>
+</tbody>
             </table>
 
         </section>
