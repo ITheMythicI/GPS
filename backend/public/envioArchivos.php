@@ -7,13 +7,14 @@ echo "INICIO\n";
 include "../includes/database.php";
 include "../includes/funciones.php";
 
-$conn = new mysqli("10.0.2.8", "bin_user", "123", "bin_db");
+//conexion a la base de datos con datos ocultos
+$conn = new mysqli($DB_HOST, $DB_USER, $DB_PASS, $DB_NAME);
 
 if ($conn->connect_error) {
     die("Conexion fallida: " . $conn->connect_error);
 }
 
-// Recibir datos
+// Recibir datos por API
 $idContenedor = $_POST['idContenedor'] ?? null;
 $temp         = $_POST['tempCelsius'] ?? null;
 $humedad      = $_POST['humedad'] ?? null;
@@ -25,35 +26,26 @@ if (!$idContenedor) {
     die("Error: No se especificó el ID del contenedor.");
 }
 
-/**
- * Función para insertar lectura buscando el ID del sensor por tipo y contenedor
- */
-function insertarLectura($conexion, $idCont, $tipo, $valor, $fechaHora) {
-    if ($valor === null) return;
+//Insercion de datos en la base de datos BIN
+$stmt = $conn->prepare("
+INSERT INTO LecturasSensores 
+(id_sensor, fecha_hora, tempCelsius, humedad, distanciaBoteTapa, pesoKg)
+VALUES (?, ?, ?, ?, ?, ?)
+");
 
-    // Buscamos el id_sensor que corresponde a este tipo en este contenedor
-    // Nota: Si no tienes tipos 'Temperatura' o 'Peso' creados en la tabla Sensores, 
-    // el sistema los ignorará. Solo insertará los que coincidan.
-    $stmt = $conexion->prepare("SELECT id_sensor FROM Sensores WHERE id_contenedor = ? AND tipo_sensor LIKE ? LIMIT 1");
-    $tipoBusqueda = "%$tipo%";
-    $stmt->bind_param("is", $idCont, $tipoBusqueda);
-    $stmt->execute();
-    $resultado = $stmt->get_result();
+$stmt->bind_param(
+    "isdddd",
+    $idContenedor,
+    $fecha,
+    $temp,
+    $humedad,
+    $distancia,
+    $peso
+);
 
-    if ($fila = $resultado->fetch_assoc()) {
-        $idSensor = $fila['id_sensor'];
-        $insert = $conexion->prepare("INSERT INTO LecturasSensores (id_sensor, valor, fecha_hora) VALUES (?, ?, ?)");
-        $insert->bind_param("iss", $idSensor, $valor, $fechaHora);
-        $insert->execute();
-    }
-}
+$stmt->execute();
 
-// Ejecutar inserciones según los sensores que tengas vinculados en la BD
-insertarLectura($conn, $idContenedor, 'Infrarrojo', $distancia, $fecha); // O 'Ultrasónico' según tu dump
-insertarLectura($conn, $idContenedor, 'Temperatura', $temp, $fecha);
-insertarLectura($conn, $idContenedor, 'Humedad', $humedad, $fecha);
-insertarLectura($conn, $idContenedor, 'Peso', $peso, $fecha);
-
+//Confirmacion de insercion
 echo "OK - Datos procesados para Contenedor #$idContenedor";
 
 $conn->close();

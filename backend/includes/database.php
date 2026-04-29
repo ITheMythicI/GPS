@@ -6,4 +6,8 @@
         exit;
     }
 
+    $DB_HOST = "10.0.2.8";
+    $DB_USER = "bin_user";
+    $DB_PASS = "123";
+    $DB_NAME = "bin_db";
 ?>
