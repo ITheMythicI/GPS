@@ -1,4 +1,8 @@
 <?php
+ini_set('display_errors', 1);
+error_reporting(E_ALL);
+
+echo "INICIO\n";
 
 include "../includes/database.php";
 include "../includes/funciones.php";
@@ -53,4 +57,6 @@ insertarLectura($conn, $idContenedor, 'Peso', $peso, $fecha);
 echo "OK - Datos procesados para Contenedor #$idContenedor";
 
 $conn->close();
+
+echo "\nFIN";
 ?>
