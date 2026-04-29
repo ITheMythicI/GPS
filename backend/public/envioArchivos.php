@@ -1,7 +1,8 @@
+<?php
+
 include "../includes/database.php";
 include "../includes/funciones.php";
 
-<?php
 $conn = new mysqli("10.0.2.8", "bin_user", "123", "bin_db");
 
 if ($conn->connect_error) {
