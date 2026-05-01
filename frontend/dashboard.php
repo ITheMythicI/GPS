@@ -251,70 +251,22 @@ $datos_contenedores = $data['data'] ?? [];
         <section class="analytics-row">
 
             <div class="panel-box">
-
                 <div class="panel-header">
-
-                    <h3>Tendencia de recolección</h3>
-
-                    <select class="period-filter">
-                        <option>Semanal</option>
-                        <option>Último mes</option>
-                        <option>Trimestre</option>
-                        <option>Año</option>
-                    </select>
-
+                    <h3>PORCENTAJE DE LLENADO</h3>
+                    <div>
+                    <canvas id="tabla_barras" height="300px" width="450px"
+                    ></canvas>
+                    </div>
                 </div>
-
-                <div class="chart-visual">
-
-                    <div class="bar" style="height:60%">
-                        <span class="month-label">Lunes</span>
-                    </div>
-
-                    <div class="bar" style="height:40%">
-                        <span class="month-label">Martes</span>
-                    </div>
-
-                    <div class="bar" style="height:75%">
-                        <span class="month-label">Miercoles</span>
-                    </div>
-
-                    <div class="bar" style="height:55%">
-                        <span class="month-label">Jueves</span>
-                    </div>
-
-                    <div class="bar" style="height:90%">
-                        <span class="month-label">Viernes</span>
-                    </div>
-
-                    <div class="bar" style="height:45%">
-                        <span class="month-label">Sabado</span>
-                    </div>
-
-                    <div class="bar" style="height:15%">
-                        <span class="month-label">Domingo</span>
-                    </div>
-
-                </div>
-
             </div>
 
-
             <div class="panel-box">
-
                 <div class="panel-header">
-                    <h3>Servicios frecuentes y costo promedio</h3>
-                </div>
-
-                <div class="servicios-list">
-
-                    <div class="servicio-item">
-                        <span>Servicio de recolección</span>
-                        <span>$850</span>
+                    <h3>GRÁFICO DE DONA</h3>
+                    <div>
+                    <canvas id="tabla_dona"></canvas>
                     </div>
-
                 </div>
-
             </div>
 
         </section>
