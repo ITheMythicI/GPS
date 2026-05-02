@@ -1,6 +1,6 @@
 <?php
 session_start();
-require __DIR__ . '/../backend/includes/database.php';
+require __DIR__ . '/../../backend/includes/database.php';
 
 $error = '';
 $success = '';
