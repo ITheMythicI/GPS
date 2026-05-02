@@ -51,18 +51,17 @@
         function toggleForm(type) {
             const loginForm = document.getElementById('login-form');
             const registroForm = document.getElementById('registro-form');
-            const titulo =  document.getElementById('titulo-form');
+            const titulo = document.getElementById('titulo-form');
 
-            if (type == 'register') {
+            if (type === 'register') {
                 loginForm.style.display = 'none';
                 registroForm.style.display = 'block';
-                titulo.innerText = 'REGISTRO DE USUARIO'
+                titulo.innerText = 'REGISTRO DE USUARIO';
             } else {
                 loginForm.style.display = 'block';
                 registroForm.style.display = 'none';
-                titulo.innerText =  'INICIAR SESIÓN';
+                titulo.innerText = 'INICIO DE SESIÓN';
             }
-
         }
     </script>
 
