@@ -39,24 +39,23 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 </head>
 <body>
     <script>
-        // Usamos json_encode para evitar que caracteres raros rompan el JS
-        const errorMsg = <?php echo json_encode($error); ?>;
         const successMsg = <?php echo json_encode($success); ?>;
-        const debugMsg = <?php echo json_encode($debug_info); ?>;
+        const errorMsg = <?php echo json_encode($error); ?>;
 
         if (successMsg) {
-            Swal.fire({ 
-                icon: 'success', 
-                title: '¡Éxito!', 
-                text: successMsg 
-            }).then(() => { window.location.href = 'landing.html'; });
+            Swal.fire({ icon: 'success', title: '¡Éxito!', text: successMsg })
+            .then(() => { window.location.href = 'landing.html'; });
         } else if (errorMsg) {
             Swal.fire({ 
                 icon: 'error', 
-                title: 'Fallo en el Registro', 
+                title: 'Error', 
                 text: errorMsg,
-                footer: debugMsg ? `<small><b>Debug:</b> ${debugMsg}</small>` : ''
+                footer: '<p>Verifica la consola para más detalles.</p>'
+            }).then(() => { 
+                // Comentado para que puedas ver el error antes de regresar
+                // window.location.href = 'landing.html'; 
             });
+            console.error("Detalle del error:", errorMsg);
         }
     </script>
 </body>
