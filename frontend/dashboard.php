@@ -1,6 +1,49 @@
 <?php
-    require __DIR__ . '/../backend/includes/funciones.php';
-    $consulta = obtener_tabla();
+require __DIR__ . '/../backend/includes/funciones.php';
+$consulta = obtener_tabla();
+
+ob_start();
+require __DIR__ . '/../backend/includes/database.php';
+ob_end_clean();
+
+$labels_barras = [];
+$data_barras   = [];
+
+if (isset($db) && $db) {
+    $res = mysqli_query($db, "
+        SELECT c.ubicacion, ls.pesoKg
+        FROM Contenedores c
+        JOIN Sensores s ON s.id_contenedor = c.id_contenedor
+        JOIN LecturasSensores ls ON ls.id_sensor = s.id_sensor
+        WHERE ls.fecha_hora = (
+            SELECT MAX(ls2.fecha_hora)
+            FROM LecturasSensores ls2
+            WHERE ls2.id_sensor = s.id_sensor
+        )
+        ORDER BY c.id_contenedor
+    ");
+    if ($res) {
+        while ($row = mysqli_fetch_assoc($res)) {
+            $labels_barras[] = $row['ubicacion'];
+            $data_barras[]   = (float) $row['pesoKg'];
+        }
+        mysqli_free_result($res);
+    }
+}
+
+$labels_dona = [];
+$data_dona   = [];
+
+if (isset($db) && $db) {
+    $res = mysqli_query($db, "SELECT capacidad, COUNT(*) AS total FROM Contenedores GROUP BY capacidad ORDER BY capacidad");
+    if ($res) {
+        while ($row = mysqli_fetch_assoc($res)) {
+            $labels_dona[] = $row['capacidad'];
+            $data_dona[]   = (int) $row['total'];
+        }
+        mysqli_free_result($res);
+    }
+}
 ?>
 
 <!DOCTYPE html>
@@ -223,73 +266,26 @@
         <section class="analytics-row">
 
             <div class="panel-box">
-
                 <div class="panel-header">
-
-                    <h3>Tendencia de recolección</h3>
-
-                    <select class="period-filter">
-                        <option>Semanal</option>
-                        <option>Último mes</option>
-                        <option>Trimestre</option>
-                        <option>Año</option>
-                    </select>
-
+                    <h3>PORCENTAJE DE LLENADO</h3>
+                    <div>
+                    <canvas id="tabla_barras" height="300px" width="450px"
+                    ></canvas>
+                    </div>
                 </div>
-
-                <div class="chart-visual">
-
-                    <div class="bar" style="height:60%">
-                        <span class="month-label">Lunes</span>
-                    </div>
-
-                    <div class="bar" style="height:40%">
-                        <span class="month-label">Martes</span>
-                    </div>
-
-                    <div class="bar" style="height:75%">
-                        <span class="month-label">Miercoles</span>
-                    </div>
-
-                    <div class="bar" style="height:55%">
-                        <span class="month-label">Jueves</span>
-                    </div>
-
-                    <div class="bar" style="height:90%">
-                        <span class="month-label">Viernes</span>
-                    </div>
-
-                    <div class="bar" style="height:45%">
-                        <span class="month-label">Sabado</span>
-                    </div>
-
-                    <div class="bar" style="height:15%">
-                        <span class="month-label">Domingo</span>
-                    </div>
-
-                </div>
-
             </div>
 
-
             <div class="panel-box">
-
                 <div class="panel-header">
-                    <h3>Servicios frecuentes y costo promedio</h3>
-                </div>
-
-                <div class="servicios-list">
-
-                    <div class="servicio-item">
-                        <span>Servicio de recolección</span>
-                        <span>$850</span>
+                    <h3>GRÁFICO DE DONA</h3>
+                    <div>
+                    <canvas id="tabla_dona"></canvas>
                     </div>
-
                 </div>
-
             </div>
 
         </section>
+
 
 
         <section class="table-box">
@@ -305,25 +301,76 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <?php while($contenedor = mysqli_fetch_assoc($consulta)): ?>
-                        <tr>
-                            <td><?php echo $contenedor['ubicacion']; ?></td>
-                            <td><?php echo $contenedor['latitud']; ?></td>
-                            <td><?php echo $contenedor['longitud']; ?></td>
-                            <td><?php echo $contenedor['capacidad']; ?></td>
-                            <td>
-                                <span class="status <?php echo 'st-' . strtolower($contenedor['estado']); ?>">
-                                    <?php echo $contenedor['estado']; ?>
-                                </span>
-                            </td>
-                        </tr>
-                    <?php endwhile; ?>
+                <tbody>
+                <?php
+                // ====================== CONEXIÓN ======================
+                require_once __DIR__ . '/../backend/includes/database.php';
+
+                if (!isset($db) || $db === null) {
+                    echo '<tr><td colspan="5" style="color:red; text-align:center; padding:40px;">';
+                    echo 'Error: No se pudo conectar a la base de datos.';
+                    echo '</td></tr>';
+                } else {
+                    // Usamos la función que ya tienes en funciones.php
+                    $resultado = obtener_tabla();   // ← Cambia esto si la función no devuelve el resultado
+
+                    if (!$resultado) {
+                        echo '<tr><td colspan="5" style="color:red; text-align:center; padding:20px;">';
+                        echo 'Error en la consulta: ' . mysqli_error($db);
+                        echo '</td></tr>';
+                    } else {
+                        $hayDatos = false;
+                        while ($Contenedor = mysqli_fetch_assoc($resultado)) {
+                            $hayDatos = true;
+                ?>
+                            <tr>
+                                <td><?php echo htmlspecialchars($Contenedor['ubicacion'] ?? ''); ?></td>
+                                <td><?php echo htmlspecialchars($Contenedor['latitud'] ?? ''); ?></td>
+                                <td><?php echo htmlspecialchars($Contenedor['longitud'] ?? ''); ?></td>
+                                <td><?php echo htmlspecialchars($Contenedor['capacidad'] ?? ''); ?></td>
+                                <td>
+                                    <span class="status <?php echo 'st-' . strtolower($Contenedor['estado'] ?? ''); ?>">
+                                        <?php echo htmlspecialchars($Contenedor['estado'] ?? 'Sin estado'); ?>
+                                    </span>
+                                </td>
+                            </tr>
+                <?php
+                        }
+                        mysqli_free_result($resultado);
+
+                        if (!$hayDatos) {
+                            echo '<tr><td colspan="5" style="text-align:center; padding:40px; color:#666;">';
+                            echo 'No hay contenedores registrados aún.';
+                            echo '</td></tr>';
+                        }
+                    }
+                }
+                ?>
                 </tbody>
+// ====================== CONEXIÓN A LA BASE DE DATOS ======================
+require_once '../includes/database.php';   // ← Ajusta esta ruta si es necesario
+
+// Verificación de seguridad
+if (!isset($db) || !$db) {
+    die('<h2 style="color:red; text-align:center;">Error: No se pudo conectar a la base de datos ($db no definido).</h2>');
+}
+?>
+</tbody>
             </table>
 
         </section>
 
     </main>
+
+    <!-- SCRIPTS -->
+    <script>
+        const labelsBarras = <?= json_encode($labels_barras) ?>;
+        const dataBarras   = <?= json_encode($data_barras) ?>;
+        const labelsDona   = <?= json_encode($labels_dona) ?>;
+        const dataDona     = <?= json_encode($data_dona) ?>;
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+    <script src="js/graficas.js"></script>
 
 </body>
 
