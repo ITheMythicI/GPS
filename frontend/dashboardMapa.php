@@ -32,7 +32,7 @@ $datos_contenedores = $data['data'];
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BuildNess - Mapa Interactivo</title>
+    <title>Bin - Mapa Interactivo</title>
 
     <link rel="stylesheet" href="css/normalize.css">
     <link rel="stylesheet" href="css/styles.css">
@@ -107,16 +107,16 @@ $datos_contenedores = $data['data'];
                     <div class="info-header">
                         <h4 id="card-title"></h4>
                         <button class="btn-back" onclick="resetUI()">⬅ Volver</button>
-                    </div>
-                    <hr id="card-hr" class="card-hr">
-                    <div class="info-body">
-                        <p><strong>📦 Contenedores:</strong> <span id="card-cont"></span></p>
-                        <p><strong>📋 Registros:</strong> <span id="card-reg"></span></p>
-                        <p><strong>⚠️ Prioridad:</strong> <span id="card-prior" class="priority-badge"></span></p>
+                        </div>
+                        <hr id="card-hr" class="card-hr">
+                            <div class="info-body">
+                                <p><strong>📦 Contenedores:</strong> <span id="card-cont"></span></p>
+                                <p><strong>📋 Registros:</strong> <span id="card-reg"></span></p>
+                                <p><strong>⚠️ Prioridad:</strong> <span id="card-prior" class="priority-badge"></span></p>
+                            </div>
+                        </div>
                     </div>
                 </div>
-            </div>
-
             <div id="map"></div>
         </div>
     </main>
@@ -124,10 +124,13 @@ $datos_contenedores = $data['data'];
     
 
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    
     <script>
         // Pasar datos de PHP a una variable Global de JS
        const datosContenedores = <?php echo json_encode($datos_contenedores); ?>;
     </script>
+    
     <script src="js/mapaContenedores.js"></script>
+
 </body>
 </html>
