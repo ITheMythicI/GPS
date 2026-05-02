@@ -2,6 +2,7 @@
 session_start();
 $error = '';
 $success = '';
+$debug = '';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $postData = $_POST;
@@ -13,16 +14,23 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($postData));
 
     $response = curl_exec($ch);
-    $data = json_decode($response, true);
-    curl_close($ch);
+    $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
 
-    if (isset($data['status']) && $data['status'] === 'success') {
-        $success = "Usuario registrado correctamente.";
+    if ($response === false) {
+        $data = "Fallp de coneccion cURL: " . curl_error($ch);
     } else {
-        $error = $data['message'] ?? "Error al registrarse.";
+        $data = json_decode($response, true);
+        if (isset($data['status']) && $data['status'] === 'success') {
+            $success = " Usuario Registrado Correctamente";
+        } else {
+            $error = $data['message'] ?? "Error desconocido en el backend";
+            $debug = "Codigo HTTP: $httpCode | Respuesta: " . htmlspecialchars($response);
+        }
     }
+    curl_close($ch);
 }
 ?>
+
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -35,8 +43,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             Swal.fire({ icon: 'success', title: '¡Éxito!', text: '<?php echo $success; ?>' })
             .then(() => { window.location.href = 'landing.html'; });
         <?php elseif ($error): ?>
-            Swal.fire({ icon: 'error', title: 'Error', text: '<?php echo $error; ?>' })
-            .then(() => { window.location.href = 'landing.html'; });
+            Swal.fire({ 
+                icon: 'error', 
+                title: 'Fallo en el Registro', 
+                text: '<?php echo $error; ?>',
+                footer: '<b>Debug:</b> <?php echo $debug; ?>'
+            }).then(() => { 
+                // Comentamos la redirección para que puedas leer el error en la consola si es necesario
+                // window.location.href = 'landing.html'; 
+            });
         <?php endif; ?>
     </script>
 </body>
