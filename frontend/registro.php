@@ -32,7 +32,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             }
         }
     }
-    curl_close($ch)
+    curl_close($ch);
 }
 ?>
 
