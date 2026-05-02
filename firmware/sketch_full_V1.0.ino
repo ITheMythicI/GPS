@@ -3,9 +3,10 @@
 // Librerias necesarias:
 // - DHT Sensor Library: https://github.com/adafruit/DHT-sensor-library
 // - Adafruit Unified Sensor Lib: https://github.com/adafruit/Adafruit_Sensor
+// - HX711 Library: https://github.com/bogde/HX711
 // - WiFi y HTTPClient, vienen por defecto
 #include "DHT.h"
-#include "HX711.h" // Asegúrate de incluir la librería para las celdas de carga
+#include "HX711.h"
 
 #define DHTPIN 4     
 #define DHTTYPE DHT22   // DHT 22  
@@ -15,18 +16,16 @@
 #include <HTTPClient.h>
 
 // Datos del wifi, poner internet de 2.4 GHz, NO FUNCIONA CON 5G
-const char* ssid = "Mega_5G_239E";
-const char* password = "SQUHKDKT";
+const char* ssid = "KKXPRO";
+const char* password = "KNGKNGXPRO";
 
 //internet de la uni
 //ssid -> "";
 //pass -> "";
 
-// IP de envio - ACTUALIZADO con la ruta del backend
-const char* serverName = "http://129.146.115.127/backend/includes/envioArchivos.php";
-
-// Id del contenedor de pruebas - IMPLEMENTADO para vincular con la BD
-int idContenedorActual = 1;
+// IP de envio - apuntar al contenedor API de Docker
+//const char* serverName = "http://api:3000/lectura"; // CAMBIAR ESTO si el ESP32 está fuera de la red Docker
+const char* serverName = "http://129.146.115.127/api/lecturas.php";
 
 // HX711 #1
 const int LOADCELL_A_DOUT = 16;
@@ -114,7 +113,7 @@ void loop() {
   //valores del sensor infrarojo
   int distancia = sensor.readRangeSingleMillimeters(); 
   float distanciaCalibrada = distancia * 0.6;
-  distanciaCalibrada = distanciaCalibrada * 10; //mm a cm - CORREGIDO: ahora asigna el valor
+  distanciaCalibrada = distanciaCalibrada * 10; //mm a cm
   float suma=0;
 
   //valores del sensor humedad
@@ -161,7 +160,11 @@ void loop() {
   Serial.print(distanciaCalibrada);
   Serial.println(" mm");
   */
-  if (scale1.is_ready() && scale2.is_ready()) {
+  float peso = 0;
+
+    if (scale1.is_ready() && scale2.is_ready()) {
+
+    float suma = 0;
 
     //Enviar a base de datos
     if (WiFi.status() == WL_CONNECTED) {
@@ -172,7 +175,7 @@ void loop() {
         delay(10);
       }
 
-      float peso = suma / 20.0;
+      peso = suma / 20.0;
 
       delay(1000);
 
@@ -180,15 +183,21 @@ void loop() {
 
       http.begin(serverName);
       http.addHeader("Content-Type", "application/x-www-form-urlencoded");
-      
-      //Variables a enviar - ACTUALIZADO: Se agregó idContenedor para la nueva estructura de la BD
-      String httpRequestData = 
-      "idContenedor=" + String(idContenedorActual) +
-      "&tempCelsius=" + String(t, 2) + //temperatura en Celsius
-      "&humedad=" + String(h, 2) + //% de humedad
-      "&distanciaBoteTapa=" + String(distanciaCalibrada, 2) + //distancia de la tapa hacia el bote
-      "&pesoKg=" + String(peso, 2); //peso en Kg
+      //Variables a enviar
+      //String httpRequestData = 
+      //"tempCelsius=" + String(t, 2) + //temperatura en Celsius
+      //"&humedad=" + String(h, 2) + //% de humedad
+      //"&distanciaBoteTapa=" + String(distanciaCalibrada, 2) + //distancia de la tapa hacia el bote
+      //"&pesoKg=" + String(peso, 2); //peso en Kg
+      String httpRequestData = "";
+      httpRequestData += "idContenedor=1";
+      httpRequestData += "&tempCelsius=" + String(t, 2);
+      httpRequestData += "&humedad=" + String(h, 2);
+      httpRequestData += "&distanciaBoteTapa=" + String(distanciaCalibrada, 2);
+      httpRequestData += "&pesoKg=" + String(peso, 2);
 
+      Serial.println("Enviando datos:");
+      Serial.println(httpRequestData);
       int httpResponseCode = http.POST(httpRequestData);
 
       if (httpResponseCode > 0) {
@@ -204,7 +213,10 @@ void loop() {
     }
 
   } else {
-    Serial.println("ERROR HX711: no se encontró.");
+    //Serial.println("ERROR HX711: no se encontró.");
+
+    Serial.println("HX711 no conectado, enviando peso=0");
+    peso = 0;
   }
   delay(10000);  // Envía cada 10 segundos
 }

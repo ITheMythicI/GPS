@@ -1,6 +1,34 @@
 <?php
-    require __DIR__ . '/../backend/includes/funciones.php';
-    $consulta = obtener_tabla();
+
+ini_set('display_errors', 1);
+error_reporting(E_ALL);
+
+$url = "http://10.0.2.8/obtenerContenedores.php";
+
+$ch = curl_init($url);
+curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+curl_setopt($ch, CURLOPT_TIMEOUT, 5);
+
+$response = curl_exec($ch);
+
+if ($response === false) {
+    die("cURL error: " . curl_error($ch));
+}
+
+curl_close($ch);
+
+if ($response === false) {
+    die("No se pudo conectar con el backend");
+}
+
+$data = json_decode($response, true);
+
+if (!$data || $data['status'] !== 'ok') {
+    die("Respuesta inválida del backend");
+}
+
+$datos_contenedores = $data['data'] ?? [];
+
 ?>
 
 <!DOCTYPE html>
@@ -20,6 +48,9 @@
         rel="stylesheet">
 
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="js/graficas.js"></script>
 
 </head>
 
@@ -223,70 +254,22 @@
         <section class="analytics-row">
 
             <div class="panel-box">
-
                 <div class="panel-header">
-
-                    <h3>Tendencia de recolección</h3>
-
-                    <select class="period-filter">
-                        <option>Semanal</option>
-                        <option>Último mes</option>
-                        <option>Trimestre</option>
-                        <option>Año</option>
-                    </select>
-
+                    <h3>PORCENTAJE DE LLENADO</h3>
+                    <div>
+                    <canvas id="tabla_barras" height="300px" width="450px"
+                    ></canvas>
+                    </div>
                 </div>
-
-                <div class="chart-visual">
-
-                    <div class="bar" style="height:60%">
-                        <span class="month-label">Lunes</span>
-                    </div>
-
-                    <div class="bar" style="height:40%">
-                        <span class="month-label">Martes</span>
-                    </div>
-
-                    <div class="bar" style="height:75%">
-                        <span class="month-label">Miercoles</span>
-                    </div>
-
-                    <div class="bar" style="height:55%">
-                        <span class="month-label">Jueves</span>
-                    </div>
-
-                    <div class="bar" style="height:90%">
-                        <span class="month-label">Viernes</span>
-                    </div>
-
-                    <div class="bar" style="height:45%">
-                        <span class="month-label">Sabado</span>
-                    </div>
-
-                    <div class="bar" style="height:15%">
-                        <span class="month-label">Domingo</span>
-                    </div>
-
-                </div>
-
             </div>
 
-
             <div class="panel-box">
-
                 <div class="panel-header">
-                    <h3>Servicios frecuentes y costo promedio</h3>
-                </div>
-
-                <div class="servicios-list">
-
-                    <div class="servicio-item">
-                        <span>Servicio de recolección</span>
-                        <span>$850</span>
+                    <h3>GRÁFICO DE DONA</h3>
+                    <div>
+                    <canvas id="tabla_dona"></canvas>
                     </div>
-
                 </div>
-
             </div>
 
         </section>
@@ -305,20 +288,16 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <?php while($contenedor = mysqli_fetch_assoc($consulta)): ?>
-                        <tr>
-                            <td><?php echo $contenedor['ubicacion']; ?></td>
-                            <td><?php echo $contenedor['latitud']; ?></td>
-                            <td><?php echo $contenedor['longitud']; ?></td>
-                            <td><?php echo $contenedor['capacidad']; ?></td>
-                            <td>
-                                <span class="status <?php echo 'st-' . strtolower($contenedor['estado']); ?>">
-                                    <?php echo $contenedor['estado']; ?>
-                                </span>
-                            </td>
-                        </tr>
-                    <?php endwhile; ?>
-                </tbody>
+<?php foreach($datos_contenedores as $contenedor): ?>
+    <tr>
+        <td><?= $contenedor['ubicacion'] ?></td>
+        <td><?= $contenedor['latitud'] ?></td>
+        <td><?= $contenedor['longitud'] ?></td>
+        <td><?= $contenedor['capacidad'] ?></td>
+        <td><?= $contenedor['estado'] ?></td>
+    </tr>
+<?php endforeach; ?>
+</tbody>
             </table>
 
         </section>
