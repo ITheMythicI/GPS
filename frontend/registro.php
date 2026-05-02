@@ -7,20 +7,25 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $postData = $_POST;
     $postData['action'] = 'registro';
 
-    $ch = curl_init("http://localhost/frontend/api/router.php");
+    $ch = curl_init("http://10.0.2.8/frontend/api/router.php");
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
     curl_setopt($ch, CURLOPT_POST, true);
     curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($postData));
 
     $response = curl_exec($ch);
-    $data = json_decode($response, true);
+    $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
     curl_close($ch);
 
-    if (isset($data['status']) && $data['status'] === 'success') {
-        $success = "Usuario registrado correctamente.";
+    $data = json_decode($response, true);
+
+    if ($httpCode === 200 && isset($data['status']) && $data['status'] === 'success') {
+        $success = "Usuario registrado correctamente";
     } else {
-        // Guardamos la respuesta cruda si el JSON falla para depurar
-        $error = $data['message'] ?? "Error desconocido en el backend: " . strip_tags($response);
+        if (json_last_error() !== JSON_ERROR_NONE) {
+            $error = "Error de redd ($httpCode). El servidor no devolvio un fotmato valido";
+        } else {
+            $error = $data['message'] ?? "Error desconocido en el registro";
+        }
     }
 }
 ?>
@@ -28,24 +33,28 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <html lang="es">
 <head>
     <meta charset="UTF-8">
+    <title>Procesando Registro</title>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </head>
 <body>
     <script>
-        // Usamos json_encode para pasar los mensajes de PHP a JS de forma segura
         const successMsg = <?php echo json_encode($success); ?>;
         const errorMsg = <?php echo json_encode($error); ?>;
 
         if (successMsg) {
-            Swal.fire({ icon: 'success', title: '¡Éxito!', text: successMsg })
-            .then(() => { window.location.href = 'landing.html'; });
+            Swal.fire({
+                icon: 'success',
+                title: '¡Éxito!',
+                text: successMsg
+            }).then(() => {
+                window.location.href = 'landing.html';
+            });
         } else if (errorMsg) {
-            console.error("Detalle del error:", errorMsg);
-            Swal.fire({ 
-                icon: 'error', 
-                title: 'Error', 
+            Swal.fire({
+                icon: 'error',
+                title: 'Fallo en el Registro',
                 text: errorMsg,
-                footer: 'Consulta la consola (F12) para detalles técnicos.'
+                footer: 'Verifica la conexión con el servidor 10.0.2.8'
             });
         }
     </script>
