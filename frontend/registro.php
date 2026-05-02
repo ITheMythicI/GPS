@@ -39,20 +39,25 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 </head>
 <body>
     <script>
-        <?php if ($success): ?>
-            Swal.fire({ icon: 'success', title: '¡Éxito!', text: '<?php echo $success; ?>' })
-            .then(() => { window.location.href = 'landing.html'; });
-        <?php elseif ($error): ?>
+        // Usamos json_encode para evitar que caracteres raros rompan el JS
+        const errorMsg = <?php echo json_encode($error); ?>;
+        const successMsg = <?php echo json_encode($success); ?>;
+        const debugMsg = <?php echo json_encode($debug_info); ?>;
+
+        if (successMsg) {
+            Swal.fire({ 
+                icon: 'success', 
+                title: '¡Éxito!', 
+                text: successMsg 
+            }).then(() => { window.location.href = 'landing.html'; });
+        } else if (errorMsg) {
             Swal.fire({ 
                 icon: 'error', 
                 title: 'Fallo en el Registro', 
-                text: '<?php echo $error; ?>',
-                footer: '<b>Debug:</b> <?php echo $debug; ?>'
-            }).then(() => { 
-                // Comentamos la redirección para que puedas leer el error en la consola si es necesario
-                // window.location.href = 'landing.html'; 
+                text: errorMsg,
+                footer: debugMsg ? `<small><b>Debug:</b> ${debugMsg}</small>` : ''
             });
-        <?php endif; ?>
+        }
     </script>
 </body>
 </html>
