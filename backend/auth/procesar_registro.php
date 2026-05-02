@@ -1,64 +1,55 @@
 <?php
-ini_set('display_errors', 1);
+// Evitar que errores de PHP rompan el JSON, pero registrarlos
+ini_set('display_errors', 0); 
 error_reporting(E_ALL);
 
 header('Content-Type: application/json');
 
-file_put_contents('debug_registro.log', date('[Y-m-d H:i:s] ') . "POST: " . print_r($_POST, true), FILE_APPEND);
-
+// Requerir la base de datos (Verifica que esta ruta sea correcta en tu MV)
 require __DIR__ . '/../../includes/database.php';
 
-$nombre = trim($_POST['nombre'] ?? '');
-$email = trim($_POST['email'] ?? '');
+$nombre   = trim($_POST['nombre'] ?? '');
+$email    = trim($_POST['email'] ?? '');
 $password = $_POST['password'] ?? '';
-$rol = 'usuario';
+$rol      = 'usuario';
 
 if (empty($nombre) || empty($email) || empty($password)) {
-    echo json_encode(['status' => 'error', 'message' => 'Todos los campos son obligatorios.']);
+    echo json_encode(['status' => 'error', 'message' => 'Todos los campos son obligatorios']);
     exit;
 }
 
+// 1. Verificar conexión a la base de datos
 if (!$db) {
-    echo json_encode(['status' => 'error', 'message' => 'Error de conexión MySQL: ' . mysqli_connect_error()]);
+    echo json_encode(['status' => 'error', 'message' => 'Fallo de conexión a la base de datos']);
     exit;
 }
 
+// 2. Verificar si el correo ya existe
 $stmt_check = mysqli_prepare($db, "SELECT id_usuario FROM Usuarios WHERE email = ? LIMIT 1");
-if (!$stmt_check) {
-    echo json_encode(['status' => 'error', 'message' => 'Error en preparación SQL (Check): ' . mysqli_error($db)]);
-    exit;
-}
-
 mysqli_stmt_bind_param($stmt_check, "s", $email);
 mysqli_stmt_execute($stmt_check);
 mysqli_stmt_store_result($stmt_check);
 
 if (mysqli_stmt_num_rows($stmt_check) > 0) {
-    echo json_encode(['status' => 'error', 'message' => 'El correo electrónico ya está registrado.']);
+    echo json_encode(['status' => 'error', 'message' => 'El correo ya está registrado']);
     mysqli_stmt_close($stmt_check);
     exit;
 }
 mysqli_stmt_close($stmt_check);
 
+// 3. Encriptación y guardado
 $password_hash = password_hash($password, PASSWORD_BCRYPT);
-
 $sql = "INSERT INTO Usuarios (nombre, email, password, rol) VALUES (?, ?, ?, ?)";
 $stmt_insert = mysqli_prepare($db, $sql);
 
-if (!$stmt_insert) {
-    echo json_encode(['status' => 'error', 'message' => 'Error en preparación SQL (Insert): ' . mysqli_error($db)]);
-    exit;
-}
-
-mysqli_stmt_bind_param($stmt_insert, "ssss", $nombre, $email, $password_hash, $rol);
-
-if (mysqli_stmt_execute($stmt_insert)) {
-    echo json_encode(['status' => 'success']);
+if ($stmt_insert) {
+    mysqli_stmt_bind_param($stmt_insert, "ssss", $nombre, $email, $password_hash, $rol);
+    if (mysqli_stmt_execute($stmt_insert)) {
+        echo json_encode(['status' => 'success']);
+    } else {
+        echo json_encode(['status' => 'error', 'message' => 'Error al ejecutar inserción: ' . mysqli_stmt_error($stmt_insert)]);
+    }
+    mysqli_stmt_close($stmt_insert);
 } else {
-    echo json_encode([
-        'status' => 'error', 
-        'message' => 'No se pudo guardar el usuario: ' . mysqli_stmt_error($stmt_insert)
-    ]);
+    echo json_encode(['status' => 'error', 'message' => 'Error al preparar inserción: ' . mysqli_error($db)]);
 }
-
-mysqli_stmt_close($stmt_insert);
