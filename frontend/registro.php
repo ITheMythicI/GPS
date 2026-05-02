@@ -53,16 +53,29 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <title>Procesando Registro...</title>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </head>
-<body>
+<body style="background-color: #f4f4f4; font-family: sans-serif;">
+
     <script>
         <?php if ($success): ?>
-            Swal.fire({ icon: 'success', title: '¡Éxito!', text: '<?php echo $success; ?>' })
-            .then(() => { window.location.href = 'landing.html'; });
+            Swal.fire({
+                icon: 'success',
+                title: '¡Éxito!',
+                text: '<?php echo $success; ?>',
+                confirmButtonColor: '#4CAF50'
+            }).then(() => {
+                window.location.href = 'landing.html';
+            });
         <?php endif; ?>
 
         <?php if ($error): ?>
-            Swal.fire({ icon: 'error', title: 'Error', text: '<?php echo $error; ?>' })
-            .then(() => { window.history.back(); });
+            Swal.fire({
+                icon: 'error',
+                title: 'Atención',
+                text: '<?php echo $error; ?>',
+                confirmButtonColor: '#f27474'
+            }).then(() => {
+                window.history.back();
+            });
         <?php endif; ?>
     </script>
 </body>
