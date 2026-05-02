@@ -10,18 +10,8 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Deploy Frontend
-        uses: appleboy/ssh-action@v1.0.0
-        with:
-          host: ${{ secrets.VM_FRONT_IP }}
-          username: ${{ secrets.VM_USER }}
-          key: ${{ secrets.SSH_KEY }}
-          script: |
-            cd /var/www/html/frontend
-            git fetch origin
-            git reset --hard origin/main
-
-      - name: Deploy Backend (via frontend)
+      # 🔵 DEPLOY BACKEND (primero)
+      - name: Deploy Backend
         uses: appleboy/ssh-action@v1.0.0
         with:
           host: ${{ secrets.VM_FRONT_IP }}
@@ -29,10 +19,15 @@ jobs:
           key: ${{ secrets.SSH_KEY }}
           script: |
             ssh -i /home/ubuntu/ssh-key-2026-03-13.key -o StrictHostKeyChecking=no ubuntu@10.0.2.8 << 'EOF'
-              sudo chown -R ubuntu:ubuntu /var/www/html/backend
-              git config --global --add safe.directory /var/www/html/backend/backend
-              cd /var/www/html/backend/backend
-              git fetch origin
-              git reset --hard origin/main
-              cp -r /var/www/html/backup/config .
+              /home/ubuntu/deploy_backend.sh
             EOF
+
+      # 🟢 DEPLOY FRONTEND
+      - name: Deploy Frontend
+        uses: appleboy/ssh-action@v1.0.0
+        with:
+          host: ${{ secrets.VM_FRONT_IP }}
+          username: ${{ secrets.VM_USER }}
+          key: ${{ secrets.SSH_KEY }}
+          script: |
+            /home/ubuntu/deploy_frontend.sh

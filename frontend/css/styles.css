@@ -871,3 +871,128 @@ background-color: #eee;
 .st-pendiente{background:var(--bg-pendiente);color:var(--st-pendiente);}
 .st-terminado{background:var(--bg-completado);color:var(--st-completado);}
 .st-cancelado{background:var(--bg-cancelado);color:var(--st-cancelado);}
+
+/* Estilo del Popup personalizado */
+    .custom-popup .leaflet-popup-content-wrapper {
+        background: #2c3e50;
+        color: #fff;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        border-radius: 8px;
+    }
+    .custom-popup .leaflet-popup-tip { background: #2c3e50; }
+
+    /* Marcadores estilo "Pin" personalizados */
+    .custom-marker-pin {
+        width: 30px;
+        height: 30px;
+        border-radius: 50% 50% 50% 0;
+        background: #007bff;
+        position: absolute;
+        transform: rotate(-45deg);
+        left: 50%;
+        top: 50%;
+        margin: -15px 0 0 -15px;
+        border: 2px solid #ffffff;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.3);
+    }
+
+    /* Contenedor circular para el icono */
+    .trash-icon-container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        width: 34px;
+        height: 34px;
+        background-color: white; /* Fondo para resaltar el icono */
+        border: 2px solid;       /* El color lo daremos por JS */
+        border-radius: 50%;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.4);
+        transition: transform 0.2s;
+    }
+
+    .trash-icon-container:hover {
+        transform: scale(1.2);
+        z-index: 1000;
+    }
+
+    /* Estilo del icono interno */
+    .trash-icon-container i {
+        font-size: 18px;
+    }
+
+    .ui-container {
+        position: absolute;
+        top: 20px;
+        right: 20px;
+        z-index: 1000;
+        width: 260px;
+        font-family: 'Segoe UI', Tahoma, sans-serif;
+    }
+
+    .card-hr {
+        border-color: #000000;
+    }
+
+    .header-card {
+        background: white;
+        color: black;
+        border-color: #000000;
+        padding: 12px 15px;
+        border-radius: 8px;
+        cursor: pointer;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+    }
+
+    .area-list {
+        background: white;
+        margin-top: 5px;
+        border-radius: 8px;
+        overflow: hidden;
+        max-height: 200px;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    }
+    
+    .area-list.collapsed { max-height: 0; opacity: 0; pointer-events: none; }
+
+    .area-item {
+        padding: 12px 15px;
+        border-bottom: 1px solid #eee;
+        cursor: pointer;
+        transition: 0.2s;
+    }
+    .area-item:hover { background: #f8f9fa; padding-left: 20px; color: #3498db; }
+
+    /* Tarjeta de Información */
+    .info-card {
+        background: white;
+        margin-top: 10px;
+        padding: 15px;
+        border-radius: 8px;
+        box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+        transition: all 0.4s ease;
+    }
+
+    .info-card.hidden { display: none; }
+
+    .info-header { display: flex; justify-content: space-between; align-items: center; }
+    .info-header h4 { margin: 0; color: #2c3e50; }
+    
+    .btn-back { 
+        font-size: 11px; background: #eee; border: none; padding: 4px 8px; 
+        border-radius: 4px; cursor: pointer; 
+    }
+
+    .priority-badge {
+        padding: 2px 8px;
+        border-radius: 4px;
+        color: white;
+        font-size: 0.85em;
+        font-weight: bold;
+    }
+
+    #arrow-icon { transition: transform 0.3s; }
+    .rotated { transform: rotate(180deg); }

@@ -5,14 +5,14 @@ document.addEventListener('DOMContentLoaded', function () {
     data: {
       labels: labelsBarras,
       datasets: [{
-        label: 'Peso (kg)',
+        label: 'Porcentaje de llenado',
         data: dataBarras,
         borderWidth: 1
       }]
     },
     options: {
       scales: {
-        y: { beginAtZero: true }
+        y: { beginAtZero: true, max: 100 }
       }
     }
   });

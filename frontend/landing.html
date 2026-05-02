@@ -3,11 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mi primera pagina</title>
+    <title>Landing Page</title>
     <link rel="stylesheet" href="css/stylesIndex.css">
 </head>
 <body>
-    <!-- ===Baraa supeior con el logo ==== -->
+    <!-- ===Barra supeior con el logo ==== -->
     <header class="navbar">
         <div class="brand">
             NEXUS <span style="color:#4CAF50;"></span> SOLUTIONS
@@ -18,25 +18,52 @@
                 </li>
             </ul>
     </header>
+
     <!-- ===Lo verde, el logo y la imagen ==== -->
 
     <section class="registro">
         <!-- Formulario -->
         <div class="registro">
-            <h3>REGISTRO</h3>
-            
-            <input type="text" placeholder="Usuario"><br>
-            <input type="email" placeholder="Email"><br>
-            <input type="password" placeholder="Contraseña"><br>
-            <button class="registro">Registrar</button>
-            
-            <p style="margin-top:30px; font-size:15px; color:#555;">
-                bin_nexus_solutions@gmail.com<br>
-                Avenida XYZ, Torreón, Coahuila.
+            <h3 id="titulo-form">INICIAR SESIÓN</h3>
+
+            <form id="login-form" method="POST" action="login.php">
+            <input type="email" name="email" placeholder="Email" required><br>
+            <input type="password" name="password" placeholder="Contraseña" required><br>
+            <button type="submit" class="registro">Entrar</button>
+            <p style="margin-top:20px; font-size:14px;">
+                ¿No tienes cuenta? <a href="#" onclick="toggleForm('register')" style="color:#4CAF50;">Regístrate aquí</a>
             </p>
+        </form>
+
+        <form id="registro-form" method="POST" action="registro.php" style="display:none;">
+            <input type="text" name="nombre" placeholder="Nombre completo" required><br>
+            <input type="email" name="email" placeholder="Email" required><br>
+            <input type="password" name="password" placeholder="Contraseña" required><br>
+            <button type="submit" class="registro">Crear Cuenta</button>
+            <p style="margin-top:20px; font-size:14px;">
+                ¿Ya tienes cuenta? <a href="#" onclick="toggleForm('login')" style="color:#4CAF50;">Inicia sesión aquí</a>
+            </p>
+        </form>            
         </div>
-    </div>
     </section>
+
+    <script>
+        function toggleForm(type) {
+            const loginForm = document.getElementById('login-form');
+            const registroForm = document.getElementById('registro-form');
+            const titulo = document.getElementById('titulo-form');
+
+            if (type === 'register') {
+                loginForm.style.display = 'none';
+                registroForm.style.display = 'block';
+                titulo.innerText = 'REGISTRO DE USUARIO';
+            } else {
+                loginForm.style.display = 'block';
+                registroForm.style.display = 'none';
+                titulo.innerText = 'INICIO DE SESIÓN';
+            }
+        }
+    </script>
 
 </body>
 </html>

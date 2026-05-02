@@ -1,49 +1,42 @@
 <?php
-require __DIR__ . '/../backend/includes/funciones.php';
-$consulta = obtener_tabla();
+ini_set('display_errors', 1);
+error_reporting(E_ALL);
 
-ob_start();
-require __DIR__ . '/../backend/includes/database.php';
-ob_end_clean();
+$url = "http://10.0.2.8/obtenerContenedores.php";
 
+$ch = curl_init($url);
+curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+curl_setopt($ch, CURLOPT_TIMEOUT, 5);
+
+$response = curl_exec($ch);
+
+$datos_contenedores = [];
+
+if ($response !== false) {
+    $data = json_decode($response, true);
+    if ($data && $data['status'] === 'ok') {
+        $datos_contenedores = $data['data'] ?? [];
+    }
+}
+
+// Gráfica de barras: estado convertido a porcentaje por contenedor
 $labels_barras = [];
 $data_barras   = [];
+$estado_map    = ['lleno' => 100, 'medio' => 50, 'vacío' => 0, 'vacio' => 0];
 
-if (isset($db) && $db) {
-    $res = mysqli_query($db, "
-        SELECT c.ubicacion, ls.pesoKg
-        FROM Contenedores c
-        JOIN Sensores s ON s.id_contenedor = c.id_contenedor
-        JOIN LecturasSensores ls ON ls.id_sensor = s.id_sensor
-        WHERE ls.fecha_hora = (
-            SELECT MAX(ls2.fecha_hora)
-            FROM LecturasSensores ls2
-            WHERE ls2.id_sensor = s.id_sensor
-        )
-        ORDER BY c.id_contenedor
-    ");
-    if ($res) {
-        while ($row = mysqli_fetch_assoc($res)) {
-            $labels_barras[] = $row['ubicacion'];
-            $data_barras[]   = (float) $row['pesoKg'];
-        }
-        mysqli_free_result($res);
-    }
+foreach ($datos_contenedores as $c) {
+    $labels_barras[] = $c['ubicacion'];
+    $data_barras[]   = $estado_map[strtolower($c['estado'] ?? '')] ?? 0;
 }
 
-$labels_dona = [];
-$data_dona   = [];
-
-if (isset($db) && $db) {
-    $res = mysqli_query($db, "SELECT capacidad, COUNT(*) AS total FROM Contenedores GROUP BY capacidad ORDER BY capacidad");
-    if ($res) {
-        while ($row = mysqli_fetch_assoc($res)) {
-            $labels_dona[] = $row['capacidad'];
-            $data_dona[]   = (int) $row['total'];
-        }
-        mysqli_free_result($res);
-    }
+// Gráfica de dona: contenedores agrupados por capacidad
+$dona_map = [];
+foreach ($datos_contenedores as $c) {
+    $cap = $c['capacidad'] ?? 'Sin datos';
+    $dona_map[$cap] = ($dona_map[$cap] ?? 0) + 1;
 }
+$labels_dona = array_keys($dona_map);
+$data_dona   = array_values($dona_map);
 ?>
 
 <!DOCTYPE html>
@@ -118,7 +111,7 @@ if (isset($db) && $db) {
                 <span><i class="fa-solid fa-gauge-high"></i> Página Principal </span>
             </a>
         </div>
-        
+
         <div class="menu-item">
             <a href="dashboard.php" class="menu-btn">
                 <span><i class="fa-solid fa-gauge-high"></i> Dashboard</span>
@@ -269,8 +262,7 @@ if (isset($db) && $db) {
                 <div class="panel-header">
                     <h3>PORCENTAJE DE LLENADO</h3>
                     <div>
-                    <canvas id="tabla_barras" height="300px" width="450px"
-                    ></canvas>
+                        <canvas id="tabla_barras" height="300px" width="450px"></canvas>
                     </div>
                 </div>
             </div>
@@ -279,13 +271,12 @@ if (isset($db) && $db) {
                 <div class="panel-header">
                     <h3>GRÁFICO DE DONA</h3>
                     <div>
-                    <canvas id="tabla_dona"></canvas>
+                        <canvas id="tabla_dona"></canvas>
                     </div>
                 </div>
             </div>
 
         </section>
-
 
 
         <section class="table-box">
@@ -301,61 +292,20 @@ if (isset($db) && $db) {
                     </tr>
                 </thead>
                 <tbody>
-                <tbody>
-                <?php
-                // ====================== CONEXIÓN ======================
-                require_once __DIR__ . '/../backend/includes/database.php';
-
-                if (!isset($db) || $db === null) {
-                    echo '<tr><td colspan="5" style="color:red; text-align:center; padding:40px;">';
-                    echo 'Error: No se pudo conectar a la base de datos.';
-                    echo '</td></tr>';
-                } else {
-                    // Usamos la función que ya tienes en funciones.php
-                    $resultado = obtener_tabla();   // ← Cambia esto si la función no devuelve el resultado
-
-                    if (!$resultado) {
-                        echo '<tr><td colspan="5" style="color:red; text-align:center; padding:20px;">';
-                        echo 'Error en la consulta: ' . mysqli_error($db);
-                        echo '</td></tr>';
-                    } else {
-                        $hayDatos = false;
-                        while ($Contenedor = mysqli_fetch_assoc($resultado)) {
-                            $hayDatos = true;
-                ?>
-                            <tr>
-                                <td><?php echo htmlspecialchars($Contenedor['ubicacion'] ?? ''); ?></td>
-                                <td><?php echo htmlspecialchars($Contenedor['latitud'] ?? ''); ?></td>
-                                <td><?php echo htmlspecialchars($Contenedor['longitud'] ?? ''); ?></td>
-                                <td><?php echo htmlspecialchars($Contenedor['capacidad'] ?? ''); ?></td>
-                                <td>
-                                    <span class="status <?php echo 'st-' . strtolower($Contenedor['estado'] ?? ''); ?>">
-                                        <?php echo htmlspecialchars($Contenedor['estado'] ?? 'Sin estado'); ?>
-                                    </span>
-                                </td>
-                            </tr>
-                <?php
-                        }
-                        mysqli_free_result($resultado);
-
-                        if (!$hayDatos) {
-                            echo '<tr><td colspan="5" style="text-align:center; padding:40px; color:#666;">';
-                            echo 'No hay contenedores registrados aún.';
-                            echo '</td></tr>';
-                        }
-                    }
-                }
-                ?>
+                    <?php foreach ($datos_contenedores as $contenedor): ?>
+                        <tr>
+                            <td><?= htmlspecialchars($contenedor['ubicacion'] ?? '') ?></td>
+                            <td><?= htmlspecialchars($contenedor['latitud'] ?? '') ?></td>
+                            <td><?= htmlspecialchars($contenedor['longitud'] ?? '') ?></td>
+                            <td><?= htmlspecialchars($contenedor['capacidad'] ?? '') ?></td>
+                            <td>
+                                <span class="status <?= 'st-' . strtolower($contenedor['estado'] ?? '') ?>">
+                                    <?= htmlspecialchars($contenedor['estado'] ?? 'Sin estado') ?>
+                                </span>
+                            </td>
+                        </tr>
+                    <?php endforeach; ?>
                 </tbody>
-// ====================== CONEXIÓN A LA BASE DE DATOS ======================
-require_once '../includes/database.php';   // ← Ajusta esta ruta si es necesario
-
-// Verificación de seguridad
-if (!isset($db) || !$db) {
-    die('<h2 style="color:red; text-align:center;">Error: No se pudo conectar a la base de datos ($db no definido).</h2>');
-}
-?>
-</tbody>
             </table>
 
         </section>
