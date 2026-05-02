@@ -8,11 +8,11 @@ $success = '';
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $nombre = trim($_POST['nombre']);
     $email = trim($_POST['email']);
-    $password = $_POST['password'];
+    $password_plana = $_POST['password'];
     $rol = 'usuario'; // Por defecto los nuevos registros son usuarios normales
 
     // Verificacion de los campos para registro
-    if (empty($nombre) || empty($email) || empty($password)) {
+    if (empty($nombre) || empty($email) || empty($password_plana)) {
         $error = "Todos los campos son obligatorios";
     } else {
         // Verificacion existencia de correo
@@ -28,12 +28,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             mysqli_stmt_close($stmt_check);
 
             // proceso de encriptacion de claves
-            $password_hash = password_hash($password, PASSWORD_BCRYPT);
+            $password_hash = password_hash($password_plana, PASSWORD_BCRYPT);
 
             // insercion sql segura
-            $sql = "INSERT INTO Usuarios (nombre, email, password, rol) values (?, ?, ?, ?)";
+            $sql = "INSERT INTO Usuarios (nombre, email, password, rol) VALUES (?, ?, ?, ?)";
             $stmt_insert = mysqli_prepare($db, $sql);
-            mysqli_stmt_bind_param($stmt_insert, "ssss", $nombre, $email, $password, $rol);
+            mysqli_stmt_bind_param($stmt_insert, "ssss", $nombre, $email, $password_hash, $rol);
 
             if (mysqli_stmt_execute($stmt_insert)) {
                 $success = "Registro exitoso. Ya puede iniciar sesión.";
