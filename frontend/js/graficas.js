@@ -1,4 +1,13 @@
+const estados = datosCont.map(c => c.estado);
+const conteo_estados = {};
+estados.forEach(e=>{ conteo[e]=(conteo[e] || 0 )+1;});
+
+//Configuración del gráfico de dona
+
+//
 document.addEventListener('DOMContentLoaded', function () {
+  
+  const barras = document.getElementById('tabla_barras');
 
   new Chart(document.getElementById('tabla_barras'), {
     type: 'bar',
@@ -24,6 +33,10 @@ document.addEventListener('DOMContentLoaded', function () {
       datasets: [{
         label: 'Contenedores',
         data: dataDona,
+        labels: Object.keys(conteo_estados),
+        datasets: [{
+            label: 'My First Dataset',
+        data: Object.values(conteo_estados),
         backgroundColor: [
           'rgb(255, 99, 132)',
           'rgb(54, 162, 235)',
