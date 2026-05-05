@@ -51,6 +51,9 @@ $datos_contenedores = $data['data'] ?? [];
     
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="js/graficas.js"></script>
+    <script> 
+        const datosCont = <?php echo json_encode($datos_contenedores); ?>;
+    </script>
 
 </head>
 
@@ -265,7 +268,7 @@ $datos_contenedores = $data['data'] ?? [];
 
             <div class="panel-box">
                 <div class="panel-header">
-                    <h3>GRÁFICO DE DONA</h3>
+                    <h3>ESTADOS DE LOS CONTENEDORES</h3>
                     <div>
                     <canvas id="tabla_dona"></canvas>
                     </div>
