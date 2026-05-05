@@ -1,8 +1,3 @@
-const estados = datosCont.map(c => c.estado);
-const conteo_estados = {};
-estados.forEach(e=>{ conteo_estados[e]=(conteo_estados[e] || 0 )+1;});
-
-//Configuración del gráfico de dona
 
 //
 document.addEventListener('DOMContentLoaded', function () {
@@ -32,10 +27,10 @@ document.addEventListener('DOMContentLoaded', function () {
 
     type: 'doughnut',
     data: {
-        labels: Object.keys(conteo_estados),
+        labels: ['150L', '200L', '300L'],
         datasets: [{
             label: 'My First Dataset',
-        data: Object.values(conteo_estados),
+        data: [2, 4, 1],
         backgroundColor: [
         'rgb(255, 99, 132)',
         'rgb(54, 162, 235)',
