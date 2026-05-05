@@ -59,9 +59,7 @@ $data_dona   = array_values($dona_map);
     
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="js/graficas.js"></script>
-    <script> 
-        const datosCont = <?php echo json_encode($datos_contenedores); ?>;
-    </script>
+
 
 </head>
 
