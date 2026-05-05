@@ -1,6 +1,6 @@
 const estados = datosCont.map(c => c.estado);
 const conteo_estados = {};
-estados.forEach(e=>{ conteo[e]=(conteo[e] || 0 )+1;});
+estados.forEach(e=>{ conteo_estados[e]=(conteo_estados[e] || 0 )+1;});
 
 //Configuración del gráfico de dona
 
@@ -45,11 +45,6 @@ document.addEventListener('DOMContentLoaded', function () {
         }]
     },
      options: {
-      scales: {
-        y: {
-          beginAtZero: true
-        }
-      }
     }
     
 });
