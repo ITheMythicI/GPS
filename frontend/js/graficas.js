@@ -1,7 +1,4 @@
-
-//
 document.addEventListener('DOMContentLoaded', function () {
-  
   const barras = document.getElementById('tabla_barras');
 
   new Chart(barras, {
