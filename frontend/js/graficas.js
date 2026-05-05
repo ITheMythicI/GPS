@@ -9,50 +9,42 @@ document.addEventListener('DOMContentLoaded', function () {
   
   const barras = document.getElementById('tabla_barras');
 
-  new Chart(barras, {
+  new Chart(document.getElementById('tabla_barras'), {
     type: 'bar',
     data: {
-      labels: ['1', '2', '3', '4', '5', '6'],
+      labels: labelsBarras,
       datasets: [{
-        label: 'PORCENTAJE',
-        data: [95, 10, 55, 75, 85, 60],
+        label: 'Porcentaje de llenado',
+        data: dataBarras,
         borderWidth: 1
       }]
     },
     options: {
       scales: {
-        y: {
-          beginAtZero: true
-        }
+        y: { beginAtZero: true, max: 100 }
       }
     }
   });
 
   new Chart(document.getElementById('tabla_dona'), {
-
     type: 'doughnut',
     data: {
+      labels: labelsDona,
+      datasets: [{
+        label: 'Contenedores',
+        data: dataDona,
         labels: Object.keys(conteo_estados),
         datasets: [{
             label: 'My First Dataset',
         data: Object.values(conteo_estados),
         backgroundColor: [
-        'rgb(255, 99, 132)',
-        'rgb(54, 162, 235)',
-        'rgb(255, 205, 86)'
+          'rgb(255, 99, 132)',
+          'rgb(54, 162, 235)',
+          'rgb(255, 205, 86)'
         ],
         hoverOffset: 4
-        }]
-    },
-     options: {
-      scales: {
-        y: {
-          beginAtZero: true
-        }
-      }
+      }]
     }
-    
-});
+  });
 
 });
-

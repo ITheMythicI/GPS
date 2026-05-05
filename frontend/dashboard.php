@@ -1,5 +1,4 @@
 <?php
-
 ini_set('display_errors', 1);
 error_reporting(E_ALL);
 
@@ -11,24 +10,33 @@ curl_setopt($ch, CURLOPT_TIMEOUT, 5);
 
 $response = curl_exec($ch);
 
-if ($response === false) {
-    die("cURL error: " . curl_error($ch));
+$datos_contenedores = [];
+
+if ($response !== false) {
+    $data = json_decode($response, true);
+    if ($data && $data['status'] === 'ok') {
+        $datos_contenedores = $data['data'] ?? [];
+    }
 }
 
-curl_close($ch);
+// Gráfica de barras: estado convertido a porcentaje por contenedor
+$labels_barras = [];
+$data_barras   = [];
+$estado_map    = ['lleno' => 100, 'medio' => 50, 'vacío' => 0, 'vacio' => 0];
 
-if ($response === false) {
-    die("No se pudo conectar con el backend");
+foreach ($datos_contenedores as $c) {
+    $labels_barras[] = $c['ubicacion'];
+    $data_barras[]   = $estado_map[strtolower($c['estado'] ?? '')] ?? 0;
 }
 
-$data = json_decode($response, true);
-
-if (!$data || $data['status'] !== 'ok') {
-    die("Respuesta inválida del backend");
+// Gráfica de dona: contenedores agrupados por capacidad
+$dona_map = [];
+foreach ($datos_contenedores as $c) {
+    $cap = $c['capacidad'] ?? 'Sin datos';
+    $dona_map[$cap] = ($dona_map[$cap] ?? 0) + 1;
 }
-
-$datos_contenedores = $data['data'] ?? [];
-
+$labels_dona = array_keys($dona_map);
+$data_dona   = array_values($dona_map);
 ?>
 
 <!DOCTYPE html>
@@ -109,7 +117,7 @@ $datos_contenedores = $data['data'] ?? [];
                 <span><i class="fa-solid fa-gauge-high"></i> Página Principal </span>
             </a>
         </div>
-        
+
         <div class="menu-item">
             <a href="dashboard.php" class="menu-btn">
                 <span><i class="fa-solid fa-gauge-high"></i> Dashboard</span>
@@ -260,8 +268,7 @@ $datos_contenedores = $data['data'] ?? [];
                 <div class="panel-header">
                     <h3>PORCENTAJE DE LLENADO</h3>
                     <div>
-                    <canvas id="tabla_barras" height="300px" width="450px"
-                    ></canvas>
+                        <canvas id="tabla_barras" height="300px" width="450px"></canvas>
                     </div>
                 </div>
             </div>
@@ -270,7 +277,7 @@ $datos_contenedores = $data['data'] ?? [];
                 <div class="panel-header">
                     <h3>ESTADOS DE LOS CONTENEDORES</h3>
                     <div>
-                    <canvas id="tabla_dona"></canvas>
+                        <canvas id="tabla_dona"></canvas>
                     </div>
                 </div>
             </div>
@@ -291,21 +298,35 @@ $datos_contenedores = $data['data'] ?? [];
                     </tr>
                 </thead>
                 <tbody>
-<?php foreach($datos_contenedores as $contenedor): ?>
-    <tr>
-        <td><?= $contenedor['ubicacion'] ?></td>
-        <td><?= $contenedor['latitud'] ?></td>
-        <td><?= $contenedor['longitud'] ?></td>
-        <td><?= $contenedor['capacidad'] ?></td>
-        <td><?= $contenedor['estado'] ?></td>
-    </tr>
-<?php endforeach; ?>
-</tbody>
+                    <?php foreach ($datos_contenedores as $contenedor): ?>
+                        <tr>
+                            <td><?= htmlspecialchars($contenedor['ubicacion'] ?? '') ?></td>
+                            <td><?= htmlspecialchars($contenedor['latitud'] ?? '') ?></td>
+                            <td><?= htmlspecialchars($contenedor['longitud'] ?? '') ?></td>
+                            <td><?= htmlspecialchars($contenedor['capacidad'] ?? '') ?></td>
+                            <td>
+                                <span class="status <?= 'st-' . strtolower($contenedor['estado'] ?? '') ?>">
+                                    <?= htmlspecialchars($contenedor['estado'] ?? 'Sin estado') ?>
+                                </span>
+                            </td>
+                        </tr>
+                    <?php endforeach; ?>
+                </tbody>
             </table>
 
         </section>
 
     </main>
+
+    <!-- SCRIPTS -->
+    <script>
+        const labelsBarras = <?= json_encode($labels_barras) ?>;
+        const dataBarras   = <?= json_encode($data_barras) ?>;
+        const labelsDona   = <?= json_encode($labels_dona) ?>;
+        const dataDona     = <?= json_encode($data_dona) ?>;
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+    <script src="js/graficas.js"></script>
 
 </body>
 
