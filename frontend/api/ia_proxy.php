@@ -27,7 +27,7 @@ if (!in_array($action, $acciones_permitidas)) {
 }
 
 // ── Construir URL del backend ─────────────────────────────────────────────────
-$backend_base = 'http://10.0.2.8/backend/ai';
+$backend_base = 'http://10.0.2.8/ai';
 
 $url_backend = match($action) {
     'clasificar' => "$backend_base/clasificar.php",
