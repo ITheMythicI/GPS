@@ -85,7 +85,7 @@ foreach ($resultados as $r) {
     $id = intval($r['id_contenedor']); $pr = $r['prioridad'];
     $sc = floatval($r['score']); $vo = floatval($r['volumen_pct']);
     $te = floatval($r['temperatura']); $hu = floatval($r['humedad']); $pe = floatval($r['peso_kg']);
-    mysqli_stmt_bind_param($stmt, 'isdddd', $id, $pr, $sc, $vo, $te, $hu, $pe);
+    mysqli_stmt_bind_param($stmt, 'isddddd', $id, $pr, $sc, $vo, $te, $hu, $pe);
     mysqli_stmt_execute($stmt);
 }
 mysqli_stmt_close($stmt);
