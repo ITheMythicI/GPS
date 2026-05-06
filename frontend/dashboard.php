@@ -314,6 +314,56 @@ $data_dona   = array_values($dona_map);
 
         </section>
 
+
+        <!-- ── Sección Reporte IA (Gemini) ── -->
+        <section class="panel-box" id="seccion-reporte-ia" style="margin-top: 24px;">
+            <div class="panel-header" style="display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:12px;">
+                <h3 style="margin:0;">REPORTE INTELIGENTE (IA)</h3>
+                <button
+                    id="btn-generar-reporte"
+                    onclick="generarReporteIA()"
+                    style="
+                        background: linear-gradient(135deg, #6c3fc5, #3b82f6);
+                        color: #fff; border: none; border-radius: 8px;
+                        padding: 9px 18px; font-family: 'Poppins', sans-serif;
+                        font-size: 13px; font-weight: 600; cursor: pointer;
+                        box-shadow: 0 4px 14px rgba(108,63,197,0.35);
+                        transition: opacity 0.2s;
+                    ">
+                    <i class="fa-solid fa-robot"></i>&nbsp; Generar Reporte IA
+                </button>
+            </div>
+
+            <!-- Contenido del reporte -->
+            <div id="reporte-ia-contenido" style="
+                margin-top: 16px;
+                padding: 16px 20px;
+                background: #f9fafb;
+                border-radius: 8px;
+                border-left: 4px solid #6c3fc5;
+                font-family: 'Poppins', sans-serif;
+                font-size: 13.5px;
+                line-height: 1.7;
+                color: #2c3e50;
+                white-space: pre-wrap;
+                display: none;
+            ">
+            </div>
+
+            <!-- Resumen numérico -->
+            <div id="reporte-ia-resumen" style="display:none; margin-top:12px;">
+                <span style="font-size:12px; color:#888;">
+                    Generado el: <span id="reporte-fecha"></span>
+                    &nbsp;|
+                    Alta: <span id="r-alta" style="color:#e74c3c; font-weight:700;"></span>
+                    &nbsp;·
+                    Media: <span id="r-media" style="color:#f39c12; font-weight:700;"></span>
+                    &nbsp;·
+                    Baja: <span id="r-baja" style="color:#27ae60; font-weight:700;"></span>
+                </span>
+            </div>
+        </section>
+
     </main>
 
     <!-- SCRIPTS -->
@@ -325,6 +375,45 @@ $data_dona   = array_values($dona_map);
     </script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
     <script src="js/graficas.js"></script>
+
+    <!-- ── Lógica Reporte IA ── -->
+    <script>
+    function generarReporteIA() {
+        var btn = document.getElementById('btn-generar-reporte');
+        btn.disabled = true;
+        btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i>&nbsp; Generando...';
+
+        var contenido = document.getElementById('reporte-ia-contenido');
+        var resumen   = document.getElementById('reporte-ia-resumen');
+        contenido.style.display = 'none';
+        resumen.style.display   = 'none';
+
+        fetch('api/ia_proxy.php?action=reporte', { method: 'POST' })
+            .then(r => r.json())
+            .then(data => {
+                if (data.status !== 'ok') throw new Error(data.message || 'Error generando reporte');
+
+                contenido.textContent = data.reporte;
+                contenido.style.display = 'block';
+
+                if (data.resumen) {
+                    document.getElementById('r-alta').textContent  = data.resumen.alta;
+                    document.getElementById('r-media').textContent = data.resumen.media;
+                    document.getElementById('r-baja').textContent  = data.resumen.baja;
+                    document.getElementById('reporte-fecha').textContent = data.fecha_reporte;
+                    resumen.style.display = 'block';
+                }
+            })
+            .catch(err => {
+                contenido.textContent = '⚠️ Error al generar reporte: ' + err.message;
+                contenido.style.display = 'block';
+            })
+            .finally(() => {
+                btn.disabled = false;
+                btn.innerHTML = '<i class="fa-solid fa-robot"></i>&nbsp; Generar Reporte IA';
+            });
+    }
+    </script>
 
 </body>
 

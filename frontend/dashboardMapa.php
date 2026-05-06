@@ -45,7 +45,7 @@ $datos_contenedores = $data['data'];
         #map-wrapper {
             position: relative;
             width: 100%;
-            height: 650px; /* Ajusta según tu diseño */
+            height: 650px;
             border-radius: 12px;
             overflow: hidden;
             box-shadow: 0 4px 20px rgba(0,0,0,0.1);
@@ -55,6 +55,45 @@ $datos_contenedores = $data['data'];
             width: 100%;
             z-index: 1;
         }
+
+        /* ── Botón Ruta IA ── */
+        #btn-ruta-ia {
+            position: absolute;
+            bottom: 20px;
+            right: 12px;
+            z-index: 999;
+            background: linear-gradient(135deg, #6c3fc5, #3b82f6);
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            padding: 10px 16px;
+            font-family: 'Poppins', sans-serif;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            box-shadow: 0 4px 14px rgba(108,63,197,0.45);
+            transition: opacity 0.2s, transform 0.15s;
+        }
+        #btn-ruta-ia:hover  { opacity: 0.9; transform: translateY(-1px); }
+        #btn-ruta-ia:active { transform: translateY(0); }
+        #btn-ruta-ia:disabled { opacity: 0.55; cursor: default; }
+
+        /* ── Info panel ruta IA ── */
+        #ruta-info {
+            position: absolute;
+            bottom: 62px;
+            right: 12px;
+            z-index: 999;
+            background: rgba(255,255,255,0.96);
+            border-radius: 8px;
+            padding: 10px 14px;
+            font-family: 'Poppins', sans-serif;
+            font-size: 12px;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.15);
+            max-width: 220px;
+            display: none;
+        }
+        #ruta-info strong { color: #6c3fc5; }
     </style>
 </head>
 
@@ -117,6 +156,19 @@ $datos_contenedores = $data['data'];
                         </div>
                     </div>
                 </div>
+
+            <!-- ── Botón Ruta IA (flota sobre el mapa) ── -->
+            <button id="btn-ruta-ia" onclick="calcularRutaIA()">
+                <i class="fa-solid fa-route"></i>&nbsp; Ver Ruta IA
+            </button>
+
+            <!-- ── Panel info de ruta ── -->
+            <div id="ruta-info">
+                <strong>🛣️ Ruta Óptima</strong><br>
+                <span id="ruta-distancia"></span><br>
+                <span id="ruta-paradas"></span>
+            </div>
+
             <div id="map"></div>
         </div>
     </main>
@@ -131,6 +183,92 @@ $datos_contenedores = $data['data'];
     </script>
     
     <script src="js/mapaContenedores.js"></script>
+
+    <!-- ── Lógica Ruta IA ── -->
+    <script>
+    var _rutaPolyline  = null; // referencia al polyline activo
+    var _rutaMarkers   = [];   // marcadores numerados de la ruta
+
+    function calcularRutaIA() {
+        var btn = document.getElementById('btn-ruta-ia');
+        btn.disabled = true;
+        btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i>&nbsp; Calculando...';
+
+        // Paso 1: clasificar contenedores
+        fetch('api/ia_proxy.php?action=clasificar')
+            .then(r => r.json())
+            .then(data => {
+                if (data.status !== 'ok') throw new Error(data.message || 'Error clasificando');
+
+                // Paso 2: calcular ruta con los prioritarios
+                return fetch('api/ia_proxy.php?action=rutas');
+            })
+            .then(r => r.json())
+            .then(data => {
+                if (data.status !== 'ok') throw new Error(data.message || 'Error en rutas');
+
+                if (!data.coordenadas || data.coordenadas.length === 0) {
+                    alert('No hay contenedores de alta prioridad para rutar.\n\nTodos los contenedores están en niveles normales.');
+                    return;
+                }
+
+                dibujarRuta(data);
+            })
+            .catch(err => {
+                console.error('[RutaIA]', err);
+                alert('Error al calcular ruta: ' + err.message);
+            })
+            .finally(() => {
+                btn.disabled = false;
+                btn.innerHTML = '<i class="fa-solid fa-route"></i>&nbsp; Ver Ruta IA';
+            });
+    }
+
+    function dibujarRuta(data) {
+        // Limpiar ruta anterior
+        if (_rutaPolyline) { map.removeLayer(_rutaPolyline); _rutaPolyline = null; }
+        _rutaMarkers.forEach(m => map.removeLayer(m));
+        _rutaMarkers = [];
+
+        // Dibujar polyline
+        _rutaPolyline = L.polyline(data.coordenadas, {
+            color:     '#6c3fc5',
+            weight:    4,
+            opacity:   0.85,
+            dashArray: '8, 6'
+        }).addTo(map);
+
+        // Marcadores numerados en la ruta
+        data.ruta_ordenada.forEach(function(c, idx) {
+            var numIcon = L.divIcon({
+                className: 'custom-div-icon',
+                html: '<div style="background:#6c3fc5;color:#fff;border-radius:50%;'
+                    + 'width:24px;height:24px;display:flex;align-items:center;'
+                    + 'justify-content:center;font-weight:700;font-size:12px;'
+                    + 'box-shadow:0 2px 6px rgba(0,0,0,0.3);">' + (idx + 1) + '</div>',
+                iconSize: [24, 24],
+                iconAnchor: [12, 12]
+            });
+            var m = L.marker([c.latitud, c.longitud], { icon: numIcon })
+                .bindPopup('<b>Parada ' + (idx+1) + '</b><br>' + (c.ubicacion || '') +
+                    '<br>Prioridad: <b>' + (c.prioridad || '') + '</b>' +
+                    '<br>Llenado: ' + (c.volumen_pct || 0).toFixed(1) + '%')
+                .addTo(map);
+            _rutaMarkers.push(m);
+        });
+
+        // Ajustar vista al polyline
+        map.fitBounds(_rutaPolyline.getBounds(), { padding: [30, 30] });
+
+        // Mostrar panel info
+        var panel = document.getElementById('ruta-info');
+        document.getElementById('ruta-distancia').textContent =
+            '📏 Distancia total: ' + data.distancia_km + ' km';
+        document.getElementById('ruta-paradas').textContent =
+            '📦 Paradas: ' + data.total_paradas + ' contenedor(es)';
+        panel.style.display = 'block';
+    }
+    </script>
 
 </body>
 </html>
