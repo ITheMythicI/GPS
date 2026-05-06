@@ -2,7 +2,9 @@
 header('Content-Type: application/json');
 header('Access-Control-Allow-Origin: *');
 
-$api_key = getenv('GEMINI_API_KEY');
+$api_key = "AIzaSyD3CvH9Tpj6qAYgBgqgNQfDvbUvemsmHKk"; 
+
+//$api_key = getenv('GEMINI_API_KEY');
 if (!$api_key) {
     http_response_code(503);
     echo json_encode(['status' => 'error', 'message' => 'GEMINI_API_KEY no configurada en el servidor']);
