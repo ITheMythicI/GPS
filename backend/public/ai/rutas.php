@@ -5,8 +5,8 @@ header('Access-Control-Allow-Origin: *');
 // Ruta corregida: backend/public/ai/ → backend/includes/
 require __DIR__ . '/../../includes/database.php';
 
-$prioridad_minima = in_array($_GET['prioridad'] ?? 'alta', ['alta', 'media', 'baja'])
-    ? $_GET['prioridad'] : 'alta';
+$prioridad_input = $_GET['prioridad'] ?? 'alta';
+$prioridad_minima = in_array($prioridad_input, ['alta', 'media', 'baja']) ? $prioridad_input : 'alta';
 
 $prioridades_incluidas = match($prioridad_minima) {
     'alta'  => "'alta'",
