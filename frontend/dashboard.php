@@ -277,7 +277,7 @@ $data_dona   = array_values($dona_map);
 
             <div class="panel-box">
                 <div class="panel-header">
-                    <h3>ESTADOS DE LOS CONTENEDORES</h3>
+                    <h3>ESTADOS DE LOS CONTENEDORES_v1</h3>
                     <div>
                         <canvas id="tabla_dona"></canvas>
                     </div>
