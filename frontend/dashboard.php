@@ -56,14 +56,6 @@ $data_dona   = array_values($dona_map);
         rel="stylesheet">
 
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
-    
-    <script>
-        const labelsDona = <?php echo json_encode($labels_dona); ?>;
-        const dataDona = <?php echo json_encode($data_dona); ?>;
-    </script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script src="js/graficas.js"></script>
-
 
 </head>
 
@@ -277,7 +269,7 @@ $data_dona   = array_values($dona_map);
 
             <div class="panel-box">
                 <div class="panel-header">
-                    <h3>ESTADOS DE LOS CONTENEDORES_v1</h3>
+                    <h3>ESTADOS DE LOS CONTENEDORES</h3>
                     <div>
                         <canvas id="tabla_dona"></canvas>
                     </div>
