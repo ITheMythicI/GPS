@@ -4,10 +4,10 @@ document.addEventListener('DOMContentLoaded', function () {
   new Chart(barras, {
     type: 'bar',
     data: {
-      labels: ['1', '2', '3', '4', '5', '6'],
+      labels: labelsBarras,
       datasets: [{
         label: 'PORCENTAJE',
-        data: [95, 10, 55, 75, 85, 60],
+        data: dataBarras,
         borderWidth: 1
       }]
     },
@@ -26,7 +26,7 @@ document.addEventListener('DOMContentLoaded', function () {
     data: {
         labels: labelsDona,
         datasets: [{
-            label: 'My First Dataset',
+            label: 'CANTIDAD DE CONTENEDORES',
         data: dataDona,
         backgroundColor: [
         'rgb(255, 99, 132)',
