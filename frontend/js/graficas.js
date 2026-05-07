@@ -24,10 +24,10 @@ document.addEventListener('DOMContentLoaded', function () {
 
     type: 'doughnut',
     data: {
-        labels: ['150L', '200L', '300L'],
+        labels: labelsDona,
         datasets: [{
             label: 'My First Dataset',
-        data: [2, 4, 1],
+        data: dataDona,
         backgroundColor: [
         'rgb(255, 99, 132)',
         'rgb(54, 162, 235)',

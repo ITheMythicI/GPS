@@ -57,6 +57,10 @@ $data_dona   = array_values($dona_map);
 
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     
+    <script>
+        const labelsDona = <?php echo json_encode($labels_dona); ?>;
+        const dataDona = <?php echo json_encode($data_dona); ?>;
+    </script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="js/graficas.js"></script>
 
