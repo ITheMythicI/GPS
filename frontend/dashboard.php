@@ -195,22 +195,38 @@ $data_dona   = array_values($dona_map);
         <section class="stats-grid">
 
             <div class="card">
-
                 <div>
+                    <div class="card-label" style="color:black; text-align:center; white-space:nowrap; 
+                    font-size:20px; margin-bottom:7px;">Condiciones para inferir el tipo de residuo</div>
+                    <table border="0">
+                        <thead>
+                            <tr>
+                            <th>CONDICIÓN</th>
+                            <th style="text-align:center;"">TIPO ASIGNADO</th>
+                            </tr>
+                        </thead>
 
-                    <div class="card-label">Registros del mes</div>
-                    <div class="card-value">1.5 Ton de basura recolectada</div>
-
-                    <div class="card-note positive">
-                        ↑ 12% mayor que el mes pasado
-                    </div>
+                        <tbody>
+                        <tr>
+                            <td style="font-size:10px;">HUMEDAD > 45% Y DENSIDAD > 300 KG/M³ (POR LITRO) 0.3X28 = 8.4 KG</td>
+                            <td style="white-space: nowrap; font-size:13px; text-align:center;">Orgánico</td>
+                        </tr>
+                        <tr>
+                            <td style="font-size:10px;">HUMEDAD < 30% Y DENSIDAD < 80 KG/M³ 0.08X28 = 2.24 KG</td>
+                            <td style="white-space: nowrap; font-size:13px; text-align:center;">Plástico</td>
+                        </tr>
+                        <tr>
+                            <td style="font-size:10px;">HUMEDAD < 30% Y DENSIDAD < 180 KG/M³ 0.180X28 = 5.04KG</td>
+                            <td style="white-space: nowrap; font-size:13px; text-align:center;">Papel/Cartón</td>
+                        </tr>
+                        <tr>
+                            <td style="white-space: nowrap; font-size:10px;">DENSIDAD > 250 KG/M³ Y HUMEDAD < 35% 0.25X28 = 7 KG</td>
+                            <td style="white-space: nowrap; font-size:13px; text-align:center;">Vidrio/Metal</td>
+                        </tr>
+                        </tbody>
+                    </table>
 
                 </div>
-
-                <div class="card-icon" style="background:#e2efda;color:#217346;">
-                    <i class="fa-solid fa-chart-line"></i>
-                </div>
-
             </div>
 
 
