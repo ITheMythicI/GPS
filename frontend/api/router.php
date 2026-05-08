@@ -1,9 +1,7 @@
 <?php
-
 header('Content-Type: application/json');
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    // Destino (Login/Registro)
     $action = $_POST['action'] ?? '';
     $url_backend = "";
 
@@ -16,7 +14,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         exit;
     }
 
-    //Reenvio de datos mediante el cURL
     $ch = curl_init($url_backend);
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
     curl_setopt($ch, CURLOPT_POST, true);
@@ -32,4 +29,3 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         echo json_encode(['status' => 'error', 'message' => "Error de conexión con el backend ($httpCode)"]);
     }
 }
-?>
