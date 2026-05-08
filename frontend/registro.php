@@ -7,7 +7,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $postData = $_POST;
     $postData['action'] = 'registro';
 
-    $ch = curl_init("http://localhost/frontend/api/router.php");
+    $ch = curl_init("http://129.146.115.127/api/router.php");
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
     curl_setopt($ch, CURLOPT_POST, true);
     curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($postData));
