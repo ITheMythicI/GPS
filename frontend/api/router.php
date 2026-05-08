@@ -8,9 +8,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $url_backend = "";
 
     if ($action === 'login') {
-        $url_backend = "http://10.0.2.8/backend/auth/procesar_login.php";
+        $url_backend = "http://10.0.2.8/auth/procesar_login.php";
     } elseif ($action === 'registro') {
-        $url_backend = "http://10.0.2.8/../auth/procesar_registro.php";
+        $url_backend = "http://10.0.2.8/auth/procesar_registro.php";
     } else {
         echo json_encode(['status' => 'error', 'message' => 'Acción no válida']);
         exit;

@@ -1,7 +1,7 @@
 <?php
 
 header('Content-Type: application/json');
-require __DIR__ . '/../../includes/database.php'; // Ruta local a tu conexión
+require __DIR__ . '/../../includes/database.php';
 
 $email = $_POST['email'] ?? '';
 $password = $_POST['password'] ?? '';
