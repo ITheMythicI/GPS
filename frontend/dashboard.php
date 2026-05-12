@@ -47,24 +47,16 @@ $data_dona   = array_values($dona_map);
 <html lang="es">
 
 <head>
-
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
     <title>Nexus Solutions - BIN</title>
-
     <link rel="stylesheet" href="css/normalize.css">
     <link rel="stylesheet" href="css/styles.css">
-
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
-        rel="stylesheet">
-
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
-
 </head>
 
 <body>
-
     <?php include_once 'includes/header.php'; ?>
 
     <!-- SIDEBAR -->
@@ -73,111 +65,61 @@ $data_dona   = array_values($dona_map);
     <!-- CONTENIDO -->
     <main id="content">
 
+        <!-- KPI CARDS -->
         <section class="stats-grid">
-
             <div class="card">
                 <div>
-                    <div class="card-label" style="color:black; text-align:center; white-space:nowrap; 
-                    font-size:20px; margin-bottom:7px;">Condiciones para inferir el tipo de residuo</div>
-                    <table border="0">
-                        <thead>
-                            <tr>
-                            <th>CONDICIÓN</th>
-                            <th style="text-align:center;"">TIPO ASIGNADO</th>
-                            </tr>
-                        </thead>
-
-                        <tbody>
-                        <tr>
-                            <td style="font-size:10px;">HUMEDAD > 45% Y DENSIDAD > 300 KG/M³ (POR LITRO) 0.3X28 = 8.4 KG</td>
-                            <td style="white-space: nowrap; font-size:13px; text-align:center;">Orgánico</td>
-                        </tr>
-                        <tr>
-                            <td style="font-size:10px;">HUMEDAD < 30% Y DENSIDAD < 80 KG/M³ 0.08X28 = 2.24 KG</td>
-                            <td style="white-space: nowrap; font-size:13px; text-align:center;">Plástico</td>
-                        </tr>
-                        <tr>
-                            <td style="font-size:10px;">HUMEDAD < 30% Y DENSIDAD < 180 KG/M³ 0.180X28 = 5.04KG</td>
-                            <td style="white-space: nowrap; font-size:13px; text-align:center;">Papel/Cartón</td>
-                        </tr>
-                        <tr>
-                            <td style="white-space: nowrap; font-size:10px;">DENSIDAD > 250 KG/M³ Y HUMEDAD < 35% 0.25X28 = 7 KG</td>
-                            <td style="white-space: nowrap; font-size:13px; text-align:center;">Vidrio/Metal</td>
-                        </tr>
-                        </tbody>
-                    </table>
-
+                    <div class="card-label">TOTAL CONTENEDORES</div>
+                    <div class="card-value"><?= count($datos_contenedores) ?></div>
+                    <div class="card-note">Red de dispositivos BIN</div>
+                </div>
+                <div class="card-icon" style="background:var(--accent-soft); color:var(--primary);">
+                    <i class="fa-solid fa-box"></i>
                 </div>
             </div>
 
-
             <div class="card">
-
                 <div>
-
-                    <div class="card-label">Alerta de contenedores</div>
-                    <div class="card-value">0</div>
-
-                    <div class="card-note">
-                        Ninguna anomalía detectada
-                    </div>
-
+                    <div class="card-label">ALERTAS CRÍTICAS</div>
+                    <div class="card-value" id="kpi-alertas">0</div>
+                    <div class="card-note">Prioridad Alta detectada</div>
                 </div>
-
-                <div class="card-icon" style="background:#fff5b1;color:#b08800;">
+                <div class="card-icon" style="background:#fff2e8; color:#fa8c16;">
                     <i class="fa-solid fa-triangle-exclamation"></i>
                 </div>
-
             </div>
-
 
             <div class="card">
-
                 <div>
-
-                    <div class="card-label">Camiones activos</div>
-                    <div class="card-value">1</div>
-
-                    <div class="card-note">
-                        En ruta
-                    </div>
-
+                    <div class="card-label">HUMEDAD PROMEDIO</div>
+                    <div class="card-value" id="kpi-humedad">--%</div>
+                    <div class="card-note">Promedio red de sensores</div>
                 </div>
-
-                <div class="card-icon" style="background:#ddf4ff;color:#0969da;">
-                    <i class="fa-solid fa-car"></i>
+                <div class="card-icon" style="background:#e6f7ff; color:#1890ff;">
+                    <i class="fa-solid fa-droplet"></i>
                 </div>
-
             </div>
-
         </section>
 
-
+        <!-- ANALYTICS -->
         <section class="analytics-row">
-
             <div class="panel-box">
                 <div class="panel-header">
                     <h3>PORCENTAJE DE LLENADO</h3>
-                    <div>
-                        <canvas id="tabla_barras" height="300px" width="450px"></canvas>
-                    </div>
                 </div>
+                <canvas id="tabla_barras" height="300"></canvas>
             </div>
 
             <div class="panel-box">
                 <div class="panel-header">
                     <h3>ESTADOS DE LOS CONTENEDORES</h3>
-                    <div>
-                        <canvas id="tabla_dona"></canvas>
-                    </div>
                 </div>
+                <canvas id="tabla_dona"></canvas>
             </div>
-
         </section>
 
-
-        <section class="table-box">
-
+        <!-- LISTADO -->
+        <section class="table-box" id="tabla-contenedores">
             <table>
                 <thead>
                     <tr>
@@ -206,7 +148,7 @@ $data_dona   = array_values($dona_map);
                                 <?php 
                                     $prio = strtolower($contenedor['prioridad'] ?? 'normal');
                                     $prio_label = strtoupper($prio);
-                                    $prio_class = "st-normal"; // Default
+                                    $prio_class = "st-normal";
                                     if($prio === 'alta') $prio_class = "st-lleno"; 
                                     if($prio === 'media') $prio_class = "st-medio";
                                 ?>
@@ -218,59 +160,26 @@ $data_dona   = array_values($dona_map);
                     <?php endforeach; ?>
                 </tbody>
             </table>
-
         </section>
 
-
-        <!-- ── Sección Reporte IA (Gemini) ── -->
+        <!-- REPORTE IA -->
         <section class="panel-box" id="seccion-reporte-ia" style="margin-top: 24px;">
             <div class="panel-header" style="display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:12px;">
                 <h3 style="margin:0;">REPORTE INTELIGENTE (IA)</h3>
-                <button
-                    id="btn-generar-reporte"
-                    onclick="generarReporteIA()"
-                    style="
-                        background: linear-gradient(135deg, #6c3fc5, #3b82f6);
-                        color: #fff; border: none; border-radius: 8px;
-                        padding: 9px 18px; font-family: 'Poppins', sans-serif;
-                        font-size: 13px; font-weight: 600; cursor: pointer;
-                        box-shadow: 0 4px 14px rgba(108,63,197,0.35);
-                        transition: opacity 0.2s;
-                    ">
+                <button id="btn-generar-reporte" onclick="generarReporteIA()" style="background: linear-gradient(135deg, #6c3fc5, #3b82f6); color: #fff; border: none; border-radius: 8px; padding: 9px 18px; font-family: 'Poppins', sans-serif; font-size: 13px; font-weight: 600; cursor: pointer; box-shadow: 0 4px 14px rgba(108,63,197,0.35); transition: opacity 0.2s;">
                     <i class="fa-solid fa-robot"></i>&nbsp; Generar Reporte IA
                 </button>
             </div>
-
-            <!-- Contenido del reporte -->
-            <div id="reporte-ia-contenido" style="
-                margin-top: 16px;
-                padding: 16px 20px;
-                background: #f9fafb;
-                border-radius: 8px;
-                border-left: 4px solid #6c3fc5;
-                font-family: 'Poppins', sans-serif;
-                font-size: 13.5px;
-                line-height: 1.7;
-                color: #2c3e50;
-                white-space: pre-wrap;
-                display: none;
-            ">
-            </div>
-
-            <!-- Resumen numérico -->
+            <div id="reporte-ia-contenido" style="margin-top: 16px; padding: 16px 20px; background: #f9fafb; border-radius: 8px; border-left: 4px solid #6c3fc5; font-family: 'Poppins', sans-serif; font-size: 13.5px; line-height: 1.7; color: #2c3e50; white-space: pre-wrap; display: none;"></div>
             <div id="reporte-ia-resumen" style="display:none; margin-top:12px;">
                 <span style="font-size:12px; color:#888;">
-                    Generado el: <span id="reporte-fecha"></span>
-                    &nbsp;|
-                    Alta: <span id="r-alta" style="color:#e74c3c; font-weight:700;"></span>
-                    &nbsp;·
-                    Media: <span id="r-media" style="color:#f39c12; font-weight:700;"></span>
-                    &nbsp;·
+                    Generado el: <span id="reporte-fecha"></span> |
+                    Alta: <span id="r-alta" style="color:#e74c3c; font-weight:700;"></span> ·
+                    Media: <span id="r-media" style="color:#f39c12; font-weight:700;"></span> ·
                     Baja: <span id="r-baja" style="color:#27ae60; font-weight:700;"></span>
                 </span>
             </div>
         </section>
-
     </main>
 
     <!-- SCRIPTS -->
@@ -284,13 +193,11 @@ $data_dona   = array_values($dona_map);
     <script src="js/api.js"></script>
     <script src="js/graficas.js"></script>
 
-    <!-- ── Lógica Reporte IA ── -->
     <script>
     async function generarReporteIA() {
         const btn = document.getElementById('btn-generar-reporte');
         btn.disabled = true;
         btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i>&nbsp; Generando...';
-
         const contenido = document.getElementById('reporte-ia-contenido');
         const resumen   = document.getElementById('reporte-ia-resumen');
         contenido.style.display = 'none';
@@ -298,89 +205,67 @@ $data_dona   = array_values($dona_map);
 
         try {
             const data = await API.generarReporte();
-            if (data.status !== 'ok') throw new Error(data.message || 'Error generando reporte');
-
+            if (data.status !== 'ok') throw new Error(data.message || 'Error');
             contenido.textContent = data.reporte;
             contenido.style.display = 'block';
-
             if (data.resumen) {
-                document.getElementById('r-alta').textContent  = data.resumen.alta;
+                document.getElementById('r-alta').textContent = data.resumen.alta;
                 document.getElementById('r-media').textContent = data.resumen.media;
-                document.getElementById('r-baja').textContent  = data.resumen.baja;
+                document.getElementById('r-baja').textContent = data.resumen.baja;
                 document.getElementById('reporte-fecha').textContent = data.fecha_reporte;
                 resumen.style.display = 'block';
             }
         } catch (err) {
-            contenido.textContent = '⚠️ Error al generar reporte: ' + err.message;
+            contenido.textContent = '⚠️ Error: ' + err.message;
             contenido.style.display = 'block';
         } finally {
             btn.disabled = false;
             btn.innerHTML = '<i class="fa-solid fa-robot"></i>&nbsp; Generar Reporte IA';
         }
     }
-    </script>
 
-    <!-- ── Lógica de Actualización en Vivo (Dashboard Vivo) ── -->
-    <script>
     async function actualizarDashboard() {
         try {
             const data = await API.obtenerContenedores();
             if (data.status !== 'ok') return;
-
             const contenedores = data.data;
-            
-            // 1. Actualizar Tabla
             const tbody = document.querySelector('table tbody');
             let html = '';
-            
-            // Variables para gráficas
-            let labelsB = [];
-            let dataB   = [];
-            let donaMap = { 'alta': 0, 'media': 0, 'normal': 0 };
+            let labelsB = [], dataB = [], donaMap = { 'alta': 0, 'media': 0, 'normal': 0 };
+            let totalHum = 0;
 
             contenedores.forEach(c => {
                 const prio = (c.prioridad || 'normal').toLowerCase();
-                const prioLabel = prio.toUpperCase();
                 let prioClass = 'st-normal';
                 if(prio === 'alta') { prioClass = 'st-lleno'; donaMap['alta']++; }
                 else if(prio === 'media') { prioClass = 'st-medio'; donaMap['media']++; }
                 else { donaMap['normal']++; }
 
                 labelsB.push(c.ubicacion);
-                // Asumimos distancia como proxy de llenado (ejemplo inverso)
                 const dist = parseInt(c.distancia) || 0;
-                const percent = Math.min(100, Math.max(0, 100 - (dist * 2))); 
-                dataB.push(percent);
+                dataB.push(Math.min(100, Math.max(0, 100 - (dist * 2))));
+                totalHum += parseFloat(c.humedad || 0);
 
-                html += `
-                    <tr>
-                        <td><b>${c.ubicacion}</b><br><span style="font-size: 10px; color: #888;">ID: ${c.id_contenedor}</span></td>
-                        <td>${c.temperatura || '0'}°C</td>
-                        <td>${c.humedad || '0'}%</td>
-                        <td><span class="status st-${(c.estado || '').toLowerCase()}">${c.estado || 'Sin datos'}</span></td>
-                        <td><span class="status ${prioClass}">${prioLabel}</span></td>
-                    </tr>
-                `;
+                html += `<tr>
+                    <td><b>${c.ubicacion}</b><br><span style="font-size:10px;color:#888;">ID: ${c.id_contenedor}</span></td>
+                    <td>${c.temperatura || '0'}°C</td>
+                    <td>${c.humedad || '0'}%</td>
+                    <td><span class="status st-${(c.estado || '').toLowerCase()}">${c.estado || 'Sin datos'}</span></td>
+                    <td><span class="status ${prioClass}">${prio.toUpperCase()}</span></td>
+                </tr>`;
             });
             tbody.innerHTML = html;
-
-            // 2. Actualizar Gráficas
             Charts.update(labelsB, dataB, ['ALTA', 'MEDIA', 'NORMAL'], [donaMap['alta'], donaMap['media'], donaMap['normal']]);
-
-            // 3. Actualizar tarjetas superiores (ejemplo con Alertas)
-            const alertCard = document.querySelector('.card-value');
-            if(alertCard) alertCard.textContent = donaMap['alta'];
-
+            
+            document.getElementById('kpi-alertas').textContent = donaMap['alta'];
+            document.getElementById('kpi-humedad').textContent = (contenedores.length > 0 ? (totalHum/contenedores.length).toFixed(1) : '0') + '%';
+            
             const dot = document.querySelector('.notification-dot');
             if(dot) dot.style.display = donaMap['alta'] > 0 ? 'block' : 'none';
-
-        } catch (e) { console.error('Error actualizando dashboard:', e); }
+        } catch (e) { console.error(e); }
     }
-
-    // Polling cada 30 segundos
     setInterval(actualizarDashboard, 30000);
-    actualizarDashboard(); // Carga inicial en vivo
+    actualizarDashboard();
     </script>
 </body>
-
 </html>

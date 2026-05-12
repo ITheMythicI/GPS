@@ -2,12 +2,6 @@
     <div class="nav-section">GENERAL</div>
 
     <div class="menu-item">
-        <a href="index.html" class="menu-btn <?php echo basename($_SERVER['PHP_SELF']) == 'index.html' ? 'active' : ''; ?>">
-            <span><i class="fa-solid fa-gauge-high"></i> Página Principal </span>
-        </a>
-    </div>
-
-    <div class="menu-item">
         <a href="dashboard.php" class="menu-btn <?php echo basename($_SERVER['PHP_SELF']) == 'dashboard.php' ? 'active' : ''; ?>">
             <span><i class="fa-solid fa-gauge-high"></i> Dashboard</span>
         </a>
@@ -16,15 +10,15 @@
     <div class="nav-section">DATOS</div>
 
     <div class="menu-item">
-        <input type="checkbox" id="inventario" class="menu-check">
-        <label for="inventario" class="menu-btn <?php echo basename($_SERVER['PHP_SELF']) == 'dashboardMapa.php' ? 'active' : ''; ?>">
+        <input type="checkbox" id="inventario" class="menu-check" <?php echo (basename($_SERVER['PHP_SELF']) == 'dashboardMapa.php') ? 'checked' : ''; ?>>
+        <label for="inventario" class="menu-btn">
             <span><i class="fa-solid fa-box"></i> Inventario</span>
             <i class="fa-solid fa-chevron-right chevron"></i>
         </label>
         <ul class="submenu">
-            <li><a href="#">Contenedores</a></li>
+            <li><a href="dashboard.php#tabla-contenedores">Contenedores</a></li>
             <li><a href="#">Camiones</a></li>
-            <li><a href="dashboardMapa.php">Mapa Interactivo</a></li>
+            <li><a href="dashboardMapa.php" style="<?php echo basename($_SERVER['PHP_SELF']) == 'dashboardMapa.php' ? 'color: var(--primary); font-weight: bold;' : ''; ?>">Mapa Interactivo</a></li>
         </ul>
     </div>
 
@@ -51,17 +45,6 @@
         <ul class="submenu">
             <li><a href="#">Flujo de Caja</a></li>
             <li><a href="#">Facturacion</a></li>
-        </ul>
-    </div>
-
-    <div class="menu-item">
-        <input type="checkbox" id="m-gas" class="menu-check">
-        <label for="m-gas" class="menu-btn">
-            <span><i class="fa-solid fa-file-invoice-dollar"></i> Gastos</span>
-            <i class="fa-solid fa-chevron-right chevron"></i>
-        </label>
-        <ul class="submenu">
-            <li><a href="#">Socios</a></li>
         </ul>
     </div>
     <?php endif; ?>
