@@ -66,16 +66,14 @@ $data_dona   = array_values($dona_map);
     <main id="content">
 
         <!-- KPI CARDS -->
-        <section class="stats-grid">
+        <section class="stats-grid" style="grid-template-columns: repeat(3, 1fr); gap: 30px; margin-bottom: 40px;">
             <div class="card">
                 <div>
                     <div class="card-label">TOTAL CONTENEDORES</div>
                     <div class="card-value"><?= count($datos_contenedores) ?></div>
-                    <div class="card-note">Red de dispositivos BIN</div>
+                    <div class="card-note">Red activa BIN</div>
                 </div>
-                <div class="card-icon" style="background:var(--accent-soft); color:var(--primary);">
-                    <i class="fa-solid fa-box"></i>
-                </div>
+                <div class="card-icon" style="background:var(--accent-soft); color:var(--primary);"><i class="fa-solid fa-box"></i></div>
             </div>
 
             <div class="card">
@@ -84,20 +82,48 @@ $data_dona   = array_values($dona_map);
                     <div class="card-value" id="kpi-alertas">0</div>
                     <div class="card-note">Prioridad Alta detectada</div>
                 </div>
-                <div class="card-icon" style="background:#fff2e8; color:#fa8c16;">
-                    <i class="fa-solid fa-triangle-exclamation"></i>
-                </div>
+                <div class="card-icon" style="background:#ffebe9; color:#cf222e;"><i class="fa-solid fa-triangle-exclamation"></i></div>
             </div>
 
             <div class="card">
                 <div>
                     <div class="card-label">HUMEDAD PROMEDIO</div>
                     <div class="card-value" id="kpi-humedad">--%</div>
-                    <div class="card-note">Promedio red de sensores</div>
+                    <div class="card-note">Promedio de red BIN</div>
                 </div>
-                <div class="card-icon" style="background:#e6f7ff; color:#1890ff;">
-                    <i class="fa-solid fa-droplet"></i>
+                <div class="card-icon" style="background:#e6f7ff; color:#1890ff;"><i class="fa-solid fa-droplet"></i></div>
+            </div>
+
+            <div class="card">
+                <div>
+                    <div class="card-label">TEMP. PROMEDIO</div>
+                    <div class="card-value" id="kpi-temp">--°C</div>
+                    <div class="card-note">Estado térmico global</div>
                 </div>
+                <div class="card-icon" style="background:#fff7e6; color:#fa8c16;"><i class="fa-solid fa-temperature-half"></i></div>
+            </div>
+
+            <div class="card">
+                <div>
+                    <div class="card-label">CAPACIDAD TOTAL</div>
+                    <div class="card-value">
+                        <?php 
+                            $caps = array_column($datos_contenedores, 'capacidad');
+                            echo array_sum($caps);
+                        ?> L
+                    </div>
+                    <div class="card-note">Volumen total instalado</div>
+                </div>
+                <div class="card-icon" style="background:#f6f8fa; color:#57606a;"><i class="fa-solid fa-weight-hanging"></i></div>
+            </div>
+
+            <div class="card">
+                <div>
+                    <div class="card-label">CONFIANZA IA</div>
+                    <div class="card-value" id="kpi-confianza">--%</div>
+                    <div class="card-note">Precisión de clasificación</div>
+                </div>
+                <div class="card-icon" style="background:#f5f0ff; color:#6c3fc5;"><i class="fa-solid fa-robot"></i></div>
             </div>
         </section>
 
@@ -115,6 +141,46 @@ $data_dona   = array_values($dona_map);
                     <h3>ESTADOS DE LOS CONTENEDORES</h3>
                 </div>
                 <canvas id="tabla_dona"></canvas>
+            </div>
+        </section>
+
+        <!-- CRITERIOS DE CLASIFICACIÓN (Rescatada y Mejorada) -->
+        <section class="panel-box" style="margin-bottom: 24px;">
+            <div class="panel-header">
+                <h3 style="margin:0;"><i class="fa-solid fa-circle-info" style="color:var(--primary);"></i> CRITERIOS PARA INFERIR TIPO DE RESIDUO</h3>
+            </div>
+            <div style="overflow-x: auto;">
+                <table style="width: 100%; border-collapse: collapse; font-size: 13px;">
+                    <thead>
+                        <tr style="background: #f8f9fa; border-bottom: 2px solid var(--border);">
+                            <th style="padding: 12px; text-align: left;">CONDICIÓN TÉCNICA (SENSORES)</th>
+                            <th style="padding: 12px; text-align: center;">TIPO ASIGNADO</th>
+                            <th style="padding: 12px; text-align: left;">REGLA DE INFERENCIA</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr style="border-bottom: 1px solid #eee;">
+                            <td style="padding: 10px;">Humedad > 45% & Densidad > 300 kg/m³</td>
+                            <td style="padding: 10px; text-align: center;"><span class="status" style="background:#e8f5e9; color:#2e7d32;">ORGÁNICO</span></td>
+                            <td style="padding: 10px; color: #666;">Residuos con alto contenido de agua y peso alto.</td>
+                        </tr>
+                        <tr style="border-bottom: 1px solid #eee;">
+                            <td style="padding: 10px;">Humedad < 30% & Densidad < 80 kg/m³</td>
+                            <td style="padding: 10px; text-align: center;"><span class="status" style="background:#e3f2fd; color:#1565c0;">PLÁSTICO</span></td>
+                            <td style="padding: 10px; color: #666;">Materiales ligeros y secos (PET, PEAD).</td>
+                        </tr>
+                        <tr style="border-bottom: 1px solid #eee;">
+                            <td style="padding: 10px;">Humedad < 30% & Densidad < 180 kg/m³</td>
+                            <td style="padding: 10px; text-align: center;"><span class="status" style="background:#fff3e0; color:#ef6c00;">PAPEL/CARTÓN</span></td>
+                            <td style="padding: 10px; color: #666;">Celulosas secas de densidad media.</td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 10px;">Humedad < 35% & Densidad > 250 kg/m³</td>
+                            <td style="padding: 10px; text-align: center;"><span class="status" style="background:#f3e5f5; color:#7b1fa2;">VIDRIO/METAL</span></td>
+                            <td style="padding: 10px; color: #666;">Inorgánicos pesados sin presencia de líquidos.</td>
+                        </tr>
+                    </tbody>
+                </table>
             </div>
         </section>
 
@@ -232,7 +298,7 @@ $data_dona   = array_values($dona_map);
             const tbody = document.querySelector('table tbody');
             let html = '';
             let labelsB = [], dataB = [], donaMap = { 'alta': 0, 'media': 0, 'normal': 0 };
-            let totalHum = 0;
+            let totalHum = 0, totalTemp = 0, totalConf = 0;
 
             contenedores.forEach(c => {
                 const prio = (c.prioridad || 'normal').toLowerCase();
@@ -244,7 +310,10 @@ $data_dona   = array_values($dona_map);
                 labelsB.push(c.ubicacion);
                 const dist = parseInt(c.distancia) || 0;
                 dataB.push(Math.min(100, Math.max(0, 100 - (dist * 2))));
+                
                 totalHum += parseFloat(c.humedad || 0);
+                totalTemp += parseFloat(c.temperatura || 0);
+                totalConf += parseFloat(c.confianza || 0);
 
                 html += `<tr>
                     <td><b>${c.ubicacion}</b><br><span style="font-size:10px;color:#888;">ID: ${c.id_contenedor}</span></td>
@@ -257,8 +326,11 @@ $data_dona   = array_values($dona_map);
             tbody.innerHTML = html;
             Charts.update(labelsB, dataB, ['ALTA', 'MEDIA', 'NORMAL'], [donaMap['alta'], donaMap['media'], donaMap['normal']]);
             
+            const count = contenedores.length || 1;
             document.getElementById('kpi-alertas').textContent = donaMap['alta'];
-            document.getElementById('kpi-humedad').textContent = (contenedores.length > 0 ? (totalHum/contenedores.length).toFixed(1) : '0') + '%';
+            document.getElementById('kpi-humedad').textContent = (totalHum/count).toFixed(1) + '%';
+            document.getElementById('kpi-temp').textContent    = (totalTemp/count).toFixed(1) + '°C';
+            document.getElementById('kpi-confianza').textContent = (totalConf/count).toFixed(1) + '%';
             
             const dot = document.querySelector('.notification-dot');
             if(dot) dot.style.display = donaMap['alta'] > 0 ? 'block' : 'none';
