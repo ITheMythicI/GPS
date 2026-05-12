@@ -1,3 +1,4 @@
+<?php
 require_once 'config.php';
 
 if (!isset($_SESSION['id_usuario'])) {
@@ -235,21 +236,28 @@ $datos_contenedores = $data['data'];
     }
     </script>
 
-    <!-- ── Lógica de Notificaciones ── -->
+    <!-- ── Lógica de Notificaciones y Actualización en Vivo ── -->
     <script>
-    async function actualizarAlertas() {
+    async function actualizarMapaEnVivo() {
         try {
-            const data = await API.clasificar();
-            if (data.status === 'ok') {
-                const prioritarios = data.resultados.filter(r => r.prioridad === 'alta');
+            // Actualizar Alertas (Campana)
+            const dataClasif = await API.clasificar();
+            if (dataClasif.status === 'ok') {
+                const prioritarios = dataClasif.resultados.filter(r => r.prioridad === 'alta');
                 const badge = document.querySelector('.notification-dot');
-                if (prioritarios.length > 0) badge.style.display = 'block';
-                else badge.style.display = 'none';
+                if (badge) badge.style.display = prioritarios.length > 0 ? 'block' : 'none';
             }
-        } catch (e) { console.error('Error polling alerts:', e); }
+
+            // Actualizar Marcadores
+            const dataCont = await API.obtenerContenedores();
+            if (dataCont.status === 'ok') {
+                MapService.renderMarkers(dataCont.data);
+            }
+        } catch (e) { console.error('Error actualizando mapa:', e); }
     }
-    setInterval(actualizarAlertas, 30000);
-    actualizarAlertas();
+
+    setInterval(actualizarMapaEnVivo, 30000);
+    actualizarMapaEnVivo();
     </script>
 </body>
 </html>

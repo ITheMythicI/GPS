@@ -1,3 +1,4 @@
+<?php
 require_once 'config.php';
 
 if (!isset($_SESSION['id_usuario'])) {
@@ -181,22 +182,36 @@ $data_dona   = array_values($dona_map);
                 <thead>
                     <tr>
                         <th>Ubicación</th>
-                        <th>Latitud</th>
-                        <th>Longitud</th>
-                        <th>Capacidad</th>
-                        <th>Estado</th>
+                        <th>Temperatura</th>
+                        <th>Humedad</th>
+                        <th>Estado / Llenado</th>
+                        <th>Prioridad IA</th>
                     </tr>
                 </thead>
                 <tbody>
                     <?php foreach ($datos_contenedores as $contenedor): ?>
                         <tr>
-                            <td><?= htmlspecialchars($contenedor['ubicacion'] ?? '') ?></td>
-                            <td><?= htmlspecialchars($contenedor['latitud'] ?? '') ?></td>
-                            <td><?= htmlspecialchars($contenedor['longitud'] ?? '') ?></td>
-                            <td><?= htmlspecialchars($contenedor['capacidad'] ?? '') ?></td>
+                            <td>
+                                <b><?= htmlspecialchars($contenedor['ubicacion'] ?? '') ?></b><br>
+                                <span style="font-size: 10px; color: #888;">ID: <?= $contenedor['id_contenedor'] ?></span>
+                            </td>
+                            <td><?= htmlspecialchars($contenedor['temperatura'] ?? '0') ?>°C</td>
+                            <td><?= htmlspecialchars($contenedor['humedad'] ?? '0') ?>%</td>
                             <td>
                                 <span class="status <?= 'st-' . strtolower($contenedor['estado'] ?? '') ?>">
                                     <?= htmlspecialchars($contenedor['estado'] ?? 'Sin estado') ?>
+                                </span>
+                            </td>
+                            <td>
+                                <?php 
+                                    $prio = strtolower($contenedor['prioridad'] ?? 'normal');
+                                    $prio_label = strtoupper($prio);
+                                    $prio_class = "st-normal"; // Default
+                                    if($prio === 'alta') $prio_class = "st-lleno"; 
+                                    if($prio === 'media') $prio_class = "st-medio";
+                                ?>
+                                <span class="status <?= $prio_class ?>">
+                                    <?= $prio_label ?>
                                 </span>
                             </td>
                         </tr>
@@ -305,30 +320,66 @@ $data_dona   = array_values($dona_map);
     }
     </script>
 
-    <!-- ── Lógica de Notificaciones y Alertas ── -->
+    <!-- ── Lógica de Actualización en Vivo (Dashboard Vivo) ── -->
     <script>
-    async function actualizarAlertas() {
+    async function actualizarDashboard() {
         try {
-            const data = await API.clasificar();
-            if (data.status === 'ok') {
-                const prioritarios = data.resultados.filter(r => r.prioridad === 'alta');
-                const badge = document.querySelector('.notification-dot');
-                const alertCardValue = document.querySelector('.card-value'); // Alerta de contenedores card
-                
-                if (prioritarios.length > 0) {
-                    badge.style.display = 'block';
-                    if (alertCardValue) alertCardValue.textContent = prioritarios.length;
-                } else {
-                    badge.style.display = 'none';
-                    if (alertCardValue) alertCardValue.textContent = '0';
-                }
-            }
-        } catch (e) { console.error('Error polling alerts:', e); }
+            const data = await API.obtenerContenedores();
+            if (data.status !== 'ok') return;
+
+            const contenedores = data.data;
+            
+            // 1. Actualizar Tabla
+            const tbody = document.querySelector('table tbody');
+            let html = '';
+            
+            // Variables para gráficas
+            let labelsB = [];
+            let dataB   = [];
+            let donaMap = { 'alta': 0, 'media': 0, 'normal': 0 };
+
+            contenedores.forEach(c => {
+                const prio = (c.prioridad || 'normal').toLowerCase();
+                const prioLabel = prio.toUpperCase();
+                let prioClass = 'st-normal';
+                if(prio === 'alta') { prioClass = 'st-lleno'; donaMap['alta']++; }
+                else if(prio === 'media') { prioClass = 'st-medio'; donaMap['media']++; }
+                else { donaMap['normal']++; }
+
+                labelsB.push(c.ubicacion);
+                // Asumimos distancia como proxy de llenado (ejemplo inverso)
+                const dist = parseInt(c.distancia) || 0;
+                const percent = Math.min(100, Math.max(0, 100 - (dist * 2))); 
+                dataB.push(percent);
+
+                html += `
+                    <tr>
+                        <td><b>${c.ubicacion}</b><br><span style="font-size: 10px; color: #888;">ID: ${c.id_contenedor}</span></td>
+                        <td>${c.temperatura || '0'}°C</td>
+                        <td>${c.humedad || '0'}%</td>
+                        <td><span class="status st-${(c.estado || '').toLowerCase()}">${c.estado || 'Sin datos'}</span></td>
+                        <td><span class="status ${prioClass}">${prioLabel}</span></td>
+                    </tr>
+                `;
+            });
+            tbody.innerHTML = html;
+
+            // 2. Actualizar Gráficas
+            Charts.update(labelsB, dataB, ['ALTA', 'MEDIA', 'NORMAL'], [donaMap['alta'], donaMap['media'], donaMap['normal']]);
+
+            // 3. Actualizar tarjetas superiores (ejemplo con Alertas)
+            const alertCard = document.querySelector('.card-value');
+            if(alertCard) alertCard.textContent = donaMap['alta'];
+
+            const dot = document.querySelector('.notification-dot');
+            if(dot) dot.style.display = donaMap['alta'] > 0 ? 'block' : 'none';
+
+        } catch (e) { console.error('Error actualizando dashboard:', e); }
     }
 
     // Polling cada 30 segundos
-    setInterval(actualizarAlertas, 30000);
-    actualizarAlertas(); // Ejecución inicial
+    setInterval(actualizarDashboard, 30000);
+    actualizarDashboard(); // Carga inicial en vivo
     </script>
 </body>
 

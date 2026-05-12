@@ -32,5 +32,9 @@ const API = {
 
     async obtenerRutas() {
         return this.fetch('rutas');
+    },
+
+    async obtenerContenedores() {
+        return this.fetch('contenedores');
     }
 };

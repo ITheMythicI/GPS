@@ -18,7 +18,7 @@ header('Content-Type: application/json');
 
 // ── Validar acción ─────────────────────────────────────────────────────────────
 $action = $_GET['action'] ?? '';
-$acciones_permitidas = ['clasificar', 'rutas', 'reporte'];
+$acciones_permitidas = ['clasificar', 'rutas', 'reporte', 'contenedores'];
 
 if (!in_array($action, $acciones_permitidas)) {
     http_response_code(400);
@@ -32,7 +32,8 @@ $backend_base = 'http://10.0.2.8/ai';
 $url_backend = match($action) {
     'clasificar' => "$backend_base/clasificar.php",
     'rutas'      => "$backend_base/rutas.php" . (isset($_GET['prioridad']) ? '?prioridad=' . urlencode($_GET['prioridad']) : ''),
-    'reporte'    => "$backend_base/reporte.php",
+    'reporte'      => "$backend_base/reporte.php",
+    'contenedores' => "http://10.0.2.8/obtenerContenedores.php",
 };
 
 // ── Reenviar la request ────────────────────────────────────────────────────────
