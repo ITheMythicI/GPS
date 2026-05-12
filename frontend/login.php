@@ -1,11 +1,24 @@
 <?php
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
+
+if (!extension_loaded('mysqli')) {
+    die("Error: La extensión 'mysqli' no está instalada en este servidor PHP.");
+}
+
 session_start();
-require __DIR__ . '/../backend/includes/database.php';
+$db_path = __DIR__ . '/../backend/includes/database.php';
+if (!is_readable($db_path)) {
+    die("Error: No se puede leer el archivo de configuración en: " . realpath($db_path));
+}
+require $db_path;
+
+if (!$db) {
+    die("Error: No se pudo establecer la conexión con la base de datos.");
+}
 
 $error = '';
-
-ini_set('display_errors', 1);
-error_reporting(E_ALL);
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $email = $_POST['email'] ?? '';
