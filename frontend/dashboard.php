@@ -1,13 +1,11 @@
-<?php
-session_start();
+require_once 'config.php';
+
 if (!isset($_SESSION['id_usuario'])) {
     header('Location: login.php');
     exit;
 }
-ini_set('display_errors', 1);
-error_reporting(E_ALL);
 
-$url = "http://10.0.2.8/obtenerContenedores.php";
+$url = BACKEND_URL . "/obtenerContenedores.php";
 
 $ch = curl_init($url);
 curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
@@ -66,135 +64,12 @@ $data_dona   = array_values($dona_map);
 
 <body>
 
-    <header id="main-header">
-
-        <div class="logo-area">
-
-            <div class="logo-box">
-                <img src="BIN.png" alt="Nexus Solutions Logo">
-            </div>
-
-            <div>
-                <h1>PORTAL BIN</h1>
-                <p>Bienvenido</p>
-            </div>
-
-        </div>
-
-        <div class="header-right">
-
-            <div class="tool-icons">
-
-                <i class="fa-regular fa-note-sticky"></i>
-
-                <i class="fa-solid fa-triangle-exclamation">
-                    <span class="notification-dot"></span>
-                </i>
-
-                <i class="fa-regular fa-bell"></i>
-                <i class="fa-regular fa-bookmark"></i>
-
-            </div>
-
-            <div class="user-profile-circle">
-                <i class="fa-solid fa-user"></i>
-            </div>
-
-        </div>
-
-    </header>
-
+    <?php include_once 'includes/header.php'; ?>
 
     <!-- SIDEBAR -->
-
-    <aside id="sidebar">
-
-        <div class="nav-section">GENERAL</div>
-
-        <div class="menu-item">
-            <a href="index.html" class="menu-btn active">
-                <span><i class="fa-solid fa-gauge-high"></i> Página Principal </span>
-            </a>
-        </div>
-
-        <div class="menu-item">
-            <a href="dashboard.php" class="menu-btn">
-                <span><i class="fa-solid fa-gauge-high"></i> Dashboard</span>
-            </a>
-        </div>
-
-        <div class="nav-section">DATOS</div>
-
-        <div class="menu-item">
-
-            <input type="checkbox" id="inventario" class="menu-check">
-
-            <label for="inventario" class="menu-btn">
-                <span><i class="fa-solid fa-box"></i> Inventario</span>
-                <i class="fa-solid fa-chevron-right chevron"></i>
-            </label>
-
-            <ul class="submenu">
-                <li><a href="#">Contenedores</a></li>
-                <li><a href="#">Camiones</a></li>
-                <li><a href="dashboardMapa.php">Mapa Interactivo</a></li>
-            </ul>
-
-        </div>
-
-        <!-- ADMINISTRACIÓN -->
-
-        <div class="nav-section">ADMINISTRACIÓN</div>
-
-        <div class="menu-item">
-            <input type="checkbox" id="m-bit" class="menu-check">
-            <label for="m-bit" class="menu-btn">
-                <span><i class="fa-solid fa-book"></i> Registros</span>
-                <i class="fa-solid fa-chevron-right chevron"></i>
-            </label>
-            <ul class="submenu">
-                <li><a href="#">Registro de Actividad</a></li>
-            </ul>
-        </div>
-
-        <div class="menu-item">
-            <input type="checkbox" id="m-fin" class="menu-check">
-            <label for="m-fin" class="menu-btn">
-                <span><i class="fa-solid fa-landmark"></i> Finanzas</span>
-                <i class="fa-solid fa-chevron-right chevron"></i>
-            </label>
-            <ul class="submenu">
-                <li><a href="#">Flujo de Caja</a></li>
-                <li><a href="#">Facturacion</a></li>
-            </ul>
-        </div>
-
-
-        <div class="menu-item">
-            <input type="checkbox" id="m-gas" class="menu-check">
-            <label for="m-gas" class="menu-btn">
-                <span><i class="fa-solid fa-file-invoice-dollar"></i> Gastos</span>
-                <i class="fa-solid fa-chevron-right chevron"></i>
-            </label>
-            <ul class="submenu">
-                <li><a href="#">Socios</a></li>
-            </ul>
-        </div>
-
-
-        <div class="nav-section">CONFIGURACIÓN</div>
-
-        <div class="menu-item">
-            <a class="menu-btn">
-                <span><i class="fa-solid fa-gear"></i> Ajustes del Sistema</span>
-            </a>
-        </div>
-
-    </aside>
-
+    <?php include_once 'includes/sidebar.php'; ?>
 
     <!-- CONTENIDO -->
-
     <main id="content">
 
         <section class="stats-grid">
@@ -391,47 +266,70 @@ $data_dona   = array_values($dona_map);
         const dataDona     = <?= json_encode($data_dona) ?>;
     </script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+    <script src="js/api.js"></script>
     <script src="js/graficas.js"></script>
 
     <!-- ── Lógica Reporte IA ── -->
     <script>
-    function generarReporteIA() {
-        var btn = document.getElementById('btn-generar-reporte');
+    async function generarReporteIA() {
+        const btn = document.getElementById('btn-generar-reporte');
         btn.disabled = true;
         btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i>&nbsp; Generando...';
 
-        var contenido = document.getElementById('reporte-ia-contenido');
-        var resumen   = document.getElementById('reporte-ia-resumen');
+        const contenido = document.getElementById('reporte-ia-contenido');
+        const resumen   = document.getElementById('reporte-ia-resumen');
         contenido.style.display = 'none';
         resumen.style.display   = 'none';
 
-        fetch('api/ia_proxy.php?action=reporte', { method: 'POST' })
-            .then(r => r.json())
-            .then(data => {
-                if (data.status !== 'ok') throw new Error(data.message || 'Error generando reporte');
+        try {
+            const data = await API.generarReporte();
+            if (data.status !== 'ok') throw new Error(data.message || 'Error generando reporte');
 
-                contenido.textContent = data.reporte;
-                contenido.style.display = 'block';
+            contenido.textContent = data.reporte;
+            contenido.style.display = 'block';
 
-                if (data.resumen) {
-                    document.getElementById('r-alta').textContent  = data.resumen.alta;
-                    document.getElementById('r-media').textContent = data.resumen.media;
-                    document.getElementById('r-baja').textContent  = data.resumen.baja;
-                    document.getElementById('reporte-fecha').textContent = data.fecha_reporte;
-                    resumen.style.display = 'block';
-                }
-            })
-            .catch(err => {
-                contenido.textContent = '⚠️ Error al generar reporte: ' + err.message;
-                contenido.style.display = 'block';
-            })
-            .finally(() => {
-                btn.disabled = false;
-                btn.innerHTML = '<i class="fa-solid fa-robot"></i>&nbsp; Generar Reporte IA';
-            });
+            if (data.resumen) {
+                document.getElementById('r-alta').textContent  = data.resumen.alta;
+                document.getElementById('r-media').textContent = data.resumen.media;
+                document.getElementById('r-baja').textContent  = data.resumen.baja;
+                document.getElementById('reporte-fecha').textContent = data.fecha_reporte;
+                resumen.style.display = 'block';
+            }
+        } catch (err) {
+            contenido.textContent = '⚠️ Error al generar reporte: ' + err.message;
+            contenido.style.display = 'block';
+        } finally {
+            btn.disabled = false;
+            btn.innerHTML = '<i class="fa-solid fa-robot"></i>&nbsp; Generar Reporte IA';
+        }
     }
     </script>
 
+    <!-- ── Lógica de Notificaciones y Alertas ── -->
+    <script>
+    async function actualizarAlertas() {
+        try {
+            const data = await API.clasificar();
+            if (data.status === 'ok') {
+                const prioritarios = data.resultados.filter(r => r.prioridad === 'alta');
+                const badge = document.querySelector('.notification-dot');
+                const alertCardValue = document.querySelector('.card-value'); // Alerta de contenedores card
+                
+                if (prioritarios.length > 0) {
+                    badge.style.display = 'block';
+                    if (alertCardValue) alertCardValue.textContent = prioritarios.length;
+                } else {
+                    badge.style.display = 'none';
+                    if (alertCardValue) alertCardValue.textContent = '0';
+                }
+            }
+        } catch (e) { console.error('Error polling alerts:', e); }
+    }
+
+    // Polling cada 30 segundos
+    setInterval(actualizarAlertas, 30000);
+    actualizarAlertas(); // Ejecución inicial
+    </script>
 </body>
 
 </html>

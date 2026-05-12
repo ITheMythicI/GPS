@@ -1,13 +1,11 @@
-<?php
-session_start();
+require_once 'config.php';
+
 if (!isset($_SESSION['id_usuario'])) {
     header('Location: login.php');
     exit;
 }
-ini_set('display_errors', 1);
-error_reporting(E_ALL);
 
-$url = "http://10.0.2.8/obtenerContenedores.php";
+$url = BACKEND_URL . "/obtenerContenedores.php";
 
 $ch = curl_init($url);
 curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
@@ -102,36 +100,10 @@ $datos_contenedores = $data['data'];
 </head>
 
 <body>
-    <header id="main-header">
-        <div class="logo-area">
-            <div class="logo-box"><img src="BIN.png" alt="Logo"></div>
-            <div>
-                <h1>PORTAL BIN</h1>
-                <p>BuildNess Management</p>
-            </div>
-        </div>
-        <div class="header-right">
-            <div class="tool-icons">
-                <i class="fa-regular fa-bell"></i>
-                <i class="fa-solid fa-triangle-exclamation"><span class="notification-dot"></span></i>
-            </div>
-            <div class="user-profile-circle"><i class="fa-solid fa-user"></i></div>
-        </div>
-    </header>
+    <?php include_once 'includes/header.php'; ?>
 
-    <aside id="sidebar">
-        <div class="nav-section">GENERAL</div>
-        <div class="menu-item">
-            <a href="dashboard.php" class="menu-btn"><span><i class="fa-solid fa-gauge-high"></i> Dashboard</span></a>
-        </div>
-        <div class="nav-section">DATOS</div>
-        <div class="menu-item">
-            <label class="menu-btn active"><span><i class="fa-solid fa-map-location-dot"></i> Mapa Interactivo</span></label>
-        </div>
-        <div class="menu-item">
-            <a href="index.html" class="menu-btn"><span><i class="fa-solid fa-house"></i> Salir</span></a>
-        </div>
-    </aside>
+    <!-- SIDEBAR -->
+    <?php include_once 'includes/sidebar.php'; ?>
 
     <main id="content">
         <div id="map-wrapper">
@@ -177,12 +149,10 @@ $datos_contenedores = $data['data'];
     </main>
 
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-    
     <script>
-        // Pasar datos de PHP a una variable Global de JS
-       const datosContenedores = <?php echo json_encode($datos_contenedores); ?>;
+        const datosContenedores = <?= json_encode($datos_contenedores) ?>;
     </script>
-    
+    <script src="js/api.js"></script>
     <script src="js/mapaContenedores.js"></script>
 
     <!-- ── Lógica Ruta IA ── -->
@@ -190,39 +160,33 @@ $datos_contenedores = $data['data'];
     var _rutaPolyline  = null; // referencia al polyline activo
     var _rutaMarkers   = [];   // marcadores numerados de la ruta
 
-    function calcularRutaIA() {
-        var btn = document.getElementById('btn-ruta-ia');
+    async function calcularRutaIA() {
+        const btn = document.getElementById('btn-ruta-ia');
         btn.disabled = true;
         btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i>&nbsp; Calculando...';
 
-        // Paso 1: clasificar contenedores
-        fetch('api/ia_proxy.php?action=clasificar')
-            .then(r => r.json())
-            .then(data => {
-                if (data.status !== 'ok') throw new Error(data.message || 'Error clasificando');
+        try {
+            // Paso 1: clasificar contenedores
+            const dataClasif = await API.clasificar();
+            if (dataClasif.status !== 'ok') throw new Error(dataClasif.message || 'Error clasificando');
 
-                // Paso 2: calcular ruta con los prioritarios
-                return fetch('api/ia_proxy.php?action=rutas');
-            })
-            .then(r => r.json())
-            .then(data => {
-                if (data.status !== 'ok') throw new Error(data.message || 'Error en rutas');
+            // Paso 2: calcular ruta con los prioritarios
+            const dataRuta = await API.obtenerRutas();
+            if (dataRuta.status !== 'ok') throw new Error(dataRuta.message || 'Error en rutas');
 
-                if (!data.coordenadas || data.coordenadas.length === 0) {
-                    alert('No hay contenedores de alta prioridad para rutar.\n\nTodos los contenedores están en niveles normales.');
-                    return;
-                }
+            if (!dataRuta.coordenadas || dataRuta.coordenadas.length === 0) {
+                alert('No hay contenedores de alta prioridad para rutar.\n\nTodos los contenedores están en niveles normales.');
+                return;
+            }
 
-                dibujarRuta(data);
-            })
-            .catch(err => {
-                console.error('[RutaIA]', err);
-                alert('Error al calcular ruta: ' + err.message);
-            })
-            .finally(() => {
-                btn.disabled = false;
-                btn.innerHTML = '<i class="fa-solid fa-route"></i>&nbsp; Ver Ruta IA';
-            });
+            dibujarRuta(dataRuta);
+        } catch (err) {
+            console.error('[RutaIA]', err);
+            alert('Error al calcular ruta: ' + err.message);
+        } finally {
+            btn.disabled = false;
+            btn.innerHTML = '<i class="fa-solid fa-route"></i>&nbsp; Ver Ruta IA';
+        }
     }
 
     function dibujarRuta(data) {
@@ -271,5 +235,21 @@ $datos_contenedores = $data['data'];
     }
     </script>
 
+    <!-- ── Lógica de Notificaciones ── -->
+    <script>
+    async function actualizarAlertas() {
+        try {
+            const data = await API.clasificar();
+            if (data.status === 'ok') {
+                const prioritarios = data.resultados.filter(r => r.prioridad === 'alta');
+                const badge = document.querySelector('.notification-dot');
+                if (prioritarios.length > 0) badge.style.display = 'block';
+                else badge.style.display = 'none';
+            }
+        } catch (e) { console.error('Error polling alerts:', e); }
+    }
+    setInterval(actualizarAlertas, 30000);
+    actualizarAlertas();
+    </script>
 </body>
 </html>
