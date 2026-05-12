@@ -3,20 +3,7 @@ ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
 
-if (!extension_loaded('mysqli')) {
-    die("Error: La extensión 'mysqli' no está instalada en este servidor PHP.");
-}
-
 session_start();
-$db_path = __DIR__ . '/../backend/includes/database.php';
-if (!is_readable($db_path)) {
-    die("Error: No se puede leer el archivo de configuración en: " . realpath($db_path));
-}
-require $db_path;
-
-if (!$db) {
-    die("Error: No se pudo establecer la conexión con la base de datos.");
-}
 
 $error = '';
 
@@ -24,36 +11,40 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $email = $_POST['email'] ?? '';
     $password = $_POST['password'] ?? '';
     
-    // Verificamos credenciales en la base de datos de forma segura
-    $sql = "SELECT id_usuario, nombre, password, rol FROM Usuarios WHERE email = ? LIMIT 1";
-    $stmt = mysqli_prepare($db, $sql);
-    
-    if ($stmt) {
-        mysqli_stmt_bind_param($stmt, "s", $email);
-        mysqli_stmt_execute($stmt);
-        mysqli_stmt_store_result($stmt);
-        
-        if (mysqli_stmt_num_rows($stmt) > 0) {
-            mysqli_stmt_bind_result($stmt, $id_usuario, $nombre, $hashed_password, $rol);
-            mysqli_stmt_fetch($stmt);
+    // Llamamos al Backend a través del router/proxy
+    // Usamos la IP interna si el Frontend y Backend están en la misma red privada,
+    // o el router.php si es necesario.
+    $url_backend = "http://10.0.2.8/auth/procesar_login.php"; 
 
-            // Verificación de la contraseña hasheada
-            if (password_verify($password, $hashed_password)) {
-                $_SESSION['id_usuario'] = $id_usuario;
-                $_SESSION['nombre'] = $nombre;
-                $_SESSION['rol'] = strtolower($rol);
-                
-                header('Location: dashboard.php');
-                exit;
-            } else {
-                $error = "La contraseña es incorrecta.";
-            }
+    $ch = curl_init($url_backend);
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    curl_setopt($ch, CURLOPT_POST, true);
+    curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query([
+        'email' => $email,
+        'password' => $password
+    ]));
+    curl_setopt($ch, CURLOPT_TIMEOUT, 5);
+
+    $response = curl_exec($ch);
+    $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+    curl_close($ch);
+
+    if ($httpCode === 200 && $response) {
+        $data = json_decode($response, true);
+        
+        if (isset($data['status']) && $data['status'] === 'success') {
+            // Guardamos la sesión en el FRONTEND
+            $_SESSION['id_usuario'] = $data['user']['id'];
+            $_SESSION['nombre']     = $data['user']['nombre'];
+            $_SESSION['rol']        = $data['user']['rol'];
+            
+            header('Location: dashboard.php');
+            exit;
         } else {
-            $error = "El correo no está registrado.";
+            $error = $data['message'] ?? 'Credenciales incorrectas';
         }
-        mysqli_stmt_close($stmt);
     } else {
-        $error = "Error en la base de datos. Por favor intente más tarde.";
+        $error = "Error de comunicación con el servidor backend (HTTP $httpCode)";
     }
 }
 ?>
@@ -66,7 +57,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <link rel="stylesheet" href="css/stylesIndex.css">
 </head>
 <body>
-    <!-- ===Barra superior con el logo ==== -->
     <header class="navbar">
         <div class="brand">
             NEXUS <span style="color:#4CAF50;"></span> SOLUTIONS
@@ -79,7 +69,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     </header>
 
     <section class="registro">
-        <!-- Formulario -->
         <div class="registro">
             <h3>INICIAR SESIÓN</h3>
             
@@ -103,6 +92,5 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             </p>
         </div>
     </section>
-
 </body>
 </html>

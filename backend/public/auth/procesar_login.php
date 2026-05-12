@@ -16,17 +16,20 @@ $sql = "SELECT id_usuario, nombre, password, rol FROM Usuarios WHERE email = ? L
 $stmt = mysqli_prepare($db, $sql);
 mysqli_stmt_bind_param($stmt, "s", $email);
 mysqli_stmt_execute($stmt);
-$resultado = mysqli_stmt_get_result($stmt);
+mysqli_stmt_store_result($stmt);
 
-if ($usuario = mysqli_fetch_assoc($resultado)) {
+if (mysqli_stmt_num_rows($stmt) > 0) {
+    mysqli_stmt_bind_result($stmt, $id_usuario, $nombre, $hashed_password, $rol);
+    mysqli_stmt_fetch($stmt);
+
     // Verificacion del Hash
-    if (password_verify($password, $usuario['password'])) {
+    if (password_verify($password, $hashed_password)) {
         echo json_encode([
             'status' => 'success',
             'user' => [
-                'id' => $usuario['id_usuario'],
-                'nombre' => $usuario['nombre'],
-                'rol' => strtolower($usuario['rol'])
+                'id' => $id_usuario,
+                'nombre' => $nombre,
+                'rol' => strtolower($rol)
             ]
         ]);
     } else {
