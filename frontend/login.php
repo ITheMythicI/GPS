@@ -4,33 +4,44 @@ require __DIR__ . '/../backend/includes/database.php';
 
 $error = '';
 
+ini_set('display_errors', 1);
+error_reporting(E_ALL);
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $email = mysqli_real_escape_string($db, $_POST['email']);
-    $password = mysqli_real_escape_string($db, $_POST['password']);
+    $email = $_POST['email'] ?? '';
+    $password = $_POST['password'] ?? '';
     
     // Verificamos credenciales en la base de datos de forma segura
     $sql = "SELECT id_usuario, nombre, password, rol FROM Usuarios WHERE email = ? LIMIT 1";
     $stmt = mysqli_prepare($db, $sql);
-    mysqli_stmt_bind_param($stmt, "s", $email);
-    mysqli_stmt_execute($stmt);
-    $resultado = mysqli_stmt_get_result($stmt);
+    
+    if ($stmt) {
+        mysqli_stmt_bind_param($stmt, "s", $email);
+        mysqli_stmt_execute($stmt);
+        mysqli_stmt_store_result($stmt);
+        
+        if (mysqli_stmt_num_rows($stmt) > 0) {
+            mysqli_stmt_bind_result($stmt, $id_usuario, $nombre, $hashed_password, $rol);
+            mysqli_stmt_fetch($stmt);
 
-    if ($usuario = mysqli_fetch_assoc($resultado)) {
-        // Verificación de la contraseña hasheada
-        if (password_verify($password, $usuario['password'])) {
-            $_SESSION['id_usuario'] = $usuario['id_usuario'];
-            $_SESSION['nombre'] = $usuario['nombre'];
-            $_SESSION['rol'] = strtolower($usuario['rol']);
-            
-            header('Location: dashboard.php');
-            exit;
+            // Verificación de la contraseña hasheada
+            if (password_verify($password, $hashed_password)) {
+                $_SESSION['id_usuario'] = $id_usuario;
+                $_SESSION['nombre'] = $nombre;
+                $_SESSION['rol'] = strtolower($rol);
+                
+                header('Location: dashboard.php');
+                exit;
+            } else {
+                $error = "La contraseña es incorrecta.";
+            }
         } else {
-            $error = "La contraseña es incorrecta.";
+            $error = "El correo no está registrado.";
         }
+        mysqli_stmt_close($stmt);
     } else {
-        $error = "El correo no está registrado.";
+        $error = "Error en la base de datos. Por favor intente más tarde.";
     }
-    mysqli_stmt_close($stmt);
 }
 ?>
 <!DOCTYPE html>
