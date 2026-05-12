@@ -25,6 +25,7 @@ const Charts = {
                 },
                 options: {
                     responsive: true,
+                    maintainAspectRatio: false,
                     scales: { y: { beginAtZero: true, max: 100 } }
                 }
             });
@@ -41,6 +42,10 @@ const Charts = {
                         backgroundColor: ['#ef4444', '#f59e0b', '#10b981'],
                         hoverOffset: 4
                     }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false
                 }
             });
         }

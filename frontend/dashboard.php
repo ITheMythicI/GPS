@@ -127,20 +127,24 @@ $data_dona   = array_values($dona_map);
             </div>
         </section>
 
-        <!-- ANALYTICS -->
-        <section class="analytics-row">
-            <div class="panel-box">
-                <div class="panel-header">
-                    <h3>PORCENTAJE DE LLENADO</h3>
+        <!-- ANALYTICS (Tamaño Optimizado) -->
+        <section class="analytics-row" style="margin-bottom: 30px;">
+            <div class="panel-box" style="padding: 15px;">
+                <div class="panel-header" style="margin-bottom: 10px;">
+                    <h3 style="font-size: 14px;">PORCENTAJE DE LLENADO</h3>
                 </div>
-                <canvas id="tabla_barras" height="300"></canvas>
+                <div style="height: 220px; position: relative;">
+                    <canvas id="tabla_barras"></canvas>
+                </div>
             </div>
 
-            <div class="panel-box">
-                <div class="panel-header">
-                    <h3>ESTADOS DE LOS CONTENEDORES</h3>
+            <div class="panel-box" style="padding: 15px;">
+                <div class="panel-header" style="margin-bottom: 10px;">
+                    <h3 style="font-size: 14px;">ESTADOS DE LOS CONTENEDORES</h3>
                 </div>
-                <canvas id="tabla_dona"></canvas>
+                <div style="height: 220px; position: relative; display: flex; justify-content: center;">
+                    <canvas id="tabla_dona"></canvas>
+                </div>
             </div>
         </section>
 
@@ -196,7 +200,7 @@ $data_dona   = array_values($dona_map);
                         <th>Prioridad IA</th>
                     </tr>
                 </thead>
-                <tbody>
+                <tbody id="tbody-contenedores">
                     <?php foreach ($datos_contenedores as $contenedor): ?>
                         <tr>
                             <td>
@@ -295,7 +299,7 @@ $data_dona   = array_values($dona_map);
             const data = await API.obtenerContenedores();
             if (data.status !== 'ok') return;
             const contenedores = data.data;
-            const tbody = document.querySelector('table tbody');
+            const tbody = document.getElementById('tbody-contenedores');
             let html = '';
             let labelsB = [], dataB = [], donaMap = { 'alta': 0, 'media': 0, 'normal': 0 };
             let totalHum = 0, totalTemp = 0, totalConf = 0;
