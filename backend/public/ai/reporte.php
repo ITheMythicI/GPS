@@ -25,7 +25,16 @@ foreach ($clasificaciones as $c) {
     $detalle .= sprintf("- %s: %s (%.1f%% lleno)\n", $c['ubicacion'] ?? '?', $c['prioridad'] ?? '?', $c['volumen_pct'] ?? 0);
 }
 
-$prompt = "Eres el analista del sistema BIN. Genera un reporte ejecutivo breve en español:\n$detalle";
+$fecha_actual = date('d \d\e F \d\e Y');
+$nombre_analista = "Erick"; // Puedes cambiar esto por tu nombre real
+
+$prompt = "Actúa como el Analista del Sistema BIN. Genera un reporte ejecutivo en español siguiendo este formato EXACTO al inicio:\n\n" .
+          "**REPORTE EJECUTIVO DEL SISTEMA BIN**\n" .
+          "**Fecha:** $fecha_actual\n" .
+          "**Analista:** $nombre_analista\n\n" .
+          "Contenido del reporte basado en estos datos:\n$detalle\n\n" .
+          "Instrucciones: Provee un resumen breve, identifica contenedores críticos y da una recomendación operativa.";
+
 $gemini_url = "https://generativelanguage.googleapis.com/v1/models/gemini-2.5-flash:generateContent?key={$api_key}";
 
 $payload = json_encode(['contents' => [['parts' => [['text' => $prompt]]]]]);

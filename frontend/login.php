@@ -8,21 +8,29 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $email = mysqli_real_escape_string($db, $_POST['email']);
     $password = mysqli_real_escape_string($db, $_POST['password']);
     
-    // Verificamos credenciales en la base de datos
-    $query = "SELECT * FROM Usuarios WHERE email = '$email' AND password = '$password'";
-    $resultado = mysqli_query($db, $query);
+    // Verificamos credenciales en la base de datos de forma segura
+    $sql = "SELECT id_usuario, nombre, password, rol FROM Usuarios WHERE email = ? LIMIT 1";
+    $stmt = mysqli_prepare($db, $sql);
+    mysqli_stmt_bind_param($stmt, "s", $email);
+    mysqli_stmt_execute($stmt);
+    $resultado = mysqli_stmt_get_result($stmt);
 
-    if ($resultado && mysqli_num_rows($resultado) > 0) {
-        $usuario = mysqli_fetch_assoc($resultado);
-        $_SESSION['id_usuario'] = $usuario['id_usuario'];
-        $_SESSION['nombre'] = $usuario['nombre'];
-        $_SESSION['rol'] = strtolower($usuario['rol']); // adminstrador, etc.
-        
-        header('Location: dashboard.php');
-        exit;
+    if ($usuario = mysqli_fetch_assoc($resultado)) {
+        // Verificación de la contraseña hasheada
+        if (password_verify($password, $usuario['password'])) {
+            $_SESSION['id_usuario'] = $usuario['id_usuario'];
+            $_SESSION['nombre'] = $usuario['nombre'];
+            $_SESSION['rol'] = strtolower($usuario['rol']);
+            
+            header('Location: dashboard.php');
+            exit;
+        } else {
+            $error = "La contraseña es incorrecta.";
+        }
     } else {
-        $error = "El correo o la contraseña son incorrectos.";
+        $error = "El correo no está registrado.";
     }
+    mysqli_stmt_close($stmt);
 }
 ?>
 <!DOCTYPE html>
