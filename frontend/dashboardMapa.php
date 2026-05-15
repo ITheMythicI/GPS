@@ -233,7 +233,11 @@ $datos_contenedores = $data['data'];
         document.getElementById('ruta-paradas').textContent =
             '📦 Paradas: ' + data.total_paradas + ' contenedor(es)';
         panel.style.display = 'block';
+
+        // Iniciar movimiento del camión
+        MapService.simulateTruckMovement(data.coordenadas);
     }
+
     </script>
 
     <!-- ── Lógica de Notificaciones y Actualización en Vivo ── -->

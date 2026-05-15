@@ -1,72 +1,75 @@
 /*
- * mapaContenedores.js - Lógica de Mapa (Áreas + Marcadores en Vivo)
+ * mapaContenedores.js - Lógica de Mapa Dinámica (DB como fuente de verdad)
  */
 
 // 1. Inicialización del Mapa
 var map = L.map('map').setView([25.5334, -103.4358], 18);
 var markerLayer = L.layerGroup().addTo(map);
+var zoneLayer = L.layerGroup().addTo(map);
+var truckMarker = null;
 
 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
     maxZoom: 19,
     attribution: '&copy; OpenStreetMap'
 }).addTo(map);
 
-// 2. Configuración de Áreas (Restaurado)
-const areaSettings = {
-    sistemas: {
-        coords: [25.5330, -103.4361],
-        title: "Área de Sistemas",
-        prioridad: "Alta",
-        colorBadge: "#e74c3c",
-        colorArea: "#34495e",
-        polygon: [
-            [25.533525597142507, -103.43583022883226], [25.53257201631325 , -103.43583022883226],
-            [25.53257201631325 , -103.43617355157481], [25.533244848235757, -103.43623792458911],
-            [25.533244848235757, -103.43652760315341], [25.533525597142507, -103.43652760315341]
-        ]
-    },
-    quimica: {
-        coords: [25.5340, -103.4355],
-        title: "Área de Química",
-        prioridad: "Media",
-        colorBadge: "#f39c12",
-        colorArea: "#27ae60",
-        polygon: [
-            [25.53358168, -103.4361112], [25.53358168, -103.4365923], [25.53392837, -103.4365890], [25.53417858, -103.4360845],
-            [25.53431399, -103.4360876], [25.53431399, -103.4357003], [25.53417256, -103.4356970], [25.53413161, -103.4356970], 
-            [25.53413161, -103.4352519], [25.53435042, -103.4349653], [25.53435042, -103.4345123], [25.53420736, -103.4345123], 
-            [25.53373844, -103.4347080], [25.53374832, -103.4353462], [25.53388083, -103.4354353], [25.53388083, -103.4359624],
-            [25.53394708, -103.4359624], [25.53394344, -103.4361046]
-        ]
-    }
-};
-
-// 3. Dibujar Polígonos de Áreas (Restaurado)
-Object.keys(areaSettings).forEach(key => {
-    const area = areaSettings[key];
-    L.polygon(area.polygon, {
-        color: area.colorArea,
-        fillColor: area.colorArea,
-        fillOpacity: 0.2,
-        dashArray: '5, 10'
-    }).addTo(map);
-});
-
-// 4. Iconos y Servicio de Marcadores
-function createTrashIcon(color) {
+// 2. Iconos
+function createTrashIcon(color, isReal = false) {
+    const shadow = isReal ? "filter: drop-shadow(0 0 5px #2e7d32);" : "";
     return L.divIcon({
         className: 'custom-div-icon',
-        html: `<div class="trash-icon-container" style="border-color: ${color}; color: ${color};"><i class="fa-solid fa-trash-can"></i></div>`,
+        html: `<div class="trash-icon-container" style="border-color: ${color}; color: ${color}; ${shadow}"><i class="fa-solid fa-trash-can"></i></div>`,
         iconSize: [34, 34],
         iconAnchor: [17, 17]
     });
 }
 
 const MapService = {
+    async init() {
+        await this.loadZones();
+        await this.loadMarkers();
+    },
+
+    async loadZones() {
+        try {
+            const res = await API.obtenerZonas();
+            if (res.status === 'ok') {
+                zoneLayer.clearLayers();
+                const listContainer = document.getElementById('area-list');
+                listContainer.innerHTML = '';
+
+                res.data.forEach(zona => {
+                    if (zona.coordenadas_poligono) {
+                        L.polygon(zona.coordenadas_poligono, {
+                            color: zona.color_hex,
+                            fillColor: zona.color_hex,
+                            fillOpacity: 0.15,
+                            dashArray: '5, 10'
+                        }).addTo(zoneLayer);
+                    }
+                    
+                    // Actualizar lista de UI
+                    const div = document.createElement('div');
+                    div.className = 'area-item';
+                    div.innerText = zona.nombre;
+                    div.onclick = () => this.selectZone(zona);
+                    listContainer.appendChild(div);
+                });
+            }
+        } catch (e) { console.error("Error cargando zonas:", e); }
+    },
+
+    async loadMarkers() {
+        try {
+            const res = await API.obtenerContenedores();
+            if (res.status === 'ok') {
+                this.renderMarkers(res.data);
+            }
+        } catch (e) { console.error("Error cargando marcadores:", e); }
+    },
+
     renderMarkers(contenedores) {
         markerLayer.clearLayers();
-        if (!Array.isArray(contenedores)) return;
-
         contenedores.forEach(c => {
             if (c.latitud && c.longitud) {
                 let iconColor = "#27ae60"; 
@@ -75,23 +78,28 @@ const MapService = {
                 else if (prio === 'media') iconColor = "#f39c12";
 
                 const marker = L.marker([parseFloat(c.latitud), parseFloat(c.longitud)], {
-                    icon: createTrashIcon(iconColor)
+                    icon: createTrashIcon(iconColor, c.es_real == 1)
                 });
 
+                const badgeFisico = c.es_real == 1 ? '<span style="background: #2e7d32; color: white; padding: 2px 6px; border-radius: 4px; font-size: 9px; font-weight: bold; margin-left: 5px;">FISICO</span>' : '';
+
                 marker.bindPopup(`
-                    <div style="font-family: 'Poppins', sans-serif; min-width: 150px;">
-                        <div style="display: flex; justify-content: space-between; align-items: center;">
-                            <b style="color: #2c3e50;">Contenedor #${c.id_contenedor}</b>
+                    <div style="font-family: 'Poppins', sans-serif; min-width: 180px;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; gap: 10px;">
+                            <b style="color: #2c3e50;">${c.ubicacion}</b>
+                            ${badgeFisico}
+                        </div>
+                        <div style="margin-top: 4px;">
                             <span style="background: ${iconColor}; color: white; padding: 2px 6px; border-radius: 4px; font-size: 10px; font-weight: bold;">
                                 ${(c.prioridad || 'NORMAL').toUpperCase()}
                             </span>
+                            <span style="font-size: 10px; color: #666; margin-left: 5px;">${c.zona_nombre || ''}</span>
                         </div>
                         <hr style="margin: 8px 0; border: 0; border-top: 1px solid #eee;">
                         <div style="font-size: 12px; line-height: 1.6;">
-                            📍 <b>Ubicación:</b> ${c.ubicacion}<br>
                             🌡️ <b>Temp:</b> ${c.temperatura || '0'}°C<br>
                             💧 <b>Hum:</b> ${c.humedad || '0'}%<br>
-                            ⚖️ <b>Peso:</b> ${c.peso || '0'} kg<br>
+                            ⚖️ <b>Peso:</b> ${parseFloat(c.peso || 0).toFixed(1)} kg<br>
                             📅 <b>Lectura:</b> <span style="color: #7f8c8d; font-size: 10px;">${c.fecha_lectura || 'N/A'}</span>
                         </div>
                     </div>
@@ -99,32 +107,58 @@ const MapService = {
                 markerLayer.addLayer(marker);
             }
         });
+    },
+
+    selectZone(zona) {
+        document.getElementById('area-list').classList.add('collapsed');
+        document.getElementById('arrow-icon').classList.remove('rotated');
+        document.getElementById('zone-name').innerText = "📍 " + zona.nombre;
+        document.getElementById('card-title').innerText = zona.nombre;
+        
+        // El conteo de contenedores se podría filtrar dinámicamente si quisiéramos
+        document.getElementById('card-reg').innerText = "Prioridad de zona: " + (zona.prioridad_zona == 3 ? "Alta" : zona.prioridad_zona == 2 ? "Media" : "Baja");
+        document.getElementById('card-hr').style.borderColor = zona.color_hex;
+        
+        document.getElementById('info-card').classList.remove('hidden');
+        
+        // Si hay coordenadas de polígono, ir al centro del polígono
+        if (zona.coordenadas_poligono && zona.coordenadas_poligono.length > 0) {
+            const bounds = L.polygon(zona.coordenadas_poligono).getBounds();
+            map.flyToBounds(bounds, { padding: [50, 50] });
+        }
+    },
+
+    async simulateTruckMovement(coords) {
+        if (truckMarker) map.removeLayer(truckMarker);
+        
+        const truckIcon = L.divIcon({
+            className: 'truck-icon',
+            html: '<div style="background: #2c3e50; color: white; border-radius: 50%; width: 30px; height: 30px; display: flex; align-items: center; justify-content: center; box-shadow: 0 0 10px rgba(0,0,0,0.5); border: 2px solid white;"><i class="fa-solid fa-truck"></i></div>',
+            iconSize: [30, 30],
+            iconAnchor: [15, 15]
+        });
+
+        truckMarker = L.marker(coords[0], { icon: truckIcon }).addTo(map);
+        
+        let i = 0;
+        const move = setInterval(() => {
+            if (i >= coords.length - 1) {
+                clearInterval(move);
+                return;
+            }
+            truckMarker.setLatLng(coords[i]);
+            i++;
+        }, 100); // Movimiento rápido para la demo
     }
 };
 
-// 5. Funciones de UI Selector (Restaurado)
+// 5. Funciones de UI Selector
 function toggleAreaList() {
     const list = document.getElementById('area-list');
     const arrow = document.getElementById('arrow-icon');
     list.classList.toggle('collapsed');
     arrow.classList.toggle('rotated');
     document.getElementById('info-card').classList.add('hidden');
-}
-
-function selectArea(key) {
-    const data = areaSettings[key];
-    document.getElementById('area-list').classList.add('collapsed');
-    document.getElementById('arrow-icon').classList.remove('rotated');
-    document.getElementById('zone-name').innerText = "📍 " + data.title;
-    document.getElementById('card-title').innerText = data.title;
-    document.getElementById('card-cont').innerText = (key === 'sistemas') ? "4" : "5";
-    document.getElementById('card-reg').innerText = "Actualizado recientemente";
-    document.getElementById('card-hr').style.borderColor = data.colorArea;
-    const badge = document.getElementById('card-prior');
-    badge.innerText = data.prioridad;
-    badge.style.backgroundColor = data.colorBadge;
-    document.getElementById('info-card').classList.remove('hidden');
-    map.flyTo(data.coords, 19);
 }
 
 function resetUI() {
@@ -135,7 +169,5 @@ function resetUI() {
 
 // 6. Carga inicial
 document.addEventListener('DOMContentLoaded', () => {
-    if (typeof datosContenedores !== 'undefined') {
-        MapService.renderMarkers(datosContenedores);
-    }
+    MapService.init();
 });

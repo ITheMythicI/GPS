@@ -36,5 +36,15 @@ const API = {
 
     async obtenerContenedores() {
         return this.fetch('contenedores');
+    },
+
+    async simular() {
+        return this.fetch('simular');
+    },
+
+    async obtenerZonas() {
+        return this.fetch('zonas');
     }
 };
+
+

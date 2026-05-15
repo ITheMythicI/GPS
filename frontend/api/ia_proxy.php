@@ -18,7 +18,10 @@ header('Content-Type: application/json');
 
 // ── Validar acción ─────────────────────────────────────────────────────────────
 $action = $_GET['action'] ?? '';
-$acciones_permitidas = ['clasificar', 'rutas', 'reporte', 'contenedores'];
+$acciones_permitidas = ['clasificar', 'rutas', 'reporte', 'contenedores', 'simular', 'zonas', 'migrar'];
+
+
+
 
 if (!in_array($action, $acciones_permitidas)) {
     http_response_code(400);
@@ -31,10 +34,16 @@ $backend_base = 'http://10.0.2.8/ai';
 
 $url_backend = match($action) {
     'clasificar' => "$backend_base/clasificar.php",
-    'rutas'      => "$backend_base/rutas.php" . (isset($_GET['prioridad']) ? '?prioridad=' . urlencode($_GET['prioridad']) : ''),
+    'rutas'        => "$backend_base/rutas.php" . (isset($_GET['prioridad']) ? '?prioridad=' . urlencode($_GET['prioridad']) : ''),
     'reporte'      => "$backend_base/reporte.php",
     'contenedores' => "http://10.0.2.8/obtenerContenedores.php",
+    'simular'      => "$backend_base/simulador.php",
+    'zonas'        => "http://10.0.2.8/obtenerZonas.php",
+    'migrar'       => "$backend_base/run_migration.php",
 };
+
+
+
 
 // ── Reenviar la request ────────────────────────────────────────────────────────
 $ch = curl_init($url_backend);

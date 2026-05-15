@@ -193,19 +193,24 @@ $data_dona   = array_values($dona_map);
             <table>
                 <thead>
                     <tr>
-                        <th>Ubicación</th>
+                        <th>Ubicación / Zona</th>
                         <th>Temperatura</th>
                         <th>Humedad</th>
                         <th>Estado / Llenado</th>
                         <th>Prioridad IA</th>
                     </tr>
+
                 </thead>
                 <tbody id="tbody-contenedores">
                     <?php foreach ($datos_contenedores as $contenedor): ?>
                         <tr>
                             <td>
-                                <b><?= htmlspecialchars($contenedor['ubicacion'] ?? '') ?></b><br>
-                                <span style="font-size: 10px; color: #888;">ID: <?= $contenedor['id_contenedor'] ?></span>
+                                <b><?= htmlspecialchars($contenedor['ubicacion'] ?? '') ?></b>
+                                <?php if($contenedor['es_real']): ?>
+                                    <span style="font-size: 9px; background: #e8f5e9; color: #2e7d32; padding: 2px 6px; border-radius: 4px; font-weight: bold; margin-left: 5px;">FISICO</span>
+                                <?php endif; ?>
+                                <br>
+                                <span style="font-size: 11px; color: var(--primary); font-weight: 500;"><?= htmlspecialchars($contenedor['zona_nombre'] ?? 'Sin zona') ?></span>
                             </td>
                             <td><?= htmlspecialchars($contenedor['temperatura'] ?? '0') ?>°C</td>
                             <td><?= htmlspecialchars($contenedor['humedad'] ?? '0') ?>%</td>
@@ -228,6 +233,7 @@ $data_dona   = array_values($dona_map);
                             </td>
                         </tr>
                     <?php endforeach; ?>
+
                 </tbody>
             </table>
         </section>
@@ -236,10 +242,16 @@ $data_dona   = array_values($dona_map);
         <section class="panel-box" id="seccion-reporte-ia" style="margin-top: 24px;">
             <div class="panel-header" style="display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:12px;">
                 <h3 style="margin:0;">REPORTE INTELIGENTE (IA)</h3>
-                <button id="btn-generar-reporte" onclick="generarReporteIA()" style="background: linear-gradient(135deg, #6c3fc5, #3b82f6); color: #fff; border: none; border-radius: 8px; padding: 9px 18px; font-family: 'Poppins', sans-serif; font-size: 13px; font-weight: 600; cursor: pointer; box-shadow: 0 4px 14px rgba(108,63,197,0.35); transition: opacity 0.2s;">
-                    <i class="fa-solid fa-robot"></i>&nbsp; Generar Reporte IA
-                </button>
+                <div style="display:flex; gap:10px;">
+                    <button id="btn-simular" onclick="triggerSimulacion()" style="background: #f3f4f6; color: #374151; border: 1px solid #d1d5db; border-radius: 8px; padding: 9px 18px; font-family: 'Poppins', sans-serif; font-size: 13px; font-weight: 600; cursor: pointer; transition: all 0.2s;">
+                        <i class="fa-solid fa-play"></i>&nbsp; Simular Actividad
+                    </button>
+                    <button id="btn-generar-reporte" onclick="generarReporteIA()" style="background: linear-gradient(135deg, #6c3fc5, #3b82f6); color: #fff; border: none; border-radius: 8px; padding: 9px 18px; font-family: 'Poppins', sans-serif; font-size: 13px; font-weight: 600; cursor: pointer; box-shadow: 0 4px 14px rgba(108,63,197,0.35); transition: opacity 0.2s;">
+                        <i class="fa-solid fa-robot"></i>&nbsp; Generar Reporte IA
+                    </button>
+                </div>
             </div>
+
             <div id="reporte-ia-contenido" style="margin-top: 16px; padding: 16px 20px; background: #f9fafb; border-radius: 8px; border-left: 4px solid #6c3fc5; font-family: 'Poppins', sans-serif; font-size: 13.5px; line-height: 1.7; color: #2c3e50; white-space: pre-wrap; display: none;"></div>
             <div id="reporte-ia-resumen" style="display:none; margin-top:12px;">
                 <span style="font-size:12px; color:#888;">
@@ -264,7 +276,24 @@ $data_dona   = array_values($dona_map);
     <script src="js/graficas.js"></script>
 
     <script>
+    async function triggerSimulacion() {
+        const btn = document.getElementById('btn-simular');
+        btn.disabled = true;
+        btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i>&nbsp; Simulando...';
+        try {
+            await API.simular();
+            await API.clasificar(); // Actualizar prioridades tras simular
+            await actualizarDashboard();
+        } catch (err) {
+            console.error(err);
+        } finally {
+            btn.disabled = false;
+            btn.innerHTML = '<i class="fa-solid fa-play"></i>&nbsp; Simular Actividad';
+        }
+    }
+
     async function generarReporteIA() {
+
         const btn = document.getElementById('btn-generar-reporte');
         btn.disabled = true;
         btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i>&nbsp; Generando...';
@@ -313,20 +342,28 @@ $data_dona   = array_values($dona_map);
 
                 labelsB.push(c.ubicacion);
                 const dist = parseInt(c.distancia) || 0;
-                dataB.push(Math.min(100, Math.max(0, 100 - (dist * 2))));
+                // Cálculo de porcentaje basado en 60cm de altura total
+                const fillingPct = Math.min(100, Math.max(0, ((60 - dist) / 60) * 100));
+                dataB.push(fillingPct.toFixed(1));
                 
                 totalHum += parseFloat(c.humedad || 0);
                 totalTemp += parseFloat(c.temperatura || 0);
                 totalConf += parseFloat(c.confianza || 0);
 
+                const badgeFisico = c.es_real == 1 ? '<span style="font-size: 9px; background: #e8f5e9; color: #2e7d32; padding: 2px 6px; border-radius: 4px; font-weight: bold; margin-left: 5px;">FISICO</span>' : '';
+
                 html += `<tr>
-                    <td><b>${c.ubicacion}</b><br><span style="font-size:10px;color:#888;">ID: ${c.id_contenedor}</span></td>
+                    <td>
+                        <b>${c.ubicacion}</b> ${badgeFisico}<br>
+                        <span style="font-size:11px; color:var(--primary); font-weight:500;">${c.zona_nombre || 'Sin zona'}</span>
+                    </td>
                     <td>${c.temperatura || '0'}°C</td>
                     <td>${c.humedad || '0'}%</td>
                     <td><span class="status st-${(c.estado || '').toLowerCase()}">${c.estado || 'Sin datos'}</span></td>
                     <td><span class="status ${prioClass}">${prio.toUpperCase()}</span></td>
                 </tr>`;
             });
+
             tbody.innerHTML = html;
             Charts.update(labelsB, dataB, ['ALTA', 'MEDIA', 'NORMAL'], [donaMap['alta'], donaMap['media'], donaMap['normal']]);
             
