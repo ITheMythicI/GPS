@@ -9,8 +9,11 @@ try {
 
     $consulta = obtener_tabla();
 
-    $datos = [];
+    if (!$consulta) {
+        throw new Exception("Error en la consulta SQL: " . mysqli_error($db));
+    }
 
+    $datos = [];
     while ($fila = mysqli_fetch_assoc($consulta)) {
         $datos[] = $fila;
     }
@@ -19,6 +22,7 @@ try {
         "status" => "ok",
         "data" => $datos
     ]);
+
 
 } catch (Exception $e) {
 

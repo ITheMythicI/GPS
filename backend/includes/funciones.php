@@ -12,8 +12,9 @@ function obtener_tabla(){
             SELECT 
                 c.*, 
                 z.nombre as zona_nombre, z.color_hex as zona_color,
-                l.temperatura, l.humedad, l.peso, l.distancia, l.fecha_lectura,
+                l.tempCelsius as temperatura, l.humedad, l.pesoKg as peso, l.distanciaBoteTapa as distancia, l.fecha_hora as fecha_lectura,
                 r.prioridad, r.score as confianza, r.fecha_clasificacion as fecha_analisis
+
             FROM Contenedores c
             LEFT JOIN Zonas z ON c.id_zona = z.id_zona
             LEFT JOIN (
