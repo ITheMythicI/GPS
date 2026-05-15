@@ -18,7 +18,8 @@ header('Content-Type: application/json');
 
 // ── Validar acción ─────────────────────────────────────────────────────────────
 $action = $_GET['action'] ?? '';
-$acciones_permitidas = ['clasificar', 'rutas', 'reporte', 'contenedores', 'simular', 'zonas', 'migrar', 'test_db'];
+$acciones_permitidas = ['clasificar', 'rutas', 'reporte', 'contenedores', 'simular', 'zonas', 'migrar', 'test_db', 'normalizar'];
+
 
 
 
@@ -42,7 +43,9 @@ $url_backend = match($action) {
     'zonas'        => "http://10.0.2.8/obtenerZonas.php",
     'migrar'       => "$backend_base/run_migration.php",
     'test_db'      => "$backend_base/test_db.php",
+    'normalizar'   => "$backend_base/normalizar_sensores.php",
 };
+
 
 
 
