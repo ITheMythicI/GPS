@@ -25,9 +25,14 @@ while ($c = mysqli_fetch_assoc($resultado)) {
     // Obtenemos la última lectura para que el crecimiento sea incremental
     $query_last = "SELECT distanciaBoteTapa FROM LecturasSensores WHERE id_sensor = $id_contenedor ORDER BY fecha_hora DESC LIMIT 1";
     $res_last = mysqli_query($db, $query_last);
-    $last_dist = 60.0;
+    
     if ($row = mysqli_fetch_assoc($res_last)) {
         $last_dist = $row['distanciaBoteTapa'];
+        $tasa_llenado = 1.2; // Crecimiento más rápido para la demo
+    } else {
+        // PRIMERA VEZ: Iniciar con un valor aleatorio entre 10 y 55 cm
+        $last_dist = rand(10, 55);
+        $tasa_llenado = 0;
     }
 
     // Tasa de llenado base (cm que baja la tapa por lectura)

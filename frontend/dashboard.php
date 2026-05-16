@@ -352,6 +352,11 @@ $data_dona   = array_values($dona_map);
 
                 const badgeFisico = c.es_real == 1 ? '<span style="font-size: 9px; background: #e8f5e9; color: #2e7d32; padding: 2px 6px; border-radius: 4px; font-weight: bold; margin-left: 5px;">FISICO</span>' : '';
 
+                // Determinar estado dinámico basado en distancia
+                let statusText = 'Vacío', statusClass = 'st-vacio';
+                if (dist < 15) { statusText = 'Lleno'; statusClass = 'st-lleno'; }
+                else if (dist < 40) { statusText = 'Medio'; statusClass = 'st-medio'; }
+
                 html += `<tr>
                     <td>
                         <b>${c.ubicacion}</b> ${badgeFisico}<br>
@@ -359,9 +364,10 @@ $data_dona   = array_values($dona_map);
                     </td>
                     <td>${c.temperatura || '0'}°C</td>
                     <td>${c.humedad || '0'}%</td>
-                    <td><span class="status st-${(c.estado || '').toLowerCase()}">${c.estado || 'Sin datos'}</span></td>
+                    <td><span class="status ${statusClass}">${statusText}</span></td>
                     <td><span class="status ${prioClass}">${prio.toUpperCase()}</span></td>
                 </tr>`;
+
             });
 
             tbody.innerHTML = html;
