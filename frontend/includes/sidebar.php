@@ -70,4 +70,11 @@
             <span><i class="fa-solid fa-right-from-bracket"></i> Cerrar Sesión</span>
         </a>
     </div>
+    <script>
+        // Aplicar modo oscuro si está activo en la sesión
+        if (<?php echo $_SESSION['dark_mode'] ?? 0; ?> == 1) {
+            document.body.classList.add('dark-theme');
+        }
+    </script>
 </aside>
+

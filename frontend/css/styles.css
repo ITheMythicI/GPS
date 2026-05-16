@@ -18,37 +18,47 @@ body.index{
 }
 
 :root{
+    --primary:#217346;
+    --primary-dark:#107c10;
+    --accent-soft:#e2efda;
+    --bg-neutral:#f3f2f1;
+    --border:#d9d9d9;
+    --text-main:#333;
+    --text-sub:#a5a5a5;
+    --white:#ffffff;
+    --shadow:0 1px 3px rgba(0,0,0,0.1);
+    
+    --bg-panel: #ffffff;
+    --bg-input: #ffffff;
+    --bg-header: #f8f9fa;
 
---primary:#217346;
---primary-dark:#107c10;
+    --st-completado:#22863a;
+    --bg-completado:#dcffe4;
+    --st-pendiente:#b08800;
+    --bg-pendiente:#fff5b1;
+    --st-cancelado:#cf222e;
+    --bg-cancelado:#ffebe9;
 
---accent-soft:#e2efda;
---bg-neutral:#f3f2f1;
+    --st-cotizado:#57606a;
+    --bg-cotizado:#f6f8fa;
 
---border:#d9d9d9;
-
---text-main:#333;
---text-sub:#a5a5a5;
-
---white:#ffffff;
-
---shadow:0 1px 3px rgba(0,0,0,0.1);
-
---st-completado:#22863a;
---bg-completado:#dcffe4;
-
---st-pendiente:#b08800;
---bg-pendiente:#fff5b1;
-
---st-cancelado:#cf222e;
---bg-cancelado:#ffebe9;
-
---st-cotizado:#57606a;
---bg-cotizado:#f6f8fa;
-
---st-nuevo:#0969da;
---bg-nuevo:#ddf4ff;
+    --st-nuevo:#0969da;
+    --bg-nuevo:#ddf4ff;
 }
+
+body.dark-theme {
+    --bg-neutral: #121212;
+    --white: #1e1e1e;
+    --bg-panel: #252525;
+    --bg-input: #2d2d2d;
+    --border: #383838;
+    --text-main: #f0f0f0;
+    --text-sub: #aaaaaa;
+    --accent-soft: #2d3e33;
+    --shadow: 0 4px 12px rgba(0,0,0,0.3);
+    --bg-header: #1e1e1e;
+}
+
 
 /* ======================
 RESET
@@ -653,19 +663,14 @@ border-collapse:collapse;
 }
 
 th{
-
-background:#f8f9fa;
-
-padding:15px 20px;
-
-text-align:left;
-
-font-size:12px;
-
-color:var(--text-sub);
-
-text-transform:uppercase;
+    background: var(--bg-header);
+    padding:15px 20px;
+    text-align:left;
+    font-size:12px;
+    color:var(--text-sub);
+    text-transform:uppercase;
 }
+
 
 td{
 
@@ -719,11 +724,12 @@ gap:25px;
 }
 
 .form-section{
-border:1px solid var(--border);
-border-radius:6px;
-padding:20px;
-background:#fafafa;
+    border:1px solid var(--border);
+    border-radius:6px;
+    padding:20px;
+    background: var(--bg-panel);
 }
+
 
 .form-section h3{
 font-size:15px;
