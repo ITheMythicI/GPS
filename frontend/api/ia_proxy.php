@@ -18,7 +18,8 @@ header('Content-Type: application/json');
 
 // ── Validar acción ─────────────────────────────────────────────────────────────
 $action = $_GET['action'] ?? '';
-$acciones_permitidas = ['clasificar', 'rutas', 'reporte', 'contenedores', 'simular', 'zonas', 'migrar', 'test_db', 'normalizar', 'guardar_zona', 'guardar_contenedor', 'actualizar_nombres'];
+$acciones_permitidas = ['clasificar', 'rutas', 'reporte', 'contenedores', 'simular', 'zonas', 'migrar', 'test_db', 'normalizar', 'guardar_zona', 'guardar_contenedor', 'actualizar_nombres', 'reparar_zonas'];
+
 
 
 
@@ -49,7 +50,9 @@ $url_backend = match($action) {
     'guardar_zona' => "$backend_base/guardar_zona.php",
     'guardar_contenedor' => "$backend_base/guardar_contenedor.php",
     'actualizar_nombres' => "$backend_base/update_zones.php",
+    'reparar_zonas'      => "$backend_base/reparar_zonas.php",
 };
+
 
 
 
