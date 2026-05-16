@@ -115,8 +115,32 @@ const MapService = {
         document.getElementById('zone-name').innerText = "📍 " + zona.nombre;
         document.getElementById('card-title').innerText = zona.nombre;
         
-        // El conteo de contenedores se podría filtrar dinámicamente si quisiéramos
-        document.getElementById('card-reg').innerText = "Prioridad de zona: " + (zona.prioridad_zona == 3 ? "Alta" : zona.prioridad_zona == 2 ? "Media" : "Baja");
+        // Filtrar contenedores de esta zona para el conteo dinámico
+        // Nota: datosContenedores viene de dashboardMapa.php
+        const botesEnZona = (typeof datosContenedores !== 'undefined') 
+            ? datosContenedores.filter(c => c.id_zona == zona.id_zona)
+            : [];
+        
+        const count = botesEnZona.length;
+        document.getElementById('card-cont').innerText = count;
+        
+        // Determinar prioridad máxima en la zona
+        let priorStr = "Baja";
+        let priorClass = "st-vacio"; // Azul/Gris
+        
+        if (botesEnZona.some(b => (b.prioridad || '').toLowerCase() === 'alta')) {
+            priorStr = "Alta";
+            priorClass = "st-lleno"; // Rojo
+        } else if (botesEnZona.some(b => (b.prioridad || '').toLowerCase() === 'media')) {
+            priorStr = "Media";
+            priorClass = "st-medio"; // Naranja
+        }
+
+        const priorEl = document.getElementById('card-prior');
+        priorEl.innerText = priorStr;
+        priorEl.className = "priority-badge " + priorClass;
+        
+        document.getElementById('card-reg').innerText = "Actualizado recientemente";
         document.getElementById('card-hr').style.borderColor = zona.color_hex;
         
         document.getElementById('info-card').classList.remove('hidden');
@@ -127,6 +151,7 @@ const MapService = {
             map.flyToBounds(bounds, { padding: [50, 50] });
         }
     },
+
 
     async simulateTruckMovement(coords) {
         if (truckMarker) map.removeLayer(truckMarker);

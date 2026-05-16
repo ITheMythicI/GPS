@@ -26,7 +26,14 @@
     <div class="nav-section">ADMINISTRACIÓN</div>
 
     <div class="menu-item">
+        <a href="admin.php" class="menu-btn <?php echo basename($_SERVER['PHP_SELF']) == 'admin.php' ? 'active' : ''; ?>">
+            <span><i class="fa-solid fa-screwdriver-wrench"></i> Gestión de Zonas</span>
+        </a>
+    </div>
+
+    <div class="menu-item">
         <input type="checkbox" id="m-bit" class="menu-check">
+
         <label for="m-bit" class="menu-btn">
             <span><i class="fa-solid fa-book"></i> Registros</span>
             <i class="fa-solid fa-chevron-right chevron"></i>
