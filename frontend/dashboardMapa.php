@@ -97,7 +97,32 @@ $datos_contenedores = $data['data'];
             display: none;
         }
         #ruta-info strong { color: #6c3fc5; }
+
+        /* ── Modal Reporte ── */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 3000;
+            left: 0; top: 0; width: 100%; height: 100%;
+            background-color: rgba(0,0,0,0.5);
+            align-items: center; justify-content: center;
+        }
+        .modal-content {
+            background-color: white;
+            padding: 24px;
+            border-radius: 12px;
+            width: 90%; max-width: 450px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+        }
+        .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+        .modal-header h3 { margin: 0; color: var(--text-main); }
+        .close-modal { cursor: pointer; font-size: 20px; color: var(--text-sub); }
+        .form-report .form-group { margin-bottom: 15px; }
+        .form-report label { display: block; font-size: 13px; font-weight: 600; margin-bottom: 6px; }
+        .form-report input, .form-report select, .form-report textarea { width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 8px; font-family: inherit; }
+        .btn-send-report { width: 100%; background: var(--primary); color: white; border: none; padding: 12px; border-radius: 8px; font-weight: 600; cursor: pointer; margin-top: 10px; }
     </style>
+
 </head>
 
 <body>
@@ -147,7 +172,51 @@ $datos_contenedores = $data['data'];
             </div>
 
         </div>
+
+        <!-- MODAL REPORTE -->
+        <div id="modalReporte" class="modal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3>Reportar Incidencia</h3>
+                    <span class="close-modal" onclick="cerrarModalReporte()">&times;</span>
+                </div>
+                <form id="formIncidencia" class="form-report">
+                    <input type="hidden" id="rep-id-contenedor">
+                    <p style="font-size: 13px; margin-bottom: 15px; color: #666;">Contenedor: <strong id="rep-nombre-contenedor"></strong></p>
+                    
+                    <div class="form-group">
+                        <label>Tipo de Problema</label>
+                        <select id="rep-tipo">
+                            <option value="Exceso de Desechos">Exceso de Desechos</option>
+                            <option value="Vandalismo">Vandalismo / Daño</option>
+                            <option value="Mal Olor">Mal Olor / Higiene</option>
+                            <option value="Sensor Fallido">Falla en Sensor</option>
+                            <option value="Otro">Otro</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Descripción</label>
+                        <textarea id="rep-desc" rows="3" placeholder="Detalla lo sucedido..."></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Evidencia Fotográfica</label>
+                        <input type="file" id="rep-foto" accept="image/*">
+                    </div>
+
+                    <div id="geo-status" style="font-size: 11px; color: #6c3fc5; margin-bottom: 10px; display: none;">
+                        <i class="fa-solid fa-location-crosshairs"></i> Ubicación obtenida correctamente.
+                    </div>
+
+                    <button type="button" class="btn-send-report" id="btnEnviarReporte" onclick="enviarReporte()">
+                        Enviar Reporte
+                    </button>
+                </form>
+            </div>
+        </div>
     </main>
+
 
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script>
@@ -260,8 +329,75 @@ $datos_contenedores = $data['data'];
         } catch (e) { console.error('Error actualizando mapa:', e); }
     }
 
-    setInterval(actualizarMapaEnVivo, 30000);
+    async setInterval(actualizarMapaEnVivo, 30000);
     actualizarMapaEnVivo();
+
+    // ── Lógica de Reportes ──
+    let currentPos = { lat: null, lng: null };
+
+    function abrirModalReporte(id, nombre) {
+        document.getElementById('rep-id-contenedor').value = id;
+        document.getElementById('rep-nombre-contenedor').innerText = nombre;
+        document.getElementById('modalReporte').style.display = 'flex';
+        
+        // Intentar obtener ubicación del usuario
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition((pos) => {
+                currentPos.lat = pos.coords.latitude;
+                currentPos.lng = pos.coords.longitude;
+                document.getElementById('geo-status').style.display = 'block';
+            }, (err) => {
+                console.warn("Geolocation error:", err);
+            });
+        }
+    }
+
+    function cerrarModalReporte() {
+        document.getElementById('modalReporte').style.display = 'none';
+        document.getElementById('formIncidencia').reset();
+        document.getElementById('geo-status').style.display = 'none';
+        currentPos = { lat: null, lng: null };
+    }
+
+    async function enviarReporte() {
+        const btn = document.getElementById('btnEnviarReporte');
+        const idCont = document.getElementById('rep-id-contenedor').value;
+        const tipo = document.getElementById('rep-tipo').value;
+        const desc = document.getElementById('rep-desc').value;
+        const foto = document.getElementById('rep-foto').files[0];
+
+        if (!desc) return alert("Por favor describe el problema.");
+
+        btn.disabled = true;
+        btn.innerText = "Enviando...";
+
+        const fd = new FormData();
+        fd.append('id_contenedor', idCont);
+        fd.append('id_usuario', '<?= $_SESSION['id_usuario'] ?>');
+        fd.append('tipo', tipo);
+        fd.append('descripcion', desc);
+        if (foto) fd.append('foto', foto);
+        if (currentPos.lat) {
+            fd.append('lat', currentPos.lat);
+            fd.append('lng', currentPos.lng);
+        }
+
+        try {
+            const res = await API.enviarReporteIncidencia(fd);
+            if (res.status === 'ok') {
+                alert("¡Gracias! El reporte ha sido enviado a los administradores.");
+                cerrarModalReporte();
+            } else {
+                alert("Error al enviar: " + res.message);
+            }
+        } catch (e) {
+            alert("Error de conexión.");
+        } finally {
+            btn.disabled = false;
+            btn.innerText = "Enviar Reporte";
+        }
+    }
     </script>
+
 </body>
 </html>

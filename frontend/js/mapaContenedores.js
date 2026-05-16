@@ -102,6 +102,11 @@ const MapService = {
                             ⚖️ <b>Peso:</b> ${parseFloat(c.peso || 0).toFixed(1)} kg<br>
                             📅 <b>Lectura:</b> <span style="color: #7f8c8d; font-size: 10px;">${c.fecha_lectura || 'N/A'}</span>
                         </div>
+                        <button onclick="abrirModalReporte(${c.id_contenedor}, '${c.ubicacion}')" style="width:100%; margin-top:10px; background:var(--primary); color:white; border:none; border-radius:4px; padding:6px; font-size:11px; cursor:pointer; font-weight:600;">
+                            <i class="fa-solid fa-triangle-exclamation"></i> Reportar Problema
+                        </button>
+                    </div>
+
                     </div>
                 `);
                 markerLayer.addLayer(marker);

@@ -60,8 +60,13 @@ const API = {
 
     async borrarContenedor(id) {
         return this.fetch('borrar_contenedor', { id_contenedor: id });
+    },
+
+    async enviarReporteIncidencia(formData) {
+        return this.fetch('crear_reporte', formData);
     }
 };
+
 
 
 
