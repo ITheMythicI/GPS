@@ -46,10 +46,14 @@ $rol = $_SESSION['rol'];
                 <div class="form-group">
                     <label>Foto de Perfil</label>
                     <div class="profile-preview">
-                        <img src="img/default-avatar.png" id="preview-foto" class="profile-img">
+                        <div id="preview-container" class="profile-img" style="display:flex; align-items:center; justify-content:center; background:#eee; font-size:30px; color:#aaa; overflow:hidden;">
+                            <i class="fa-solid fa-user" id="preview-icon"></i>
+                            <img src="" id="preview-foto" style="display:none; width:100%; height:100%; object-fit:cover;">
+                        </div>
                         <input type="file" id="input-foto" accept="image/*" style="flex:1;">
                     </div>
                 </div>
+
                 <div class="form-group">
                     <label class="toggle-switch">
                         <span class="switch">
@@ -105,8 +109,13 @@ $rol = $_SESSION['rol'];
             if (res.status === 'ok') {
                 // Info Usuario
                 if (res.usuario.foto_perfil) {
-                    document.getElementById('preview-foto').src = 'http://129.146.115.127/' + res.usuario.foto_perfil;
+                    const img = document.getElementById('preview-foto');
+                    const icon = document.getElementById('preview-icon');
+                    img.src = 'http://129.146.115.127/' + res.usuario.foto_perfil;
+                    img.style.display = 'block';
+                    icon.style.display = 'none';
                 }
+
                 document.getElementById('toggle-dark').checked = res.usuario.config_oscuro == 1;
 
                 // Info Sistema (Si es Admin)

@@ -38,10 +38,8 @@ body.index{
     --bg-pendiente:#fff5b1;
     --st-cancelado:#cf222e;
     --bg-cancelado:#ffebe9;
-
     --st-cotizado:#57606a;
     --bg-cotizado:#f6f8fa;
-
     --st-nuevo:#0969da;
     --bg-nuevo:#ddf4ff;
 }
@@ -58,6 +56,7 @@ body.dark-theme {
     --shadow: 0 4px 12px rgba(0,0,0,0.3);
     --bg-header: #1e1e1e;
 }
+
 
 
 /* ======================
