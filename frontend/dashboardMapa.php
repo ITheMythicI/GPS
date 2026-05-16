@@ -311,6 +311,71 @@ $datos_contenedores = $data['data'];
 
     <!-- ── Lógica de Notificaciones y Actualización en Vivo ── -->
     <script>
+    // ── Lógica de Reportes (Global para que el mapa lo vea) ──
+    window.currentPos = { lat: null, lng: null };
+
+    window.abrirModalReporte = function(id, nombre) {
+        document.getElementById('rep-id-contenedor').value = id;
+        document.getElementById('rep-nombre-contenedor').innerText = nombre;
+        document.getElementById('modalReporte').style.display = 'flex';
+        
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition((pos) => {
+                window.currentPos.lat = pos.coords.latitude;
+                window.currentPos.lng = pos.coords.longitude;
+                document.getElementById('geo-status').style.display = 'block';
+            }, (err) => {
+                console.warn("Geolocation error:", err);
+            });
+        }
+    };
+
+    window.cerrarModalReporte = function() {
+        document.getElementById('modalReporte').style.display = 'none';
+        document.getElementById('formIncidencia').reset();
+        document.getElementById('geo-status').style.display = 'none';
+        window.currentPos = { lat: null, lng: null };
+    };
+
+    window.enviarReporte = async function() {
+        const btn = document.getElementById('btnEnviarReporte');
+        const idCont = document.getElementById('rep-id-contenedor').value;
+        const tipo = document.getElementById('rep-tipo').value;
+        const desc = document.getElementById('rep-desc').value;
+        const foto = document.getElementById('rep-foto').files[0];
+
+        if (!desc) return alert("Por favor describe el problema.");
+
+        btn.disabled = true;
+        btn.innerText = "Enviando...";
+
+        const fd = new FormData();
+        fd.append('id_contenedor', idCont);
+        fd.append('id_usuario', '<?= $_SESSION['id_usuario'] ?>');
+        fd.append('tipo', tipo);
+        fd.append('descripcion', desc);
+        if (foto) fd.append('foto', foto);
+        if (window.currentPos.lat) {
+            fd.append('lat', window.currentPos.lat);
+            fd.append('lng', window.currentPos.lng);
+        }
+
+        try {
+            const res = await API.enviarReporteIncidencia(fd);
+            if (res.status === 'ok') {
+                alert("¡Gracias! El reporte ha sido enviado a los administradores.");
+                window.cerrarModalReporte();
+            } else {
+                alert("Error al enviar: " + res.message);
+            }
+        } catch (e) {
+            alert("Error de conexión.");
+        } finally {
+            btn.disabled = false;
+            btn.innerText = "Enviar Reporte";
+        }
+    };
+
     async function actualizarMapaEnVivo() {
         try {
             // Actualizar Alertas (Campana)
@@ -329,75 +394,12 @@ $datos_contenedores = $data['data'];
         } catch (e) { console.error('Error actualizando mapa:', e); }
     }
 
-    async setInterval(actualizarMapaEnVivo, 30000);
+
+    // Iniciar actualizaciones
+    setInterval(actualizarMapaEnVivo, 30000);
     actualizarMapaEnVivo();
-
-    // ── Lógica de Reportes ──
-    let currentPos = { lat: null, lng: null };
-
-    function abrirModalReporte(id, nombre) {
-        document.getElementById('rep-id-contenedor').value = id;
-        document.getElementById('rep-nombre-contenedor').innerText = nombre;
-        document.getElementById('modalReporte').style.display = 'flex';
-        
-        // Intentar obtener ubicación del usuario
-        if (navigator.geolocation) {
-            navigator.geolocation.getCurrentPosition((pos) => {
-                currentPos.lat = pos.coords.latitude;
-                currentPos.lng = pos.coords.longitude;
-                document.getElementById('geo-status').style.display = 'block';
-            }, (err) => {
-                console.warn("Geolocation error:", err);
-            });
-        }
-    }
-
-    function cerrarModalReporte() {
-        document.getElementById('modalReporte').style.display = 'none';
-        document.getElementById('formIncidencia').reset();
-        document.getElementById('geo-status').style.display = 'none';
-        currentPos = { lat: null, lng: null };
-    }
-
-    async function enviarReporte() {
-        const btn = document.getElementById('btnEnviarReporte');
-        const idCont = document.getElementById('rep-id-contenedor').value;
-        const tipo = document.getElementById('rep-tipo').value;
-        const desc = document.getElementById('rep-desc').value;
-        const foto = document.getElementById('rep-foto').files[0];
-
-        if (!desc) return alert("Por favor describe el problema.");
-
-        btn.disabled = true;
-        btn.innerText = "Enviando...";
-
-        const fd = new FormData();
-        fd.append('id_contenedor', idCont);
-        fd.append('id_usuario', '<?= $_SESSION['id_usuario'] ?>');
-        fd.append('tipo', tipo);
-        fd.append('descripcion', desc);
-        if (foto) fd.append('foto', foto);
-        if (currentPos.lat) {
-            fd.append('lat', currentPos.lat);
-            fd.append('lng', currentPos.lng);
-        }
-
-        try {
-            const res = await API.enviarReporteIncidencia(fd);
-            if (res.status === 'ok') {
-                alert("¡Gracias! El reporte ha sido enviado a los administradores.");
-                cerrarModalReporte();
-            } else {
-                alert("Error al enviar: " + res.message);
-            }
-        } catch (e) {
-            alert("Error de conexión.");
-        } finally {
-            btn.disabled = false;
-            btn.innerText = "Enviar Reporte";
-        }
-    }
     </script>
+
 
 </body>
 </html>
