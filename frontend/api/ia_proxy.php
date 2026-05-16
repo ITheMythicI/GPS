@@ -18,7 +18,7 @@ header('Content-Type: application/json');
 
 // ── Validar acción ─────────────────────────────────────────────────────────────
 $action = $_GET['action'] ?? '';
-$acciones_permitidas = ['clasificar', 'rutas', 'reporte', 'contenedores', 'simular', 'zonas', 'migrar', 'test_db', 'normalizar', 'guardar_zona', 'guardar_contenedor', 'actualizar_nombres', 'reparar_zonas', 'borrar_zona', 'borrar_contenedor', 'crear_reporte', 'migrar_reportes', 'obtener_reportes', 'obtener_actividad', 'migrar_actividad', 'registrar_actividad', 'obtener_ajustes', 'guardar_ajustes', 'subir_foto_perfil', 'migrar_ajustes'];
+$acciones_permitidas = ['clasificar', 'rutas', 'reporte', 'contenedores', 'simular', 'zonas', 'migrar', 'test_db', 'normalizar', 'guardar_zona', 'guardar_contenedor', 'actualizar_nombres', 'reparar_zonas', 'borrar_zona', 'borrar_contenedor', 'crear_reporte', 'migrar_reportes', 'obtener_reportes', 'obtener_actividad', 'migrar_actividad', 'registrar_actividad', 'obtener_ajustes', 'guardar_ajustes', 'subir_foto_perfil', 'migrar_ajustes', 'imagen'];
 
 
 
@@ -71,11 +71,48 @@ $url_backend = match($action) {
     'migrar_ajustes'     => "$backend_base/migration_ajustes.php",
 };
 
+if ($action === 'imagen') {
+    if (!isset($_GET['path'])) {
+        http_response_code(400);
+        exit;
+    }
+    $path = $_GET['path'];
+    $segments = explode('/', ltrim($path, '/'));
+    $encoded_segments = array_map('rawurlencode', $segments);
+    $url = 'http://10.0.2.8/' . implode('/', $encoded_segments);
 
+    $ch = curl_init($url);
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    curl_setopt($ch, CURLOPT_HEADER, false);
+    curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
+    $response = curl_exec($ch);
+    $http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+    $contentType = curl_getinfo($ch, CURLINFO_CONTENT_TYPE);
+    curl_close($ch);
 
+    if ($response !== false && $http_code == 200) {
+        header('Content-Type: ' . $contentType);
+        echo $response;
+    } else {
+        $url2 = 'http://10.0.2.8/ai/' . implode('/', $encoded_segments);
+        $ch2 = curl_init($url2);
+        curl_setopt($ch2, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch2, CURLOPT_HEADER, false);
+        $response2 = curl_exec($ch2);
+        $http_code2 = curl_getinfo($ch2, CURLINFO_HTTP_CODE);
+        $contentType2 = curl_getinfo($ch2, CURLINFO_CONTENT_TYPE);
+        curl_close($ch2);
 
-
-session_start();
+        if ($response2 !== false && $http_code2 == 200) {
+            header('Content-Type: ' . $contentType2);
+            echo $response2;
+        } else {
+            http_response_code(404);
+            echo 'Not found: ' . $url;
+        }
+    }
+    exit;
+}session_start();
 $id_usuario_sesion = $_SESSION['id_usuario'] ?? 0;
 
 // Añadir parámetros GET adicionales (como id_contenedor, y id_usuario de sesión)

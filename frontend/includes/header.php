@@ -24,7 +24,7 @@
 
         <div class="user-profile-circle" onclick="toggleUserMenu(event)">
             <?php if (isset($_SESSION['foto_perfil']) && !empty($_SESSION['foto_perfil'])): ?>
-                <img src="api/image_proxy.php?path=<?php echo urlencode($_SESSION['foto_perfil']); ?>" 
+                <img src="api/ia_proxy.php?action=imagen&path=<?php echo urlencode($_SESSION['foto_perfil']); ?>" 
                      onerror="this.style.display='none'; this.nextElementSibling.style.display='block';" 
                      style="width:100%; height:100%; border-radius:50%; object-fit:cover;">
                 <i class="fa-solid fa-user" style="display:none;"></i>

@@ -157,7 +157,7 @@ $id_reporte = $_GET['id'] ?? 0;
                         // Foto
                         const fotoContainer = document.getElementById('foto-container');
                         if (rep.foto_url) {
-                            fotoContainer.innerHTML = `<img src="api/image_proxy.php?path=${encodeURIComponent(rep.foto_url)}" class="incidencia-foto" alt="Evidencia">`;
+                            fotoContainer.innerHTML = `<img src="api/ia_proxy.php?action=imagen&path=${encodeURIComponent(rep.foto_url)}" class="incidencia-foto" alt="Evidencia">`;
                         } else {
                             fotoContainer.innerHTML = `<p style="color:var(--text-sub);"><i class="fa-solid fa-camera-slash fa-2x"></i><br><br>No se adjuntó evidencia fotográfica</p>`;
                         }

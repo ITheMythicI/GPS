@@ -111,7 +111,7 @@ $rol = $_SESSION['rol'];
                 if (res.usuario.foto_perfil) {
                     const img = document.getElementById('preview-foto');
                     const icon = document.getElementById('preview-icon');
-                    img.src = 'api/image_proxy.php?path=' + encodeURIComponent(res.usuario.foto_perfil);
+                    img.src = 'api/ia_proxy.php?action=imagen&path=' + encodeURIComponent(res.usuario.foto_perfil);
                     img.style.display = 'block';
                     icon.style.display = 'none';
                 }

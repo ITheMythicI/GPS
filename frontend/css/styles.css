@@ -972,15 +972,15 @@ MAPA
 }
 
 /* Estilo del Popup personalizado */
-.custom-popup .leaflet-popup-content-wrapper {
-    background: var(--bg-panel);
-    color: var(--text-main);
+.leaflet-popup-content-wrapper {
+    background: var(--bg-panel) !important;
+    color: var(--text-main) !important;
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     border-radius: 8px;
 }
 
-.custom-popup .leaflet-popup-tip {
-    background: var(--bg-panel);
+.leaflet-popup-tip {
+    background: var(--bg-panel) !important;
 }
 
 /* Marcadores estilo "Pin" personalizados */

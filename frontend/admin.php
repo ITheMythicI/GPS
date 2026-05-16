@@ -21,6 +21,8 @@ if (!isset($_SESSION['id_usuario'])) {
         input, select, textarea { width: 100%; padding: 8px; border: 1px solid var(--border); border-radius: 6px; font-family: inherit; background: var(--bg-input); color: var(--text-main); }
         .btn-save { background: var(--primary); color: white; border: none; padding: 10px 20px; border-radius: 6px; cursor: pointer; font-weight: 600; }
         .btn-save:hover { opacity: 0.9; }
+        .btn-cancel { background: #eee; color: #333; border: 1px solid var(--border); padding: 10px 20px; border-radius: 6px; cursor: pointer; font-weight: 600; margin-left: 10px; }
+        body.dark-theme .btn-cancel { background: #333; color: #eee; }
     </style>
 </head>
 <body class="<?= isset($_SESSION['dark_mode']) && $_SESSION['dark_mode'] ? 'dark-theme' : '' ?>">
@@ -36,7 +38,7 @@ if (!isset($_SESSION['id_usuario'])) {
         <div class="admin-grid">
             <!-- Gestión de Zonas -->
             <section class="panel-box">
-                <div class="panel-header"><h3><i class="fa-solid fa-map-location-dot"></i> Nueva Zona</h3></div>
+                <div class="panel-header" id="header-zona"><h3><i class="fa-solid fa-map-location-dot"></i> Nueva Zona</h3></div>
                 <form id="form-zona" style="padding: 20px;">
                     <input type="hidden" id="z-id" value="">
                     <div class="form-group">
@@ -60,12 +62,13 @@ if (!isset($_SESSION['id_usuario'])) {
                         <textarea id="z-coords" rows="4" placeholder="[[lat, lng], [lat, lng]...]"></textarea>
                     </div>
                     <button type="button" class="btn-save" onclick="guardarZona()">Crear Zona</button>
+                    <button type="button" class="btn-cancel" onclick="limpiarFormZona()" style="display:none;" id="btn-cancel-zona">Cancelar / Limpiar</button>
                 </form>
             </section>
 
             <!-- Gestión de Contenedores -->
             <section class="panel-box">
-                <div class="panel-header"><h3><i class="fa-solid fa-box"></i> Nuevo Contenedor</h3></div>
+                <div class="panel-header" id="header-contenedor"><h3><i class="fa-solid fa-box"></i> Nuevo Contenedor</h3></div>
                 <form id="form-contenedor" style="padding: 20px;">
                     <input type="hidden" id="c-id" value="">
                     <div class="form-group">
@@ -96,6 +99,7 @@ if (!isset($_SESSION['id_usuario'])) {
                         </select>
                     </div>
                     <button type="button" class="btn-save" onclick="guardarContenedor()">Guardar Contenedor</button>
+                    <button type="button" class="btn-cancel" onclick="limpiarFormContenedor()" style="display:none;" id="btn-cancel-contenedor">Cancelar / Limpiar</button>
                 </form>
             </section>
         </div>
@@ -172,6 +176,17 @@ if (!isset($_SESSION['id_usuario'])) {
             document.getElementById('z-prioridad').value = prioridad;
             document.getElementById('z-color').value = color_hex;
             document.getElementById('z-coords').value = coords || '';
+            document.querySelector('#header-zona h3').innerHTML = '<i class="fa-solid fa-pen"></i> Editar Zona';
+            document.querySelector('#form-zona .btn-save').innerText = 'Actualizar Zona';
+            document.getElementById('btn-cancel-zona').style.display = 'inline-block';
+        }
+
+        function limpiarFormZona() {
+            document.getElementById('form-zona').reset();
+            document.getElementById('z-id').value = '';
+            document.querySelector('#header-zona h3').innerHTML = '<i class="fa-solid fa-map-location-dot"></i> Nueva Zona';
+            document.querySelector('#form-zona .btn-save').innerText = 'Crear Zona';
+            document.getElementById('btn-cancel-zona').style.display = 'none';
         }
 
         function editarContenedor(id, ubicacion, id_zona, lat, lng, es_real) {
@@ -181,6 +196,17 @@ if (!isset($_SESSION['id_usuario'])) {
             document.getElementById('c-lat').value = lat || '';
             document.getElementById('c-lng').value = lng || '';
             document.getElementById('c-real').value = es_real || '0';
+            document.querySelector('#header-contenedor h3').innerHTML = '<i class="fa-solid fa-pen"></i> Editar Contenedor';
+            document.querySelector('#form-contenedor .btn-save').innerText = 'Actualizar Contenedor';
+            document.getElementById('btn-cancel-contenedor').style.display = 'inline-block';
+        }
+
+        function limpiarFormContenedor() {
+            document.getElementById('form-contenedor').reset();
+            document.getElementById('c-id').value = '';
+            document.querySelector('#header-contenedor h3').innerHTML = '<i class="fa-solid fa-box"></i> Nuevo Contenedor';
+            document.querySelector('#form-contenedor .btn-save').innerText = 'Guardar Contenedor';
+            document.getElementById('btn-cancel-contenedor').style.display = 'none';
         }
 
         async function eliminarZona(id, nombre) {
@@ -219,9 +245,9 @@ if (!isset($_SESSION['id_usuario'])) {
 
             const res = await API.guardarZona(datos);
             if (res.status === 'ok') {
-                alert("Zona creada exitosamente");
+                alert("Zona guardada exitosamente");
                 cargarDatosAdmin();
-                document.getElementById('form-zona').reset();
+                limpiarFormZona();
             } else {
                 alert("Error: " + res.message);
             }
@@ -242,9 +268,9 @@ if (!isset($_SESSION['id_usuario'])) {
 
             const res = await API.guardarContenedor(datos);
             if (res.status === 'ok') {
-                alert("Contenedor creado exitosamente");
+                alert("Contenedor guardado exitosamente");
                 cargarDatosAdmin();
-                document.getElementById('form-contenedor').reset();
+                limpiarFormContenedor();
             } else {
                 alert("Error: " + res.message);
             }
