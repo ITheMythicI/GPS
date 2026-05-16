@@ -71,10 +71,14 @@
         </a>
     </div>
     <script>
-        // Aplicar modo oscuro si está activo en la sesión
-        if (<?php echo $_SESSION['dark_mode'] ?? 0; ?> == 1) {
-            document.body.classList.add('dark-theme');
-        }
+        // Aplicar modo oscuro: priorizar sesión PHP, fallback a localStorage
+        (function() {
+            var sessionDark = <?php echo $_SESSION['dark_mode'] ?? 0; ?>;
+            var storedDark = localStorage.getItem('dark_mode');
+            if (sessionDark == 1 || storedDark === '1') {
+                document.body.classList.add('dark-theme');
+            }
+        })();
     </script>
 </aside>
 

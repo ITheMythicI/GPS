@@ -37,6 +37,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $_SESSION['id_usuario'] = $data['user']['id'];
             $_SESSION['nombre']     = $data['user']['nombre'];
             $_SESSION['rol']        = $data['user']['rol'];
+            $_SESSION['foto_perfil'] = $data['user']['foto_perfil'] ?? '';
+            $_SESSION['dark_mode']   = $data['user']['config_oscuro'] ?? 0;
             
             // Loguear actividad (Login)
             $proxy_log_url = "http://localhost/api/ia_proxy.php?action=registrar_actividad"; // O la URL pública si es necesario

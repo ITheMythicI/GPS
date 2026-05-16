@@ -4,16 +4,25 @@
 
 const API = {
     async fetch(action, body = {}) {
-        const formData = new FormData();
-        formData.append('action', action);
-        for (const key in body) {
-            formData.append(key, body[key]);
+        let sendBody;
+
+        // Si body ya es un FormData, usarlo directamente
+        if (body instanceof FormData) {
+            sendBody = body;
+            sendBody.append('action', action);
+        } else {
+            // Si es un objeto plano, crear un nuevo FormData
+            sendBody = new FormData();
+            sendBody.append('action', action);
+            for (const key in body) {
+                sendBody.append(key, body[key]);
+            }
         }
 
         try {
             const response = await fetch('api/ia_proxy.php?action=' + action, {
                 method: 'POST',
-                body: formData
+                body: sendBody
             });
             return await response.json();
         } catch (error) {

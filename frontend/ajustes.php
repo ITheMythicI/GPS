@@ -15,11 +15,11 @@ $rol = $_SESSION['rol'];
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         .settings-container { max-width: 800px; margin: 30px auto; display: grid; gap: 25px; }
-        .settings-card { background: white; border-radius: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); padding: 25px; }
-        .settings-card h4 { margin-top: 0; color: #333; display: flex; align-items: center; gap: 10px; border-bottom: 1px solid #eee; padding-bottom: 15px; margin-bottom: 20px; }
+        .settings-card { background: var(--bg-panel); border-radius: 15px; box-shadow: var(--shadow); padding: 25px; }
+        .settings-card h4 { margin-top: 0; color: var(--text-main); display: flex; align-items: center; gap: 10px; border-bottom: 1px solid var(--border); padding-bottom: 15px; margin-bottom: 20px; }
         .form-group { margin-bottom: 20px; }
-        .form-group label { display: block; margin-bottom: 8px; font-weight: 600; font-size: 14px; color: #555; }
-        .form-group input, .form-group select { width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px; font-size: 14px; }
+        .form-group label { display: block; margin-bottom: 8px; font-weight: 600; font-size: 14px; color: var(--text-sub); }
+        .form-group input, .form-group select { width: 100%; padding: 12px; border: 1px solid var(--border); border-radius: 8px; font-size: 14px; background: var(--bg-input); color: var(--text-main); }
         .toggle-switch { display: flex; align-items: center; gap: 15px; cursor: pointer; }
         .switch { position: relative; display: inline-block; width: 50px; height: 26px; }
         .switch input { opacity: 0; width: 0; height: 0; }
@@ -34,10 +34,10 @@ $rol = $_SESSION['rol'];
     </style>
 </head>
 <body class="<?= isset($_SESSION['dark_mode']) && $_SESSION['dark_mode'] ? 'dark-theme' : '' ?>">
+    <?php include 'includes/header.php'; ?>
     <?php include 'includes/sidebar.php'; ?>
     
     <main id="content">
-        <?php include 'includes/header.php'; ?>
 
         <div class="settings-container">
             <!-- 1. Perfil y Personalización (Todos) -->
@@ -116,7 +116,9 @@ $rol = $_SESSION['rol'];
                     icon.style.display = 'none';
                 }
 
-                document.getElementById('toggle-dark').checked = res.usuario.config_oscuro == 1;
+                const isDark = res.usuario.config_oscuro == 1;
+                document.getElementById('toggle-dark').checked = isDark;
+                localStorage.setItem('dark_mode', isDark ? '1' : '0');
 
                 // Info Sistema (Si es Admin)
                 const s = res.sistema;
@@ -129,6 +131,15 @@ $rol = $_SESSION['rol'];
             }
         }
 
+        // Aplicar dark mode en vivo al cambiar el toggle
+        document.getElementById('toggle-dark').addEventListener('change', function() {
+            if (this.checked) {
+                document.body.classList.add('dark-theme');
+            } else {
+                document.body.classList.remove('dark-theme');
+            }
+        });
+
         async function guardarPerfil() {
             const fd = new FormData();
             const foto = document.getElementById('input-foto').files[0];
@@ -140,6 +151,8 @@ $rol = $_SESSION['rol'];
             try {
                 const res = await API.subirFotoPerfil(fd);
                 if (res.status === 'ok') {
+                    // Guardar en localStorage para que las demás páginas lo lean
+                    localStorage.setItem('dark_mode', dark.toString());
                     alert("Perfil actualizado correctamente");
                     location.reload();
                 } else {

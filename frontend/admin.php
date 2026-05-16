@@ -154,9 +154,9 @@ if (!isset($_SESSION['id_usuario'])) {
                     </div>
                 `).join('');
            }
+        }
 
         async function eliminarZona(id, nombre) {
-(id, nombre) {
             if (!confirm(`¿Estás seguro de eliminar la zona "${nombre}"? Los contenedores se quedarán sin zona asignada.`)) return;
             const res = await API.borrarZona(id);
             if (res.status === 'ok') {

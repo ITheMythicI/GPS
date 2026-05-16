@@ -12,14 +12,14 @@ if (empty($email) || empty($password)) {
 }
 
 // Query segura
-$sql = "SELECT id_usuario, nombre, password, rol FROM Usuarios WHERE email = ? LIMIT 1";
+$sql = "SELECT id_usuario, nombre, password, rol, foto_perfil, config_oscuro FROM Usuarios WHERE email = ? LIMIT 1";
 $stmt = mysqli_prepare($db, $sql);
 mysqli_stmt_bind_param($stmt, "s", $email);
 mysqli_stmt_execute($stmt);
 mysqli_stmt_store_result($stmt);
 
 if (mysqli_stmt_num_rows($stmt) > 0) {
-    mysqli_stmt_bind_result($stmt, $id_usuario, $nombre, $hashed_password, $rol);
+    mysqli_stmt_bind_result($stmt, $id_usuario, $nombre, $hashed_password, $rol, $foto_perfil, $config_oscuro);
     mysqli_stmt_fetch($stmt);
 
     // Verificacion del Hash
@@ -29,7 +29,9 @@ if (mysqli_stmt_num_rows($stmt) > 0) {
             'user' => [
                 'id' => $id_usuario,
                 'nombre' => $nombre,
-                'rol' => strtolower($rol)
+                'rol' => strtolower($rol),
+                'foto_perfil' => $foto_perfil,
+                'config_oscuro' => $config_oscuro
             ]
         ]);
     } else {
