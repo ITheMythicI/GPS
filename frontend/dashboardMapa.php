@@ -361,8 +361,10 @@ $datos_contenedores = $data['data'];
         }
 
         try {
-            const res = await API.enviarReporteIncidencia(fd);
+            // Enviamos el id_contenedor también por URL como backup
+            const res = await API.fetch(`crear_reporte&id_contenedor=${idCont}`, fd);
             if (res.status === 'ok') {
+
                 alert("¡Gracias! El reporte ha sido enviado a los administradores.");
                 window.cerrarModalReporte();
             } else {

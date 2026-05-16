@@ -12,8 +12,9 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     exit;
 }
 
-$id_contenedor = $_POST['id_contenedor'] ?? null;
-$id_usuario = $_POST['id_usuario'] ?? null;
+$id_contenedor = $_REQUEST['id_contenedor'] ?? null;
+$id_usuario = $_REQUEST['id_usuario'] ?? null;
+
 $tipo = $_POST['tipo'] ?? 'Otro';
 $descripcion = $_POST['descripcion'] ?? '';
 $lat = $_POST['lat'] ?? null;

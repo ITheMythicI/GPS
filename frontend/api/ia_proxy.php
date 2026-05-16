@@ -59,6 +59,16 @@ $url_backend = match($action) {
     'migrar_reportes'    => "$backend_base/migration_reportes.php",
 };
 
+// Añadir parámetros GET adicionales (como id_contenedor) a la URL del backend
+$queryParams = $_GET;
+unset($queryParams['action']); // Quitar 'action' porque ya lo procesamos
+if (!empty($queryParams)) {
+    $separator = (strpos($url_backend, '?') !== false) ? '&' : '?';
+    $url_backend .= $separator . http_build_query($queryParams);
+}
+
+
+
 
 
 
