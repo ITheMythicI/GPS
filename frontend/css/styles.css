@@ -45,6 +45,9 @@ body.index {
     --bg-cotizado: #f6f8fa;
     --st-nuevo: #0969da;
     --bg-nuevo: #ddf4ff;
+
+    --st-ia: #6c3fc5;
+    --bg-ia: #f5f0ff;
 }
 
 body.dark-theme {
@@ -58,6 +61,22 @@ body.dark-theme {
     --accent-soft: #2d3e33;
     --shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
     --bg-header: #1e1e1e;
+    --primary: #4ade80;
+    --primary-dark: #22c55e;
+
+    /* Dark mode status colors */
+    --st-completado: #3fb950;
+    --bg-completado: rgba(46, 160, 67, 0.15);
+    --st-pendiente: #d29922;
+    --bg-pendiente: rgba(187, 128, 9, 0.15);
+    --st-cancelado: #f85149;
+    --bg-cancelado: rgba(248, 81, 73, 0.15);
+    --st-cotizado: #8b949e;
+    --bg-cotizado: rgba(139, 148, 158, 0.15);
+    --st-nuevo: #58a6ff;
+    --bg-nuevo: rgba(56, 139, 253, 0.15);
+    --st-ia: #a371f7;
+    --bg-ia: rgba(163, 113, 247, 0.15);
 }
 
 
@@ -77,6 +96,7 @@ body {
     font-family: 'Poppins', sans-serif;
     font-size: 15px;
 
+    color: var(--text-main);
     background-color: var(--bg-neutral);
 
     display: grid;
@@ -91,6 +111,13 @@ body {
     height: 100vh;
 
     overflow: hidden;
+
+    transition: background-color 1.5s ease, color 1.5s ease;
+}
+
+/* Transición suave para tema oscuro en todos los elementos */
+body *:not(.slider):not(.slider:before) {
+    transition: background-color 1.5s ease, color 1.5s ease, border-color 1.5s ease, box-shadow 1.5s ease;
 }
 
 /* ======================

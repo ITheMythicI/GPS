@@ -17,13 +17,13 @@ if (!isset($_SESSION['id_usuario'])) {
     <style>
         .admin-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-top: 20px; }
         .form-group { margin-bottom: 15px; }
-        label { display: block; font-size: 13px; font-weight: 600; margin-bottom: 5px; }
-        input, select, textarea { width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 6px; font-family: inherit; }
+        label { display: block; font-size: 13px; font-weight: 600; margin-bottom: 5px; color: var(--text-sub); }
+        input, select, textarea { width: 100%; padding: 8px; border: 1px solid var(--border); border-radius: 6px; font-family: inherit; background: var(--bg-input); color: var(--text-main); }
         .btn-save { background: var(--primary); color: white; border: none; padding: 10px 20px; border-radius: 6px; cursor: pointer; font-weight: 600; }
         .btn-save:hover { opacity: 0.9; }
     </style>
 </head>
-<body>
+<body class="<?= isset($_SESSION['dark_mode']) && $_SESSION['dark_mode'] ? 'dark-theme' : '' ?>">
     <?php include_once 'includes/header.php'; ?>
     <?php include_once 'includes/sidebar.php'; ?>
 
