@@ -100,6 +100,16 @@ $ch = curl_init($url_backend);
 curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 curl_setopt($ch, CURLOPT_TIMEOUT,        25);
 
+// Reenviar cookies para mantener la sesión
+$cookies = [];
+foreach ($_COOKIE as $key => $value) {
+    $cookies[] = "$key=" . urlencode($value);
+}
+if (!empty($cookies)) {
+    curl_setopt($ch, CURLOPT_COOKIE, implode('; ', $cookies));
+}
+
+
 // DEBUG PROXY
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     file_put_contents(__DIR__ . '/debug_proxy.txt', "PROXY POST: " . print_r($_POST, true) . "\nPROXY FILES: " . print_r($_FILES, true) . "\n", FILE_APPEND);
