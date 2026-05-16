@@ -63,16 +63,20 @@ $ch = curl_init($url_backend);
 curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 curl_setopt($ch, CURLOPT_TIMEOUT,        25);
 
-if ($action === 'reporte') {
-    // Reenviar body JSON del frontend al backend
-    $body = file_get_contents('php://input');
-    curl_setopt($ch, CURLOPT_POST,        true);
-    curl_setopt($ch, CURLOPT_POSTFIELDS,  $body ?: '{}');
-    curl_setopt($ch, CURLOPT_HTTPHEADER,  ['Content-Type: application/json']);
-} else {
-    // GET simple para clasificar y rutas
-    curl_setopt($ch, CURLOPT_HTTPGET, true);
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    curl_setopt($ch, CURLOPT_POST, true);
+    
+    // Si es JSON (como en 'reporte')
+    if (str_contains($_SERVER['CONTENT_TYPE'] ?? '', 'application/json')) {
+        $body = file_get_contents('php://input');
+        curl_setopt($ch, CURLOPT_POSTFIELDS, $body ?: '{}');
+        curl_setopt($ch, CURLOPT_HTTPHEADER, ['Content-Type: application/json']);
+    } else {
+        // Si es FormData o x-www-form-urlencoded (como en admin.php)
+        curl_setopt($ch, CURLOPT_POSTFIELDS, $_POST);
+    }
 }
+
 
 $response  = curl_exec($ch);
 $http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
