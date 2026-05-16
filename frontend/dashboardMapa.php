@@ -108,7 +108,7 @@ $datos_contenedores = $data['data'];
             align-items: center; justify-content: center;
         }
         .modal-content {
-            background-color: white;
+            background-color: var(--bg-panel);
             padding: 24px;
             border-radius: 12px;
             width: 90%; max-width: 450px;
@@ -119,7 +119,7 @@ $datos_contenedores = $data['data'];
         .close-modal { cursor: pointer; font-size: 20px; color: var(--text-sub); }
         .form-report .form-group { margin-bottom: 15px; }
         .form-report label { display: block; font-size: 13px; font-weight: 600; margin-bottom: 6px; }
-        .form-report input, .form-report select, .form-report textarea { width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 8px; font-family: inherit; }
+        .form-report input, .form-report select, .form-report textarea { width: 100%; padding: 10px; border: 1px solid var(--border); border-radius: 8px; font-family: inherit; background-color: var(--bg-input); color: var(--text-main); }
         .btn-send-report { width: 100%; background: var(--primary); color: white; border: none; padding: 12px; border-radius: 8px; font-weight: 600; cursor: pointer; margin-top: 10px; }
     </style>
 
@@ -182,7 +182,7 @@ $datos_contenedores = $data['data'];
                 </div>
                 <form id="formIncidencia" class="form-report">
                     <input type="hidden" id="rep-id-contenedor">
-                    <p style="font-size: 13px; margin-bottom: 15px; color: #666;">Contenedor: <strong id="rep-nombre-contenedor"></strong></p>
+                    <p style="font-size: 13px; margin-bottom: 15px; color: var(--text-sub);">Contenedor: <strong id="rep-nombre-contenedor" style="color: var(--text-main);"></strong></p>
                     
                     <div class="form-group">
                         <label>Tipo de Problema</label>

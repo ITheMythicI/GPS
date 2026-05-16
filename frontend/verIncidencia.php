@@ -54,7 +54,7 @@ $id_reporte = $_GET['id'] ?? 0;
             font-weight: bold;
             margin-bottom: 5px;
         }
-        .detalle-item span {
+        .detalle-item > span:not(.status) {
             font-size: 15px;
             color: var(--text-main);
             font-weight: 500;

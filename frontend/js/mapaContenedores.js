@@ -86,21 +86,21 @@ const MapService = {
                 marker.bindPopup(`
                     <div style="font-family: 'Poppins', sans-serif; min-width: 180px;">
                         <div style="display: flex; justify-content: space-between; align-items: center; gap: 10px;">
-                            <b style="color: #2c3e50;">${c.ubicacion}</b>
+                            <b style="color: var(--text-main);">${c.ubicacion}</b>
                             ${badgeFisico}
                         </div>
                         <div style="margin-top: 4px;">
                             <span style="background: ${iconColor}; color: white; padding: 2px 6px; border-radius: 4px; font-size: 10px; font-weight: bold;">
                                 ${(c.prioridad || 'NORMAL').toUpperCase()}
                             </span>
-                            <span style="font-size: 10px; color: #666; margin-left: 5px;">${c.zona_nombre || ''}</span>
+                            <span style="font-size: 10px; color: var(--text-sub); margin-left: 5px;">${c.zona_nombre || ''}</span>
                         </div>
-                        <hr style="margin: 8px 0; border: 0; border-top: 1px solid #eee;">
-                        <div style="font-size: 12px; line-height: 1.6;">
+                        <hr style="margin: 8px 0; border: 0; border-top: 1px solid var(--border);">
+                        <div style="font-size: 12px; line-height: 1.6; color: var(--text-main);">
                             🌡️ <b>Temp:</b> ${c.temperatura || '0'}°C<br>
                             💧 <b>Hum:</b> ${c.humedad || '0'}%<br>
                             ⚖️ <b>Peso:</b> ${parseFloat(c.peso || 0).toFixed(1)} kg<br>
-                            📅 <b>Lectura:</b> <span style="color: #7f8c8d; font-size: 10px;">${c.fecha_lectura || 'N/A'}</span>
+                            📅 <b>Lectura:</b> <span style="color: var(--text-sub); font-size: 10px;">${c.fecha_lectura || 'N/A'}</span>
                         </div>
                         <button onclick="abrirModalReporte(${c.id_contenedor}, '${c.ubicacion}')" style="width:100%; margin-top:10px; background:var(--primary); color:white; border:none; border-radius:4px; padding:6px; font-size:11px; cursor:pointer; font-weight:600;">
                             <i class="fa-solid fa-triangle-exclamation"></i> Reportar Problema

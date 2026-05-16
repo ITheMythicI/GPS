@@ -38,6 +38,7 @@ if (!isset($_SESSION['id_usuario'])) {
             <section class="panel-box">
                 <div class="panel-header"><h3><i class="fa-solid fa-map-location-dot"></i> Nueva Zona</h3></div>
                 <form id="form-zona" style="padding: 20px;">
+                    <input type="hidden" id="z-id" value="">
                     <div class="form-group">
                         <label>Nombre de la Zona</label>
                         <input type="text" id="z-nombre" placeholder="Ej. Campus Norte">
@@ -66,6 +67,7 @@ if (!isset($_SESSION['id_usuario'])) {
             <section class="panel-box">
                 <div class="panel-header"><h3><i class="fa-solid fa-box"></i> Nuevo Contenedor</h3></div>
                 <form id="form-contenedor" style="padding: 20px;">
+                    <input type="hidden" id="c-id" value="">
                     <div class="form-group">
                         <label>Ubicación / Nombre</label>
                         <input type="text" id="c-ubicacion" placeholder="Ej. Puerta Principal">
@@ -132,12 +134,17 @@ if (!isset($_SESSION['id_usuario'])) {
                 
                 select.innerHTML = resZonas.data.map(z => `<option value="${z.id_zona}">${z.nombre}</option>`).join('');
                 
-                listaZonas.innerHTML = resZonas.data.map(z => `
-                    <div style="display:flex; justify-content:space-between; align-items:center; padding:8px; border-bottom:1px solid #eee;">
+                listaZonas.innerHTML = resZonas.data.map(z => {
+                    const coords = z.coordenadas_poligono ? JSON.stringify(z.coordenadas_poligono).replace(/"/g, '&quot;') : '';
+                    return `
+                    <div style="display:flex; justify-content:space-between; align-items:center; padding:8px; border-bottom:1px solid var(--border);">
                         <span><i class="fa-solid fa-circle" style="color:${z.color_hex}; font-size:10px;"></i> ${z.nombre}</span>
-                        <button onclick="eliminarZona(${z.id_zona}, '${z.nombre}')" style="background:none; border:none; color:#e74c3c; cursor:pointer;"><i class="fa-solid fa-trash"></i></button>
+                        <div>
+                            <button onclick="editarZona(${z.id_zona}, '${z.nombre}', '${z.prioridad}', '${z.color_hex}', '${coords}')" style="background:none; border:none; color:var(--primary); cursor:pointer; margin-right:10px;"><i class="fa-solid fa-pen"></i></button>
+                            <button onclick="eliminarZona(${z.id_zona}, '${z.nombre}')" style="background:none; border:none; color:#e74c3c; cursor:pointer;"><i class="fa-solid fa-trash"></i></button>
+                        </div>
                     </div>
-                `).join('');
+                `}).join('');
             }
 
             // Cargar Contenedores
@@ -145,15 +152,35 @@ if (!isset($_SESSION['id_usuario'])) {
             if (resCont.status === 'ok') {
                 const listaCont = document.getElementById('lista-contenedores');
                 listaCont.innerHTML = resCont.data.map(c => `
-                    <div style="display:flex; justify-content:space-between; align-items:center; padding:8px; border-bottom:1px solid #eee;">
+                    <div style="display:flex; justify-content:space-between; align-items:center; padding:8px; border-bottom:1px solid var(--border);">
                         <div>
-                            <strong>${c.ubicacion}</strong><br>
-                            <small style="color:#666;">Zona: ${c.zona_nombre || 'Sin zona'}</small>
+                            <strong style="color:var(--text-main);">${c.ubicacion}</strong><br>
+                            <small style="color:var(--text-sub);">Zona: ${c.zona_nombre || 'Sin zona'}</small>
                         </div>
-                        <button onclick="eliminarContenedor(${c.id_contenedor}, '${c.ubicacion}')" style="background:none; border:none; color:#e74c3c; cursor:pointer;"><i class="fa-solid fa-trash"></i></button>
+                        <div>
+                            <button onclick="editarContenedor(${c.id_contenedor}, '${c.ubicacion}', '${c.id_zona || ''}', '${c.latitud || ''}', '${c.longitud || ''}', '${c.es_real || '0'}')" style="background:none; border:none; color:var(--primary); cursor:pointer; margin-right:10px;"><i class="fa-solid fa-pen"></i></button>
+                            <button onclick="eliminarContenedor(${c.id_contenedor}, '${c.ubicacion}')" style="background:none; border:none; color:#e74c3c; cursor:pointer;"><i class="fa-solid fa-trash"></i></button>
+                        </div>
                     </div>
                 `).join('');
            }
+        }
+
+        function editarZona(id, nombre, prioridad, color_hex, coords) {
+            document.getElementById('z-id').value = id;
+            document.getElementById('z-nombre').value = nombre;
+            document.getElementById('z-prioridad').value = prioridad;
+            document.getElementById('z-color').value = color_hex;
+            document.getElementById('z-coords').value = coords || '';
+        }
+
+        function editarContenedor(id, ubicacion, id_zona, lat, lng, es_real) {
+            document.getElementById('c-id').value = id;
+            document.getElementById('c-ubicacion').value = ubicacion;
+            document.getElementById('c-id-zona').value = id_zona || '';
+            document.getElementById('c-lat').value = lat || '';
+            document.getElementById('c-lng').value = lng || '';
+            document.getElementById('c-real').value = es_real || '0';
         }
 
         async function eliminarZona(id, nombre) {
@@ -179,12 +206,14 @@ if (!isset($_SESSION['id_usuario'])) {
         }
 
         async function guardarZona() {
+            const id = document.getElementById('z-id').value;
             const datos = {
                 nombre: document.getElementById('z-nombre').value,
                 prioridad: document.getElementById('z-prioridad').value,
                 color: document.getElementById('z-color').value,
                 coords: document.getElementById('z-coords').value
             };
+            if(id) datos.id_zona = id;
             
             if(!datos.nombre) return alert("Nombre requerido");
 
@@ -199,6 +228,7 @@ if (!isset($_SESSION['id_usuario'])) {
         }
 
         async function guardarContenedor() {
+            const id = document.getElementById('c-id').value;
             const datos = {
                 ubicacion: document.getElementById('c-ubicacion').value,
                 id_zona: document.getElementById('c-id-zona').value,
@@ -206,6 +236,7 @@ if (!isset($_SESSION['id_usuario'])) {
                 lng: document.getElementById('c-lng').value,
                 es_real: document.getElementById('c-real').value
             };
+            if(id) datos.id_contenedor = id;
 
             if(!datos.ubicacion) return alert("Ubicación requerida");
 
