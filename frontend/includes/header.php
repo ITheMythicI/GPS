@@ -11,14 +11,15 @@
 
     <div class="header-right">
         <div class="tool-icons">
-            <a href="dashboard.php#seccion-reporte-ia" title="Generar Reporte"><i class="fa-regular fa-note-sticky"></i></a>
-            <a href="dashboard.php#tabla-contenedores" title="Alertas Críticas">
+            <a href="dashboard.php#seccion-reporte-ia" title="Generar Reporte" style="color: #6c3fc5;"><i class="fa-regular fa-note-sticky"></i></a>
+            <a href="dashboard.php#tabla-contenedores" title="Alertas Críticas" style="color: #cf222e;">
                 <i class="fa-solid fa-triangle-exclamation">
                     <span class="notification-dot" style="display: none;"></span>
                 </i>
             </a>
             <i class="fa-regular fa-bell" title="Notificaciones" onclick="alert('No hay notificaciones nuevas')"></i>
             <i class="fa-regular fa-bookmark" title="Guardados"></i>
+
         </div>
 
         <div class="user-profile-circle" onclick="toggleUserMenu(event)">

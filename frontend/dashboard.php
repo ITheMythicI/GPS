@@ -364,9 +364,13 @@ $data_dona   = array_values($dona_map);
                     </td>
                     <td>${c.temperatura || '0'}°C</td>
                     <td>${c.humedad || '0'}%</td>
-                    <td><span class="status ${statusClass}">${statusText}</span></td>
+                    <td>
+                        <span class="status ${statusClass}">${statusText}</span>
+                        <small style="display:block; font-size:10px; color:#666; margin-top:2px;">${fillingPct.toFixed(0)}% de llenado</small>
+                    </td>
                     <td><span class="status ${prioClass}">${prio.toUpperCase()}</span></td>
                 </tr>`;
+
 
             });
 
