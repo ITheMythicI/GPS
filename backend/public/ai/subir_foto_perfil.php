@@ -31,12 +31,18 @@ if (!empty($_FILES['foto'])) {
 if ($foto_url) {
     $query = "UPDATE Usuarios SET foto_perfil = ?, config_oscuro = ? WHERE id_usuario = ?";
     $stmt = mysqli_prepare($db, $query);
-    mysqli_stmt_bind_param($stmt, 'sii', $foto_url, $dark_mode, $id_usuario);
+    if ($stmt) mysqli_stmt_bind_param($stmt, 'sii', $foto_url, $dark_mode, $id_usuario);
 } else {
     $query = "UPDATE Usuarios SET config_oscuro = ? WHERE id_usuario = ?";
     $stmt = mysqli_prepare($db, $query);
-    mysqli_stmt_bind_param($stmt, 'ii', $dark_mode, $id_usuario);
+    if ($stmt) mysqli_stmt_bind_param($stmt, 'ii', $dark_mode, $id_usuario);
 }
+
+if (!$stmt) {
+    echo json_encode(['status' => 'error', 'message' => 'Error de BD. ¿Corriste la migración? ' . mysqli_error($db)]);
+    exit;
+}
+
 
 if (mysqli_stmt_execute($stmt)) {
     // Actualizar sesión para el frontend

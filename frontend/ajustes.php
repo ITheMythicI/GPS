@@ -142,8 +142,11 @@ $rol = $_SESSION['rol'];
                 if (res.status === 'ok') {
                     alert("Perfil actualizado correctamente");
                     location.reload();
+                } else {
+                    alert("Error al guardar perfil: " + (res.message || JSON.stringify(res)));
                 }
-            } catch(e) { alert("Error al guardar perfil"); }
+            } catch(e) { alert("Error de red al guardar perfil: " + e); }
+
         }
 
         async function guardarAjustesGlobales() {
