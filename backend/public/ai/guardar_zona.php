@@ -3,28 +3,43 @@ require_once __DIR__ . '/../../includes/database.php';
 
 header('Content-Type: application/json');
 
-if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-    echo json_encode(['status' => 'error', 'message' => 'Método no permitido']);
-    exit;
-}
+// Desactivar reporte de errores en pantalla para no corromper el JSON
+ini_set('display_errors', 0);
+error_reporting(E_ALL);
 
-$nombre = $_POST['nombre'] ?? '';
-$prioridad = $_POST['prioridad'] ?? 1;
-$color = $_POST['color'] ?? '#3b82f6';
-$coords = $_POST['coords'] ?? '[]';
+try {
+    if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+        throw new Exception('Método no permitido');
+    }
 
-if (!$nombre) {
-    echo json_encode(['status' => 'error', 'message' => 'Nombre requerido']);
-    exit;
-}
+    $nombre = $_POST['nombre'] ?? '';
+    $prioridad = (int)($_POST['prioridad'] ?? 1);
+    $color = $_POST['color'] ?? '#3b82f6';
+    $coords = $_POST['coords'] ?? '[]';
 
-$query = "INSERT INTO Zonas (nombre, prioridad_limpieza, color_hex, coordenadas_poligono) VALUES (?, ?, ?, ?)";
-$stmt = mysqli_prepare($db, $query);
-mysqli_stmt_bind_param($stmt, 'siss', $nombre, $prioridad, $color, $coords);
+    if (!$nombre) {
+        throw new Exception('El nombre de la zona es obligatorio');
+    }
 
-if (mysqli_stmt_execute($stmt)) {
-    echo json_encode(['status' => 'ok', 'message' => 'Zona creada correctamente']);
-} else {
-    echo json_encode(['status' => 'error', 'message' => mysqli_error($db)]);
+    $query = "INSERT INTO Zonas (nombre, prioridad_limpieza, color_hex, coordenadas_poligono) VALUES (?, ?, ?, ?)";
+    $stmt = mysqli_prepare($db, $query);
+    
+    if (!$stmt) {
+        throw new Exception("Error preparando la consulta: " . mysqli_error($db));
+    }
+
+    mysqli_stmt_bind_param($stmt, 'siss', $nombre, $prioridad, $color, $coords);
+
+    if (mysqli_stmt_execute($stmt)) {
+        echo json_encode(['status' => 'ok', 'message' => 'Zona creada correctamente']);
+    } else {
+        throw new Exception("Error al ejecutar: " . mysqli_stmt_error($stmt));
+    }
+
+} catch (Exception $e) {
+    echo json_encode([
+        'status' => 'error', 
+        'message' => $e->getMessage()
+    ]);
 }
 ?>

@@ -91,4 +91,16 @@ if ($response === false) {
 
 // Propagar el código HTTP del backend
 http_response_code($http_code);
-echo $response;
+
+// Intentar validar si es JSON, si no, envolverlo en un error
+json_decode($response);
+if (json_last_error() === JSON_ERROR_NONE) {
+    echo $response;
+} else {
+    echo json_encode([
+        'status' => 'error', 
+        'message' => 'El backend devolvió una respuesta no válida (posible error de PHP)',
+        'debug' => substr(strip_tags($response), 0, 200)
+    ]);
+}
+
