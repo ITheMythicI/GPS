@@ -3,12 +3,12 @@ require_once __DIR__ . '/../../includes/database.php';
 
 header('Content-Type: application/json');
 
-session_start();
-$id_usuario = $_SESSION['id_usuario'] ?? null;
+$id_usuario = $_POST['id_usuario'] ?? null;
 if (!$id_usuario) {
     echo json_encode(['status' => 'error', 'message' => 'Sesión no iniciada']);
     exit;
 }
+
 
 $dark_mode = $_POST['dark_mode'] ?? 0;
 $foto_url = null;

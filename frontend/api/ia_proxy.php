@@ -75,58 +75,39 @@ $url_backend = match($action) {
 
 
 
-// Añadir parámetros GET adicionales (como id_contenedor) a la URL del backend
+session_start();
+$id_usuario_sesion = $_SESSION['id_usuario'] ?? 0;
+
+// Añadir parámetros GET adicionales (como id_contenedor, y id_usuario de sesión)
 $queryParams = $_GET;
-unset($queryParams['action']); // Quitar 'action' porque ya lo procesamos
+unset($queryParams['action']); // Quitar 'action'
+$queryParams['id_usuario'] = $id_usuario_sesion;
+
 if (!empty($queryParams)) {
     $separator = (strpos($url_backend, '?') !== false) ? '&' : '?';
     $url_backend .= $separator . http_build_query($queryParams);
 }
-
-
-
-
-
-
-
-
-
-
-
-
 
 // ── Reenviar la request ────────────────────────────────────────────────────────
 $ch = curl_init($url_backend);
 curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 curl_setopt($ch, CURLOPT_TIMEOUT,        25);
 
-// Reenviar cookies para mantener la sesión
-$cookies = [];
-foreach ($_COOKIE as $key => $value) {
-    $cookies[] = "$key=" . urlencode($value);
-}
-if (!empty($cookies)) {
-    curl_setopt($ch, CURLOPT_COOKIE, implode('; ', $cookies));
-}
-
-
-// DEBUG PROXY
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    file_put_contents(__DIR__ . '/debug_proxy.txt', "PROXY POST: " . print_r($_POST, true) . "\nPROXY FILES: " . print_r($_FILES, true) . "\n", FILE_APPEND);
-}
-
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     curl_setopt($ch, CURLOPT_POST, true);
     
-    // Si es JSON (como en 'reporte')
+    // Si es JSON
     if (str_contains($_SERVER['CONTENT_TYPE'] ?? '', 'application/json')) {
         $body = file_get_contents('php://input');
-        curl_setopt($ch, CURLOPT_POSTFIELDS, $body ?: '{}');
+        $body_arr = json_decode($body, true) ?: [];
+        $body_arr['id_usuario'] = $id_usuario_sesion;
+        curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($body_arr));
         curl_setopt($ch, CURLOPT_HTTPHEADER, ['Content-Type: application/json']);
     } else {
-        // Si es FormData o x-www-form-urlencoded (como en admin.php y reportes)
+        // Si es FormData o x-www-form-urlencoded
         $post_data = $_POST;
+        $post_data['id_usuario'] = $id_usuario_sesion;
         
         // Adjuntar archivos si existen
         if (!empty($_FILES)) {
@@ -138,9 +119,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
         
         curl_setopt($ch, CURLOPT_POSTFIELDS, $post_data);
-
     }
 }
+
 
 
 $response  = curl_exec($ch);
@@ -160,6 +141,16 @@ http_response_code($http_code);
 // Intentar validar si es JSON, si no, envolverlo en un error
 json_decode($response);
 if (json_last_error() === JSON_ERROR_NONE) {
+    // Si estamos subiendo perfil y fue exitoso, actualizar sesión local
+    if ($action === 'subir_foto_perfil') {
+        $resObj = json_decode($response, true);
+        if (isset($resObj['status']) && $resObj['status'] === 'ok') {
+            $_SESSION['dark_mode'] = $_POST['dark_mode'] ?? 0;
+            if (!empty($resObj['foto_url'])) {
+                $_SESSION['foto_perfil'] = $resObj['foto_url'];
+            }
+        }
+    }
     echo $response;
 } else {
     echo json_encode([

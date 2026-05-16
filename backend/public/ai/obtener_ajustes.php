@@ -25,7 +25,7 @@ if (empty($ajustes)) {
 }
 
 // Obtener info del usuario
-$id_usuario = $_SESSION['id_usuario'] ?? 0;
+$id_usuario = $_GET['id_usuario'] ?? 0;
 $user_data = ['foto_perfil' => null, 'config_oscuro' => 0];
 
 if ($id_usuario > 0) {
