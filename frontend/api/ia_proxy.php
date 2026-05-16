@@ -83,8 +83,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         curl_setopt($ch, CURLOPT_POSTFIELDS, $body ?: '{}');
         curl_setopt($ch, CURLOPT_HTTPHEADER, ['Content-Type: application/json']);
     } else {
-        // Si es FormData o x-www-form-urlencoded (como en admin.php)
-        curl_setopt($ch, CURLOPT_POSTFIELDS, $_POST);
+        // Si es FormData o x-www-form-urlencoded (como en admin.php y reportes)
+        $post_data = $_POST;
+        
+        // Adjuntar archivos si existen
+        if (!empty($_FILES)) {
+            foreach ($_FILES as $key => $file) {
+                if ($file['error'] === UPLOAD_ERR_OK) {
+                    $post_data[$key] = new CURLFile($file['tmp_name'], $file['type'], $file['name']);
+                }
+            }
+        }
+        
+        curl_setopt($ch, CURLOPT_POSTFIELDS, $post_data);
+
     }
 }
 
