@@ -3,7 +3,11 @@ require_once __DIR__ . '/../../includes/database.php';
 
 header('Content-Type: application/json');
 
+// DEBUG: Loguear lo que llega
+file_put_contents(__DIR__ . '/../../debug_reporte.txt', "POST: " . print_r($_POST, true) . "\nFILES: " . print_r($_FILES, true) . "\n", FILE_APPEND);
+
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+
     echo json_encode(['status' => 'error', 'message' => 'Método no permitido']);
     exit;
 }

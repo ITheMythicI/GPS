@@ -74,7 +74,13 @@ $ch = curl_init($url_backend);
 curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 curl_setopt($ch, CURLOPT_TIMEOUT,        25);
 
+// DEBUG PROXY
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    file_put_contents(__DIR__ . '/debug_proxy.txt', "PROXY POST: " . print_r($_POST, true) . "\nPROXY FILES: " . print_r($_FILES, true) . "\n", FILE_APPEND);
+}
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+
     curl_setopt($ch, CURLOPT_POST, true);
     
     // Si es JSON (como en 'reporte')
