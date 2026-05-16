@@ -111,14 +111,44 @@ if (!isset($_SESSION['id_usuario'])) {
         }
 
         async function guardarZona() {
-            // Aquí iría la llamada al API de guardado (que crearé a continuación)
-            alert("Zona guardada exitosamente (Simulado)");
+            const datos = {
+                nombre: document.getElementById('z-nombre').value,
+                prioridad: document.getElementById('z-prioridad').value,
+                color: document.getElementById('z-color').value,
+                coords: document.getElementById('z-coords').value
+            };
+            
+            if(!datos.nombre) return alert("Nombre requerido");
+
+            const res = await API.guardarZona(datos);
+            if (res.status === 'ok') {
+                alert("Zona creada exitosamente");
+                location.reload();
+            } else {
+                alert("Error: " + res.message);
+            }
         }
 
         async function guardarContenedor() {
-            // Aquí iría la llamada al API de guardado
-            alert("Contenedor guardado exitosamente (Simulado)");
+            const datos = {
+                ubicacion: document.getElementById('c-ubicacion').value,
+                id_zona: document.getElementById('c-id-zona').value,
+                lat: document.getElementById('c-lat').value,
+                lng: document.getElementById('c-lng').value,
+                es_real: document.getElementById('c-real').value
+            };
+
+            if(!datos.ubicacion) return alert("Ubicación requerida");
+
+            const res = await API.guardarContenedor(datos);
+            if (res.status === 'ok') {
+                alert("Contenedor creado exitosamente");
+                location.reload();
+            } else {
+                alert("Error: " + res.message);
+            }
         }
+
 
         document.addEventListener('DOMContentLoaded', cargarZonasAdmin);
     </script>

@@ -44,7 +44,16 @@ const API = {
 
     async obtenerZonas() {
         return this.fetch('zonas');
+    },
+    
+    async guardarZona(datos) {
+        return this.fetch('guardar_zona', datos);
+    },
+
+    async guardarContenedor(datos) {
+        return this.fetch('guardar_contenedor', datos);
     }
 };
+
 
 
