@@ -33,7 +33,7 @@ $rol = $_SESSION['rol'];
         .btn-update:hover { opacity: 0.9; }
     </style>
 </head>
-<body class="<?= isset($_SESSION['dark_mode']) && $_SESSION['dark_mode'] ? 'dark-theme' : '' ?>">
+<body class="settings-page <?= isset($_SESSION['dark_mode']) && $_SESSION['dark_mode'] ? 'dark-theme' : '' ?>">
     <?php include 'includes/header.php'; ?>
     <?php include 'includes/sidebar.php'; ?>
     
@@ -111,7 +111,7 @@ $rol = $_SESSION['rol'];
                 if (res.usuario.foto_perfil) {
                     const img = document.getElementById('preview-foto');
                     const icon = document.getElementById('preview-icon');
-                    img.src = 'http://129.146.115.127/' + res.usuario.foto_perfil;
+                    img.src = 'api/image_proxy.php?path=' + encodeURIComponent(res.usuario.foto_perfil);
                     img.style.display = 'block';
                     icon.style.display = 'none';
                 }

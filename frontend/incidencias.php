@@ -46,27 +46,26 @@ if (!isset($_SESSION['id_usuario']) || $_SESSION['rol'] !== 'administrador') {
                             <thead style="background:var(--bg-header); border-bottom:2px solid var(--border);">
                                 <tr>
                                     <th style="padding:15px; text-align:left;">Fecha</th>
-                                    <th style="padding:15px; text-align:left;">Contenedor</th>
+                                    <th style="padding:15px; text-align:left;">Contenedor / Ubicación</th>
                                     <th style="padding:15px; text-align:left;">Usuario</th>
                                     <th style="padding:15px; text-align:left;">Tipo</th>
                                     <th style="padding:15px; text-align:left;">Descripción</th>
-                                    <th style="padding:15px; text-align:left;">Multimedia</th>
-                                    <th style="padding:15px; text-align:left;">Ubicación</th>
+                                    <th style="padding:15px; text-align:left;">Acciones</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 ${resRep.data.map(r => `
                                     <tr style="border-bottom:1px solid var(--border);">
                                         <td style="padding:15px;">${r.fecha_hora}</td>
-                                        <td style="padding:15px;"><strong>${r.contenedor_nombre || 'N/A'}</strong></td>
+                                        <td style="padding:15px;">
+                                            <strong>${r.contenedor_nombre || 'No Asignado'}</strong><br>
+                                            <span style="font-size:11px; color:var(--text-sub);"><i class="fa-solid fa-location-dot"></i> ${r.lat_reporte ? 'GPS Local' : 'Por ubicación de contenedor'}</span>
+                                        </td>
                                         <td style="padding:15px;">${r.usuario_nombre || 'Anónimo'}</td>
                                         <td style="padding:15px;"><span class="status st-cancelado">${r.tipo_incidencia}</span></td>
-                                        <td style="padding:15px;">${r.descripcion}</td>
+                                        <td style="padding:15px;">${r.descripcion.substring(0, 40)}${r.descripcion.length > 40 ? '...' : ''}</td>
                                         <td style="padding:15px;">
-                                            ${r.foto_url ? `<a href="http://129.146.115.127/${r.foto_url}" target="_blank" style="color:var(--primary); font-weight:600;"><i class="fa-solid fa-image"></i> Ver Foto</a>` : '<span style="color:var(--text-sub);">Sin foto</span>'}
-                                        </td>
-                                        <td style="padding:15px;">
-                                            ${r.lat_reporte ? `<a href="https://www.google.com/maps?q=${r.lat_reporte},${r.lng_reporte}" target="_blank" style="color:var(--st-ia); font-weight:600;"><i class="fa-solid fa-location-dot"></i> Mapa</a>` : '<span style="color:var(--text-sub);">N/A</span>'}
+                                            <a href="verIncidencia.php?id=${r.id_reporte}" style="display:inline-block; padding:6px 12px; background:var(--primary); color:white; border-radius:6px; text-decoration:none; font-size:12px; font-weight:600;"><i class="fa-solid fa-eye"></i> Detalles</a>
                                         </td>
                                     </tr>
                                 `).join('')}

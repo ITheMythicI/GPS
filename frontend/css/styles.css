@@ -112,11 +112,14 @@ body {
 
     overflow: hidden;
 
+}
+
+body.settings-page {
     transition: background-color 1.5s ease, color 1.5s ease;
 }
 
-/* Transición suave para tema oscuro en todos los elementos */
-body *:not(.slider):not(.slider:before) {
+/* Transición suave para tema oscuro en todos los elementos (solo en ajustes) */
+body.settings-page *:not(.slider):not(.slider:before) {
     transition: background-color 1.5s ease, color 1.5s ease, border-color 1.5s ease, box-shadow 1.5s ease;
 }
 
@@ -970,14 +973,14 @@ MAPA
 
 /* Estilo del Popup personalizado */
 .custom-popup .leaflet-popup-content-wrapper {
-    background: #2c3e50;
-    color: #fff;
+    background: var(--bg-panel);
+    color: var(--text-main);
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     border-radius: 8px;
 }
 
 .custom-popup .leaflet-popup-tip {
-    background: #2c3e50;
+    background: var(--bg-panel);
 }
 
 /* Marcadores estilo "Pin" personalizados */
@@ -1002,7 +1005,7 @@ MAPA
     align-items: center;
     width: 34px;
     height: 34px;
-    background-color: white;
+    background-color: var(--bg-panel);
     /* Fondo para resaltar el icono */
     border: 2px solid;
     /* El color lo daremos por JS */
@@ -1035,9 +1038,9 @@ MAPA
 }
 
 .header-card {
-    background: white;
-    color: black;
-    border-color: #000000;
+    background: var(--bg-panel);
+    color: var(--text-main);
+    border-color: var(--border);
     padding: 12px 15px;
     border-radius: 8px;
     cursor: pointer;
@@ -1048,7 +1051,7 @@ MAPA
 }
 
 .area-list {
-    background: white;
+    background: var(--bg-panel);
     margin-top: 5px;
     border-radius: 8px;
     overflow: hidden;
@@ -1065,20 +1068,21 @@ MAPA
 
 .area-item {
     padding: 12px 15px;
-    border-bottom: 1px solid #eee;
+    border-bottom: 1px solid var(--border);
+    color: var(--text-main);
     cursor: pointer;
     transition: 0.2s;
 }
 
 .area-item:hover {
-    background: #f8f9fa;
+    background: var(--bg-header);
     padding-left: 20px;
-    color: #3498db;
+    color: var(--primary);
 }
 
 /* Tarjeta de Información */
 .info-card {
-    background: white;
+    background: var(--bg-panel);
     margin-top: 10px;
     padding: 15px;
     border-radius: 8px;
@@ -1098,12 +1102,13 @@ MAPA
 
 .info-header h4 {
     margin: 0;
-    color: #2c3e50;
+    color: var(--text-main);
 }
 
 .btn-back {
     font-size: 11px;
-    background: #eee;
+    background: var(--bg-header);
+    color: var(--text-main);
     border: none;
     padding: 4px 8px;
     border-radius: 4px;
