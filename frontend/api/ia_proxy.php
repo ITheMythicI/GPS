@@ -18,7 +18,11 @@ header('Content-Type: application/json');
 
 // ── Validar acción ─────────────────────────────────────────────────────────────
 $action = $_GET['action'] ?? '';
-$acciones_permitidas = ['clasificar', 'rutas', 'reporte', 'contenedores', 'simular', 'zonas', 'migrar', 'test_db', 'normalizar', 'guardar_zona', 'guardar_contenedor', 'actualizar_nombres', 'reparar_zonas', 'borrar_zona', 'borrar_contenedor', 'crear_reporte', 'migrar_reportes'];
+$acciones_permitidas = ['clasificar', 'rutas', 'reporte', 'contenedores', 'simular', 'zonas', 'migrar', 'test_db', 'normalizar', 'guardar_zona', 'guardar_contenedor', 'actualizar_nombres', 'reparar_zonas', 'borrar_zona', 'borrar_contenedor', 'crear_reporte', 'migrar_reportes', 'obtener_reportes', 'obtener_actividad', 'migrar_actividad', 'registrar_actividad', 'obtener_ajustes', 'guardar_ajustes', 'subir_foto_perfil', 'migrar_ajustes'];
+
+
+
+
 
 
 
@@ -57,7 +61,19 @@ $url_backend = match($action) {
     'borrar_contenedor'  => "$backend_base/borrar_contenedor.php",
     'crear_reporte'      => "$backend_base/crear_reporte.php",
     'migrar_reportes'    => "$backend_base/migration_reportes.php",
+    'obtener_reportes'   => "$backend_base/obtener_reportes.php",
+    'obtener_actividad'  => "$backend_base/obtener_actividad.php",
+    'migrar_actividad'   => "$backend_base/migration_actividad.php",
+    'registrar_actividad' => "$backend_base/registrar_actividad.php",
+    'obtener_ajustes'    => "$backend_base/obtener_ajustes.php",
+    'guardar_ajustes'    => "$backend_base/guardar_ajustes.php",
+    'subir_foto_perfil'  => "$backend_base/subir_foto_perfil.php",
+    'migrar_ajustes'     => "$backend_base/migration_ajustes.php",
 };
+
+
+
+
 
 // Añadir parámetros GET adicionales (como id_contenedor) a la URL del backend
 $queryParams = $_GET;

@@ -32,21 +32,21 @@
     </div>
 
     <div class="menu-item">
-        <input type="checkbox" id="m-bit" class="menu-check">
-
-        <label for="m-bit" class="menu-btn">
+        <input type="checkbox" id="check-registros" class="menu-check">
+        <label for="check-registros" class="menu-btn">
             <span><i class="fa-solid fa-book"></i> Registros</span>
             <i class="fa-solid fa-chevron-right chevron"></i>
         </label>
         <ul class="submenu">
-            <li><a href="#">Registro de Actividad</a></li>
+            <li><a href="registroActividad.php">Registro de Actividad</a></li>
+            <li><a href="incidencias.php">Incidencias</a></li>
         </ul>
     </div>
 
     <div class="menu-item">
         <input type="checkbox" id="m-fin" class="menu-check">
         <label for="m-fin" class="menu-btn">
-            <span><i class="fa-solid fa-landmark"></i> Finanzas</span>
+            <span><i class="fa-solid fa-landmark"></i> Finanzas (Proximamente...)</span>
             <i class="fa-solid fa-chevron-right chevron"></i>
         </label>
         <ul class="submenu">
@@ -59,10 +59,11 @@
     <div class="nav-section">CONFIGURACIÓN</div>
 
     <div class="menu-item">
-        <a class="menu-btn">
+        <a href="ajustes.php" class="menu-btn">
             <span><i class="fa-solid fa-gear"></i> Ajustes del Sistema</span>
         </a>
     </div>
+
 
     <div class="menu-item">
         <a href="logout.php" class="menu-btn" style="color: #e74c3c;">

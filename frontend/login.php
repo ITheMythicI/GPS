@@ -38,7 +38,25 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $_SESSION['nombre']     = $data['user']['nombre'];
             $_SESSION['rol']        = $data['user']['rol'];
             
+            // Loguear actividad (Login)
+            $proxy_log_url = "http://localhost/api/ia_proxy.php?action=registrar_actividad"; // O la URL pública si es necesario
+            // Como estamos en el servidor, podemos intentar una llamada interna o usar la URL base
+            // Intentaremos con la URL de la misma máquina
+            $ch_log = curl_init("http://".$_SERVER['HTTP_HOST'].dirname($_SERVER['PHP_SELF'])."/api/ia_proxy.php?action=registrar_actividad");
+            curl_setopt($ch_log, CURLOPT_RETURNTRANSFER, true);
+            curl_setopt($ch_log, CURLOPT_POST, true);
+            curl_setopt($ch_log, CURLOPT_POSTFIELDS, http_build_query([
+                'id_usuario' => $_SESSION['id_usuario'],
+                'accion' => 'Inicio de Sesión',
+                'descripcion' => 'El usuario ha accedido al portal',
+                'ip' => $_SERVER['REMOTE_ADDR']
+            ]));
+            curl_setopt($ch_log, CURLOPT_TIMEOUT, 2);
+            curl_exec($ch_log);
+            curl_close($ch_log);
+
             header('Location: dashboard.php');
+
             exit;
         } else {
             $error = $data['message'] ?? 'Credenciales incorrectas';

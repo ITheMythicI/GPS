@@ -64,8 +64,31 @@ const API = {
 
     async enviarReporteIncidencia(formData) {
         return this.fetch('crear_reporte', formData);
+    },
+
+    async obtenerReportes() {
+        return this.fetch('obtener_reportes', {}, 'GET');
+    },
+
+    async obtenerActividad() {
+        return this.fetch('obtener_actividad', {}, 'GET');
+    },
+
+    async obtenerAjustes() {
+        return this.fetch('obtener_ajustes', {}, 'GET');
+    },
+
+    async guardarAjustes(datos) {
+        return this.fetch('guardar_ajustes', datos);
+    },
+
+    async subirFotoPerfil(formData) {
+        return this.fetch('subir_foto_perfil', formData);
     }
 };
+
+
+
 
 
 

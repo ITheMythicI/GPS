@@ -118,6 +118,8 @@ if (!isset($_SESSION['id_usuario'])) {
 
     </main>
 
+
+
     <script src="js/api.js"></script>
     <script>
         // Cargar zonas y contenedores en las listas
@@ -151,10 +153,10 @@ if (!isset($_SESSION['id_usuario'])) {
                         <button onclick="eliminarContenedor(${c.id_contenedor}, '${c.ubicacion}')" style="background:none; border:none; color:#e74c3c; cursor:pointer;"><i class="fa-solid fa-trash"></i></button>
                     </div>
                 `).join('');
-            }
-        }
+           }
 
         async function eliminarZona(id, nombre) {
+(id, nombre) {
             if (!confirm(`¿Estás seguro de eliminar la zona "${nombre}"? Los contenedores se quedarán sin zona asignada.`)) return;
             const res = await API.borrarZona(id);
             if (res.status === 'ok') {

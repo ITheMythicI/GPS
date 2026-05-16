@@ -23,15 +23,20 @@
         </div>
 
         <div class="user-profile-circle" onclick="toggleUserMenu(event)">
-            <i class="fa-solid fa-user"></i>
+            <?php if (isset($_SESSION['foto_perfil'])): ?>
+                <img src="http://129.146.115.127/<?php echo $_SESSION['foto_perfil']; ?>" style="width:100%; height:100%; border-radius:50%; object-fit:cover;">
+            <?php else: ?>
+                <i class="fa-solid fa-user"></i>
+            <?php endif; ?>
             
             <div class="user-dropdown" id="userDropdown">
-                <a href="#"><i class="fa-solid fa-circle-user"></i> Ver Perfil</a>
-                <a href="#"><i class="fa-solid fa-sliders"></i> Ajustes</a>
+                <a href="ajustes.php"><i class="fa-solid fa-circle-user"></i> Ver Perfil</a>
+                <a href="ajustes.php"><i class="fa-solid fa-sliders"></i> Ajustes</a>
                 <hr>
                 <a href="logout.php" style="color: #e74c3c;"><i class="fa-solid fa-power-off"></i> Cerrar Sesión</a>
             </div>
         </div>
+
     </div>
 </header>
 
