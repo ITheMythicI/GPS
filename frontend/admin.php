@@ -97,16 +97,82 @@ if (!isset($_SESSION['id_usuario'])) {
                 </form>
             </section>
         </div>
+
+        <div class="admin-grid" style="margin-top: 30px;">
+            <!-- Lista de Zonas -->
+            <section class="panel-box">
+                <div class="panel-header"><h3><i class="fa-solid fa-list"></i> Zonas Existentes</h3></div>
+                <div id="lista-zonas" style="padding: 15px;">
+                    <!-- Se llena dinámicamente -->
+                </div>
+            </section>
+
+            <!-- Lista de Contenedores -->
+            <section class="panel-box">
+                <div class="panel-header"><h3><i class="fa-solid fa-trash-can"></i> Eliminar Contenedores</h3></div>
+                <div id="lista-contenedores" style="padding: 15px;">
+                    <!-- Se llena dinámicamente -->
+                </div>
+            </section>
+        </div>
+
     </main>
 
     <script src="js/api.js"></script>
     <script>
-        // Cargar zonas en el select de contenedores
-        async function cargarZonasAdmin() {
-            const res = await API.obtenerZonas();
-            if (res.status === 'ok') {
+        // Cargar zonas y contenedores en las listas
+        async function cargarDatosAdmin() {
+            // Cargar Zonas
+            const resZonas = await API.obtenerZonas();
+            if (resZonas.status === 'ok') {
                 const select = document.getElementById('c-id-zona');
-                select.innerHTML = res.data.map(z => `<option value="${z.id_zona}">${z.nombre}</option>`).join('');
+                const listaZonas = document.getElementById('lista-zonas');
+                
+                select.innerHTML = resZonas.data.map(z => `<option value="${z.id_zona}">${z.nombre}</option>`).join('');
+                
+                listaZonas.innerHTML = resZonas.data.map(z => `
+                    <div style="display:flex; justify-content:space-between; align-items:center; padding:8px; border-bottom:1px solid #eee;">
+                        <span><i class="fa-solid fa-circle" style="color:${z.color_hex}; font-size:10px;"></i> ${z.nombre}</span>
+                        <button onclick="eliminarZona(${z.id_zona}, '${z.nombre}')" style="background:none; border:none; color:#e74c3c; cursor:pointer;"><i class="fa-solid fa-trash"></i></button>
+                    </div>
+                `).join('');
+            }
+
+            // Cargar Contenedores
+            const resCont = await API.obtenerContenedores();
+            if (resCont.status === 'ok') {
+                const listaCont = document.getElementById('lista-contenedores');
+                listaCont.innerHTML = resCont.data.map(c => `
+                    <div style="display:flex; justify-content:space-between; align-items:center; padding:8px; border-bottom:1px solid #eee;">
+                        <div>
+                            <strong>${c.ubicacion}</strong><br>
+                            <small style="color:#666;">Zona: ${c.zona_nombre || 'Sin zona'}</small>
+                        </div>
+                        <button onclick="eliminarContenedor(${c.id_contenedor}, '${c.ubicacion}')" style="background:none; border:none; color:#e74c3c; cursor:pointer;"><i class="fa-solid fa-trash"></i></button>
+                    </div>
+                `).join('');
+            }
+        }
+
+        async function eliminarZona(id, nombre) {
+            if (!confirm(`¿Estás seguro de eliminar la zona "${nombre}"? Los contenedores se quedarán sin zona asignada.`)) return;
+            const res = await API.borrarZona(id);
+            if (res.status === 'ok') {
+                alert("Zona eliminada");
+                cargarDatosAdmin();
+            } else {
+                alert("Error: " + res.message);
+            }
+        }
+
+        async function eliminarContenedor(id, nombre) {
+            if (!confirm(`¿Estás seguro de eliminar el contenedor "${nombre}"?`)) return;
+            const res = await API.borrarContenedor(id);
+            if (res.status === 'ok') {
+                alert("Contenedor eliminado");
+                cargarDatosAdmin();
+            } else {
+                alert("Error: " + res.message);
             }
         }
 
@@ -123,7 +189,8 @@ if (!isset($_SESSION['id_usuario'])) {
             const res = await API.guardarZona(datos);
             if (res.status === 'ok') {
                 alert("Zona creada exitosamente");
-                location.reload();
+                cargarDatosAdmin();
+                document.getElementById('form-zona').reset();
             } else {
                 alert("Error: " + res.message);
             }
@@ -143,14 +210,15 @@ if (!isset($_SESSION['id_usuario'])) {
             const res = await API.guardarContenedor(datos);
             if (res.status === 'ok') {
                 alert("Contenedor creado exitosamente");
-                location.reload();
+                cargarDatosAdmin();
+                document.getElementById('form-contenedor').reset();
             } else {
                 alert("Error: " + res.message);
             }
         }
 
+        document.addEventListener('DOMContentLoaded', cargarDatosAdmin);
 
-        document.addEventListener('DOMContentLoaded', cargarZonasAdmin);
     </script>
 </body>
 </html>

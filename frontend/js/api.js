@@ -52,8 +52,17 @@ const API = {
 
     async guardarContenedor(datos) {
         return this.fetch('guardar_contenedor', datos);
+    },
+
+    async borrarZona(id) {
+        return this.fetch('borrar_zona', { id_zona: id });
+    },
+
+    async borrarContenedor(id) {
+        return this.fetch('borrar_contenedor', { id_contenedor: id });
     }
 };
+
 
 
 
