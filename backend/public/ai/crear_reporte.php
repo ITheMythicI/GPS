@@ -28,8 +28,8 @@ if (!$id_contenedor) {
 // Manejo de imagen
 $foto_url = null;
 if (isset($_FILES['foto']) && $_FILES['foto']['error'] === UPLOAD_ERR_OK) {
-    $upload_dir = __DIR__ . '/../../uploads/reportes/';
-    if (!is_dir($upload_dir)) mkdir($upload_dir, 0777, true);
+    $upload_dir = __DIR__ . '/../uploads/reportes/';
+    if (!is_dir($upload_dir)) mkdir($upload_dir, 0755, true);
     
     $ext = pathinfo($_FILES['foto']['name'], PATHINFO_EXTENSION);
     $filename = uniqid('rep_') . '.' . $ext;
