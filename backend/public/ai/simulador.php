@@ -71,6 +71,9 @@ try {
             $hum = 40 + (rand(-5, 5));
             $peso = (60 - $nueva_dist) * 0.8 + (rand(0, 50) / 10); // Peso proporcional al llenado
 
+            // Asegurar que exista el sensor correspondiente para evitar fallos de Foreign Key
+            mysqli_query($db, "INSERT IGNORE INTO Sensores (id_sensor, tipo_sensor, id_contenedor) VALUES ($id_contenedor, 'Simulado', $id_contenedor)");
+
             // 2. Insertar lectura
             $sql_insert = "INSERT INTO LecturasSensores (id_sensor, fecha_hora, tempCelsius, humedad, distanciaBoteTapa, pesoKg) 
                            VALUES (?, NOW(), ?, ?, ?, ?)";
