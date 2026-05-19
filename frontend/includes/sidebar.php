@@ -17,7 +17,7 @@
         </label>
         <ul class="submenu">
             <li><a href="dashboard.php#tabla-contenedores">Contenedores</a></li>
-            <li><a href="#">Camiones</a></li>
+            <li><a href="#">Camiones (Proximamente...)</a></li>
             <li><a href="dashboardMapa.php" style="<?php echo basename($_SERVER['PHP_SELF']) == 'dashboardMapa.php' ? 'color: var(--primary); font-weight: bold;' : ''; ?>">Mapa Interactivo</a></li>
         </ul>
     </div>

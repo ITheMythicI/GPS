@@ -60,7 +60,7 @@ $rol = $_SESSION['rol'];
                             <input type="checkbox" id="toggle-dark">
                             <span class="slider"></span>
                         </span>
-                        <span>Modo Oscuro (Beta)</span>
+                        <span>Modo Oscuro</span>
                     </label>
                 </div>
                 <button class="btn-update" onclick="guardarPerfil()">Guardar Cambios de Perfil</button>
