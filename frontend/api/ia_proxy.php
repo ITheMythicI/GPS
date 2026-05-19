@@ -16,6 +16,10 @@
 
 header('Content-Type: application/json');
 
+session_start();
+$id_usuario_sesion = $_SESSION['id_usuario'] ?? 0;
+$rol_sesion = $_SESSION['rol'] ?? '';
+
 // ── Validar acción ─────────────────────────────────────────────────────────────
 $action = $_GET['action'] ?? '';
 $acciones_permitidas = ['clasificar', 'rutas', 'reporte', 'contenedores', 'simular', 'zonas', 'migrar', 'test_db', 'normalizar', 'guardar_zona', 'guardar_contenedor', 'actualizar_nombres', 'reparar_zonas', 'borrar_zona', 'borrar_contenedor', 'crear_reporte', 'migrar_reportes', 'obtener_reportes', 'obtener_actividad', 'migrar_actividad', 'registrar_actividad', 'obtener_ajustes', 'guardar_ajustes', 'subir_foto_perfil', 'migrar_ajustes', 'imagen', 'reiniciar_simulacion'];
@@ -23,6 +27,14 @@ $acciones_permitidas = ['clasificar', 'rutas', 'reporte', 'contenedores', 'simul
 if (!in_array($action, $acciones_permitidas)) {
     http_response_code(400);
     echo json_encode(['status' => 'error', 'message' => "Acción '$action' no válida"]);
+    exit;
+}
+
+// Bloquear acciones administrativas si no es administrador
+$acciones_admin = ['guardar_ajustes', 'guardar_zona', 'guardar_contenedor', 'borrar_zona', 'borrar_contenedor', 'migrar', 'normalizar'];
+if (in_array($action, $acciones_admin) && $rol_sesion !== 'administrador') {
+    http_response_code(403);
+    echo json_encode(['status' => 'error', 'message' => 'No autorizado']);
     exit;
 }
 
@@ -59,9 +71,6 @@ $url_backend = match($action) {
     'imagen'               => '', // Manejado antes del match, este valor nunca se usa
 };
 
-
-session_start();
-$id_usuario_sesion = $_SESSION['id_usuario'] ?? 0;
 
 // Añadir parámetros GET adicionales (como id_contenedor, y id_usuario de sesión)
 $queryParams = $_GET;

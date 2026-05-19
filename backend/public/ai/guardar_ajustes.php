@@ -9,14 +9,16 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
 }
 
 // Solo administradores pueden guardar ajustes globales
-session_start();
-if (!isset($_SESSION['rol']) || $_SESSION['rol'] !== 'administrador') {
+$id_usuario = $_POST['id_usuario'] ?? $_GET['id_usuario'] ?? 0;
+$query_role = mysqli_query($db, "SELECT rol FROM Usuarios WHERE id_usuario = " . (int)$id_usuario);
+$user = mysqli_fetch_assoc($query_role);
+if (!$user || $user['rol'] !== 'administrador') {
     echo json_encode(['status' => 'error', 'message' => 'No autorizado']);
     exit;
 }
 
 $errores = [];
-$claves_permitidas = ['velocidad_simulacion', 'simulador_activo', 'umbral_llenado', 'umbral_bateria'];
+$claves_permitidas = ['umbral_llenado', 'umbral_bateria'];
 
 foreach ($_POST as $clave => $valor) {
     if (!in_array($clave, $claves_permitidas)) {

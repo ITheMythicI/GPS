@@ -52,10 +52,6 @@ if (!$stmt) {
 
 
 if (mysqli_stmt_execute($stmt)) {
-    // Actualizar sesión para el frontend
-    $_SESSION['dark_mode'] = $dark_mode;
-    if ($foto_url) $_SESSION['foto_perfil'] = $foto_url;
-    
     echo json_encode(['status' => 'ok', 'foto_url' => $foto_url]);
 } else {
     echo json_encode(['status' => 'error', 'message' => mysqli_error($db)]);

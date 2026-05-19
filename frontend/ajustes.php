@@ -66,39 +66,6 @@ $rol = $_SESSION['rol'];
                 <button class="btn-update" onclick="guardarPerfil()">Guardar Cambios de Perfil</button>
             </section>
 
-            <?php if ($rol === 'administrador'): ?>
-            <!-- 2. Parámetros de Simulación (Admin) -->
-            <section class="settings-card">
-                <h4><i class="fa-solid fa-microchip"></i> Simulación y Sensores</h4>
-                <div class="form-group">
-                    <label>Velocidad de Simulación (Segundos por ciclo)</label>
-                    <input type="number" id="s-velocidad" min="1" max="60">
-                </div>
-                <div class="form-group">
-                    <label class="toggle-switch">
-                        <span class="switch">
-                            <input type="checkbox" id="s-activo">
-                            <span class="slider"></span>
-                        </span>
-                        <span>Simulador en Tiempo Real Activo</span>
-                    </label>
-                </div>
-            </section>
-
-            <!-- 3. Umbrales de Alerta (Admin) -->
-            <section class="settings-card">
-                <h4><i class="fa-solid fa-triangle-exclamation"></i> Umbrales de Alerta</h4>
-                <div class="form-group">
-                    <label>Nivel Crítico de Llenado (%)</label>
-                    <input type="number" id="u-llenado" min="50" max="100">
-                </div>
-                <div class="form-group">
-                    <label>Alerta de Batería Baja (%)</label>
-                    <input type="number" id="u-bateria" min="1" max="50">
-                </div>
-                <button class="btn-update" onclick="guardarAjustesGlobales()">Guardar Configuración Global</button>
-            </section>
-            <?php endif; ?>
         </div>
     </main>
 
@@ -119,15 +86,6 @@ $rol = $_SESSION['rol'];
                 const isDark = res.usuario.config_oscuro == 1;
                 document.getElementById('toggle-dark').checked = isDark;
                 localStorage.setItem('dark_mode', isDark ? '1' : '0');
-
-                // Info Sistema (Si es Admin)
-                const s = res.sistema;
-                if (document.getElementById('s-velocidad')) {
-                    document.getElementById('s-velocidad').value = s.velocidad_simulacion || 1;
-                    document.getElementById('s-activo').checked = s.simulador_activo == 1;
-                    document.getElementById('u-llenado').value = s.umbral_llenado || 85;
-                    document.getElementById('u-bateria').value = s.umbral_bateria || 15;
-                }
             }
         }
 
@@ -160,22 +118,6 @@ $rol = $_SESSION['rol'];
                 }
             } catch(e) { alert("Error de red al guardar perfil: " + e); }
 
-        }
-
-        async function guardarAjustesGlobales() {
-            const datos = {
-                velocidad_simulacion: document.getElementById('s-velocidad').value,
-                simulador_activo: document.getElementById('s-activo').checked ? 1 : 0,
-                umbral_llenado: document.getElementById('u-llenado').value,
-                umbral_bateria: document.getElementById('u-bateria').value
-            };
-
-            const res = await API.guardarAjustes(datos);
-            if (res.status === 'ok') {
-                alert("Ajustes globales guardados");
-            } else {
-                alert("Error al guardar ajustes: " + (res.message || JSON.stringify(res)));
-            }
         }
 
         document.addEventListener('DOMContentLoaded', cargarAjustes);
