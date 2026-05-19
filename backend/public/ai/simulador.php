@@ -68,9 +68,19 @@ while ($c = mysqli_fetch_assoc($resultado)) {
     $sql_insert = "INSERT INTO LecturasSensores (id_sensor, fecha_hora, tempCelsius, humedad, distanciaBoteTapa, pesoKg) 
                    VALUES (?, NOW(), ?, ?, ?, ?)";
     $stmt = mysqli_prepare($db, $sql_insert);
-    mysqli_stmt_bind_param($stmt, 'idddd', $id_contenedor, $temp, $hum, $nueva_dist, $peso);
-    mysqli_stmt_execute($stmt);
-    mysqli_stmt_close($stmt);
+    if ($stmt) {
+        mysqli_stmt_bind_param($stmt, 'idddd', $id_contenedor, $temp, $hum, $nueva_dist, $peso);
+        if (!mysqli_stmt_execute($stmt)) {
+            $err = mysqli_stmt_error($stmt);
+            error_log("Error simulando contenedor $id_contenedor: " . $err);
+            $errores[] = "Contenedor $id_contenedor: $err";
+        }
+        mysqli_stmt_close($stmt);
+    } else {
+        $err = mysqli_error($db);
+        error_log("Error preparando simulacion: " . $err);
+        $errores[] = "Error prepare: $err";
+    }
 
     // 3. Actualizar estado del contenedor (para consistencia legacy)
     $estado = 'Vacío';
@@ -80,5 +90,9 @@ while ($c = mysqli_fetch_assoc($resultado)) {
     mysqli_query($db, "UPDATE Contenedores SET estado = '$estado' WHERE id_contenedor = $id_contenedor");
 }
 
-echo json_encode(["status" => "ok", "message" => "Simulación completada para botes secundarios."]);
+if (!empty($errores)) {
+    echo json_encode(["status" => "warning", "message" => "Simulación terminó con errores.", "errores" => $errores]);
+} else {
+    echo json_encode(["status" => "ok", "message" => "Simulación completada para botes secundarios."]);
+}
 ?>

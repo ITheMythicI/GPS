@@ -217,7 +217,10 @@ if (!isset($_SESSION['id_usuario'])) {
         btn.disabled = true;
         btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i>&nbsp; Simulando...';
         try {
-            await API.simular();
+            const simRes = await API.simular();
+            if (simRes.status === 'warning' && simRes.errores) {
+                alert("Algunos contenedores fallaron al simular:\n" + simRes.errores.join('\n'));
+            }
             await API.clasificar();
             await actualizarDashboard();
         } catch (err) {
