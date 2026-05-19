@@ -14,51 +14,61 @@ if (!isset($_SESSION['id_usuario']) || $_SESSION['rol'] !== 'administrador') {
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         .select-estado {
-            padding: 5px 10px;
-            border-radius: 20px;
-            font-size: 11px;
+            appearance: none;
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            padding: 5px 25px 5px 12px;
+            border-radius: 15px;
+            font-size: 10px;
             font-weight: 700;
             text-transform: uppercase;
             border: 1px solid transparent;
             outline: none;
             cursor: pointer;
             transition: all 0.2s ease;
+            background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23666' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 8px center;
+            background-size: 10px;
         }
         
         .select-estado[data-status="Sin resolver"],
         .select-estado[data-status="Pendiente"] {
-            background: #ffebe9;
+            background-color: #ffebe9;
             color: #cf222e;
             border-color: #ffc5c2;
         }
         .select-estado[data-status="En revisión"],
         .select-estado[data-status="En Revisión"] {
-            background: #fff8c5;
+            background-color: #fff8c5;
             color: #9e6a00;
             border-color: #f1e05a;
         }
         .select-estado[data-status="Resuelta"],
         .select-estado[data-status="Resuelto"] {
-            background: #dafbe1;
+            background-color: #dafbe1;
             color: #1a7f37;
             border-color: #8ae8a1;
         }
 
+        .dark-theme .select-estado {
+            background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23ccc' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+        }
         .dark-theme .select-estado[data-status="Sin resolver"],
         .dark-theme .select-estado[data-status="Pendiente"] {
-            background: rgba(248,81,73,0.15);
+            background-color: rgba(248,81,73,0.15);
             color: #f85149;
             border-color: rgba(248,81,73,0.4);
         }
         .dark-theme .select-estado[data-status="En revisión"],
         .dark-theme .select-estado[data-status="En Revisión"] {
-            background: rgba(210,144,40,0.15);
+            background-color: rgba(210,144,40,0.15);
             color: #d29004;
             border-color: rgba(210,144,40,0.4);
         }
         .dark-theme .select-estado[data-status="Resuelta"],
         .dark-theme .select-estado[data-status="Resuelto"] {
-            background: rgba(56,139,60,0.15);
+            background-color: rgba(56,139,60,0.15);
             color: #56d364;
             border-color: rgba(56,139,60,0.4);
         }
