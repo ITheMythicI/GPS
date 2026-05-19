@@ -11,6 +11,7 @@ try {
         throw new Exception('Método no permitido');
     }
 
+    $id = $_POST['id'] ?? '';
     $ubicacion = $_POST['ubicacion'] ?? '';
     $id_zona = $_POST['id_zona'] ?? null;
     $lat = (float)($_POST['lat'] ?? 0);
@@ -21,17 +22,24 @@ try {
         throw new Exception('La ubicación es obligatoria');
     }
 
-    $query = "INSERT INTO Contenedores (ubicacion, id_zona, latitud, longitud, es_real, estado) VALUES (?, ?, ?, ?, ?, 'Vacío')";
-    $stmt = mysqli_prepare($db, $query);
-    
-    if (!$stmt) {
-        throw new Exception("Error preparando la consulta: " . mysqli_error($db));
+    if (!empty($id)) {
+        // UPDATE
+        $query = "UPDATE Contenedores SET ubicacion = ?, id_zona = ?, latitud = ?, longitud = ?, es_real = ? WHERE id_contenedor = ?";
+        $stmt = mysqli_prepare($db, $query);
+        if (!$stmt) throw new Exception("Error preparando la consulta update: " . mysqli_error($db));
+        mysqli_stmt_bind_param($stmt, 'siddii', $ubicacion, $id_zona, $lat, $lng, $es_real, $id);
+        $msg = 'Contenedor actualizado correctamente';
+    } else {
+        // INSERT
+        $query = "INSERT INTO Contenedores (ubicacion, id_zona, latitud, longitud, es_real, estado) VALUES (?, ?, ?, ?, ?, 'Vacío')";
+        $stmt = mysqli_prepare($db, $query);
+        if (!$stmt) throw new Exception("Error preparando la consulta insert: " . mysqli_error($db));
+        mysqli_stmt_bind_param($stmt, 'siddi', $ubicacion, $id_zona, $lat, $lng, $es_real);
+        $msg = 'Contenedor creado correctamente';
     }
 
-    mysqli_stmt_bind_param($stmt, 'siddi', $ubicacion, $id_zona, $lat, $lng, $es_real);
-
     if (mysqli_stmt_execute($stmt)) {
-        echo json_encode(['status' => 'ok', 'message' => 'Contenedor creado correctamente']);
+        echo json_encode(['status' => 'ok', 'message' => $msg]);
     } else {
         throw new Exception("Error al ejecutar: " . mysqli_stmt_error($stmt));
     }

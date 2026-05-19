@@ -38,6 +38,7 @@ if (!isset($_SESSION['id_usuario'])) {
             <section class="panel-box">
                 <div class="panel-header"><h3><i class="fa-solid fa-map-location-dot"></i> Nueva Zona</h3></div>
                 <form id="form-zona" style="padding: 20px;">
+                    <input type="hidden" id="z-id">
                     <div class="form-group">
                         <label>Nombre de la Zona</label>
                         <input type="text" id="z-nombre" placeholder="Ej. Campus Norte">
@@ -58,7 +59,7 @@ if (!isset($_SESSION['id_usuario'])) {
                         <label>Polígono (JSON Coords)</label>
                         <textarea id="z-coords" rows="4" placeholder="[[lat, lng], [lat, lng]...]"></textarea>
                     </div>
-                    <button type="button" class="btn-save" onclick="guardarZona()">Crear Zona</button>
+                    <button type="button" class="btn-save" id="btn-save-zona" onclick="guardarZona()">Guardar Zona</button>
                 </form>
             </section>
 
@@ -66,6 +67,7 @@ if (!isset($_SESSION['id_usuario'])) {
             <section class="panel-box">
                 <div class="panel-header"><h3><i class="fa-solid fa-box"></i> Nuevo Contenedor</h3></div>
                 <form id="form-contenedor" style="padding: 20px;">
+                    <input type="hidden" id="c-id">
                     <div class="form-group">
                         <label>Ubicación / Nombre</label>
                         <input type="text" id="c-ubicacion" placeholder="Ej. Puerta Principal">
@@ -135,7 +137,10 @@ if (!isset($_SESSION['id_usuario'])) {
                 listaZonas.innerHTML = resZonas.data.map(z => `
                     <div style="display:flex; justify-content:space-between; align-items:center; padding:8px; border-bottom:1px solid #eee;">
                         <span><i class="fa-solid fa-circle" style="color:${z.color_hex}; font-size:10px;"></i> ${z.nombre}</span>
-                        <button onclick="eliminarZona(${z.id_zona}, '${z.nombre}')" style="background:none; border:none; color:#e74c3c; cursor:pointer;"><i class="fa-solid fa-trash"></i></button>
+                        <div>
+                            <button onclick='editarZona(${JSON.stringify(z).replace(/'/g, "&#39;")})' style="background:none; border:none; color:var(--primary); cursor:pointer; margin-right:10px;"><i class="fa-solid fa-pen"></i></button>
+                            <button onclick="eliminarZona(${z.id_zona}, '${z.nombre}')" style="background:none; border:none; color:#e74c3c; cursor:pointer;"><i class="fa-solid fa-trash"></i></button>
+                        </div>
                     </div>
                 `).join('');
             }
@@ -150,7 +155,10 @@ if (!isset($_SESSION['id_usuario'])) {
                             <strong>${c.ubicacion}</strong><br>
                             <small style="color:#666;">Zona: ${c.zona_nombre || 'Sin zona'}</small>
                         </div>
-                        <button onclick="eliminarContenedor(${c.id_contenedor}, '${c.ubicacion}')" style="background:none; border:none; color:#e74c3c; cursor:pointer;"><i class="fa-solid fa-trash"></i></button>
+                        <div>
+                            <button onclick='editarContenedor(${JSON.stringify(c).replace(/'/g, "&#39;")})' style="background:none; border:none; color:var(--primary); cursor:pointer; margin-right:10px;"><i class="fa-solid fa-pen"></i></button>
+                            <button onclick="eliminarContenedor(${c.id_contenedor}, '${c.ubicacion}')" style="background:none; border:none; color:#e74c3c; cursor:pointer;"><i class="fa-solid fa-trash"></i></button>
+                        </div>
                     </div>
                 `).join('');
            }
@@ -178,8 +186,28 @@ if (!isset($_SESSION['id_usuario'])) {
             }
         }
 
+        function editarZona(z) {
+            document.getElementById('z-id').value = z.id_zona;
+            document.getElementById('z-nombre').value = z.nombre;
+            document.getElementById('z-prioridad').value = z.prioridad_limpieza || 1;
+            document.getElementById('z-color').value = z.color_hex;
+            document.getElementById('z-coords').value = z.coordenadas_poligono || '';
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function editarContenedor(c) {
+            document.getElementById('c-id').value = c.id_contenedor;
+            document.getElementById('c-ubicacion').value = c.ubicacion;
+            document.getElementById('c-id-zona').value = c.id_zona || '';
+            document.getElementById('c-lat').value = c.latitud || '';
+            document.getElementById('c-lng').value = c.longitud || '';
+            document.getElementById('c-real').value = c.es_real;
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
         async function guardarZona() {
             const datos = {
+                id: document.getElementById('z-id').value,
                 nombre: document.getElementById('z-nombre').value,
                 prioridad: document.getElementById('z-prioridad').value,
                 color: document.getElementById('z-color').value,
@@ -190,9 +218,10 @@ if (!isset($_SESSION['id_usuario'])) {
 
             const res = await API.guardarZona(datos);
             if (res.status === 'ok') {
-                alert("Zona creada exitosamente");
+                alert(res.message || "Guardado exitosamente");
                 cargarDatosAdmin();
                 document.getElementById('form-zona').reset();
+                document.getElementById('z-id').value = '';
             } else {
                 alert("Error: " + res.message);
             }
@@ -200,6 +229,7 @@ if (!isset($_SESSION['id_usuario'])) {
 
         async function guardarContenedor() {
             const datos = {
+                id: document.getElementById('c-id').value,
                 ubicacion: document.getElementById('c-ubicacion').value,
                 id_zona: document.getElementById('c-id-zona').value,
                 lat: document.getElementById('c-lat').value,
@@ -211,9 +241,10 @@ if (!isset($_SESSION['id_usuario'])) {
 
             const res = await API.guardarContenedor(datos);
             if (res.status === 'ok') {
-                alert("Contenedor creado exitosamente");
+                alert(res.message || "Guardado exitosamente");
                 cargarDatosAdmin();
                 document.getElementById('form-contenedor').reset();
+                document.getElementById('c-id').value = '';
             } else {
                 alert("Error: " + res.message);
             }
