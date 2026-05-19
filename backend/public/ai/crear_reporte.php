@@ -27,16 +27,29 @@ if (!$id_contenedor) {
 
 // Manejo de imagen
 $foto_url = null;
-if (isset($_FILES['foto']) && $_FILES['foto']['error'] === UPLOAD_ERR_OK) {
-    $upload_dir = __DIR__ . '/../uploads/reportes/';
-    if (!is_dir($upload_dir)) mkdir($upload_dir, 0755, true);
-    
-    $ext = pathinfo($_FILES['foto']['name'], PATHINFO_EXTENSION);
-    $filename = uniqid('rep_') . '.' . $ext;
-    $target = $upload_dir . $filename;
-    
-    if (move_uploaded_file($_FILES['foto']['tmp_name'], $target)) {
-        $foto_url = 'uploads/reportes/' . $filename;
+if (isset($_FILES['foto'])) {
+    if ($_FILES['foto']['error'] === UPLOAD_ERR_OK) {
+        $upload_dir = __DIR__ . '/../uploads/reportes/';
+        if (!is_dir($upload_dir)) {
+            if (!mkdir($upload_dir, 0755, true)) {
+                echo json_encode(['status' => 'error', 'message' => 'Error del servidor: No se pudo crear el directorio de reportes.']);
+                exit;
+            }
+        }
+        
+        $ext = pathinfo($_FILES['foto']['name'], PATHINFO_EXTENSION);
+        $filename = uniqid('rep_') . '.' . $ext;
+        $target = $upload_dir . $filename;
+        
+        if (move_uploaded_file($_FILES['foto']['tmp_name'], $target)) {
+            $foto_url = 'uploads/reportes/' . $filename;
+        } else {
+            echo json_encode(['status' => 'error', 'message' => 'Error del servidor: No se pudo guardar el archivo subido en el destino.']);
+            exit;
+        }
+    } elseif ($_FILES['foto']['error'] !== UPLOAD_ERR_NO_FILE) {
+        echo json_encode(['status' => 'error', 'message' => 'Error al subir archivo: Código de error PHP ' . $_FILES['foto']['error']]);
+        exit;
     }
 }
 

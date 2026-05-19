@@ -3,6 +3,9 @@ require_once __DIR__ . '/../../includes/database.php';
 
 header('Content-Type: application/json');
 
+// Asegurar que la columna estado soporte tanto los valores nuevos como los antiguos
+mysqli_query($db, "ALTER TABLE ReportesIncidencias MODIFY COLUMN estado ENUM('Pendiente', 'En Revisión', 'Resuelto', 'Sin resolver', 'En revisión', 'Resuelta') DEFAULT 'Sin resolver'");
+
 $query = "
     SELECT r.*, c.ubicacion as contenedor_nombre, u.nombre as usuario_nombre 
     FROM ReportesIncidencias r

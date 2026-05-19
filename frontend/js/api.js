@@ -93,6 +93,14 @@ const API = {
 
     async subirFotoPerfil(formData) {
         return this.fetch('subir_foto_perfil', formData);
+    },
+
+    async actualizarEstadoReporte(idReporte, estado) {
+        return this.fetch('actualizar_estado_reporte', { id_reporte: idReporte, estado: estado });
+    },
+
+    async borrarReporte(idReporte) {
+        return this.fetch('borrar_reporte', { id_reporte: idReporte });
     }
 };
 

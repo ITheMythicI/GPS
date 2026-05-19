@@ -191,7 +191,12 @@ if (!isset($_SESSION['id_usuario'])) {
             document.getElementById('z-nombre').value = z.nombre;
             document.getElementById('z-prioridad').value = z.prioridad_limpieza || 1;
             document.getElementById('z-color').value = z.color_hex;
-            document.getElementById('z-coords').value = z.coordenadas_poligono || '';
+            
+            let coordsStr = '';
+            if (z.coordenadas_poligono) {
+                coordsStr = typeof z.coordenadas_poligono === 'object' ? JSON.stringify(z.coordenadas_poligono) : z.coordenadas_poligono;
+            }
+            document.getElementById('z-coords').value = coordsStr;
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 

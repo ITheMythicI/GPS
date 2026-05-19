@@ -67,6 +67,55 @@ $id_reporte = $_GET['id'] ?? 0;
             object-fit: contain;
             background: #000;
         }
+        .select-estado {
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            border: 1px solid transparent;
+            outline: none;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        
+        .select-estado[data-status="Sin resolver"],
+        .select-estado[data-status="Pendiente"] {
+            background: #ffebe9;
+            color: #cf222e;
+            border-color: #ffc5c2;
+        }
+        .select-estado[data-status="En revisión"],
+        .select-estado[data-status="En Revisión"] {
+            background: #fff8c5;
+            color: #9e6a00;
+            border-color: #f1e05a;
+        }
+        .select-estado[data-status="Resuelta"],
+        .select-estado[data-status="Resuelto"] {
+            background: #dafbe1;
+            color: #1a7f37;
+            border-color: #8ae8a1;
+        }
+
+        .dark-theme .select-estado[data-status="Sin resolver"],
+        .dark-theme .select-estado[data-status="Pendiente"] {
+            background: rgba(248,81,73,0.15);
+            color: #f85149;
+            border-color: rgba(248,81,73,0.4);
+        }
+        .dark-theme .select-estado[data-status="En revisión"],
+        .dark-theme .select-estado[data-status="En Revisión"] {
+            background: rgba(210,144,40,0.15);
+            color: #d29004;
+            border-color: rgba(210,144,40,0.4);
+        }
+        .dark-theme .select-estado[data-status="Resuelta"],
+        .dark-theme .select-estado[data-status="Resuelto"] {
+            background: rgba(56,139,60,0.15);
+            color: #56d364;
+            border-color: rgba(56,139,60,0.4);
+        }
     </style>
 </head>
 <body class="<?= isset($_SESSION['dark_mode']) && $_SESSION['dark_mode'] ? 'dark-theme' : '' ?>">
@@ -102,16 +151,19 @@ $id_reporte = $_GET['id'] ?? 0;
                         <label>Reportado por</label>
                         <span id="d-usuario"></span>
                     </div>
+                    <div class="detalle-item">
+                        <label>Estado de Incidencia</label>
+                        <select id="d-estado-select" class="select-estado" style="margin-top:5px;"></select>
+                    </div>
+                    <div class="detalle-item">
+                        <label>Ubicación / Referencia</label>
+                        <span id="d-ubicacion" style="display:block; margin-top:5px;"></span>
+                    </div>
                 </div>
 
                 <div class="detalle-item" style="margin-bottom:20px;">
                     <label>Descripción del Problema</label>
                     <span id="d-desc" style="display:block; padding:10px; background:var(--bg-panel); border-radius:6px; margin-top:5px;"></span>
-                </div>
-
-                <div class="detalle-item" style="margin-bottom:20px;">
-                    <label>Ubicación / Referencia</label>
-                    <span id="d-ubicacion"></span>
                 </div>
 
                 <h3 style="margin-top:30px; margin-bottom:15px; font-size:16px;"><i class="fa-solid fa-image"></i> Evidencia Multimedia</h3>
@@ -125,6 +177,14 @@ $id_reporte = $_GET['id'] ?? 0;
     <script src="js/api.js"></script>
     <script>
         const ID_REPORTE = <?= json_encode($id_reporte) ?>;
+
+        function normalizarEstado(est) {
+            if (!est) return 'Sin resolver';
+            if (est === 'Pendiente') return 'Sin resolver';
+            if (est === 'En Revisión') return 'En revisión';
+            if (est === 'Resuelto') return 'Resuelta';
+            return est;
+        }
 
         async function cargarDetalle() {
             try {
@@ -153,6 +213,28 @@ $id_reporte = $_GET['id'] ?? 0;
                             ubicacionHTML = `<span style="color:var(--text-sub);">Ubicación no disponible</span>`;
                         }
                         document.getElementById('d-ubicacion').innerHTML = ubicacionHTML;
+
+                        // Estado
+                        const estNorm = normalizarEstado(rep.estado);
+                        const stateSelect = document.getElementById('d-estado-select');
+                        stateSelect.innerHTML = `
+                            <option value="Sin resolver" ${estNorm === 'Sin resolver' ? 'selected' : ''}>Sin resolver</option>
+                            <option value="En revisión" ${estNorm === 'En revisión' ? 'selected' : ''}>En revisión</option>
+                            <option value="Resuelta" ${estNorm === 'Resuelta' ? 'selected' : ''}>Resuelta</option>
+                        `;
+                        stateSelect.setAttribute('data-status', estNorm);
+                        stateSelect.onchange = async function() {
+                            const newStatus = this.value;
+                            this.setAttribute('data-status', newStatus);
+                            try {
+                                const resUpdate = await API.actualizarEstadoReporte(ID_REPORTE, newStatus);
+                                if (resUpdate.status !== 'ok') {
+                                    alert("Error al actualizar estado: " + resUpdate.message);
+                                }
+                            } catch (err) {
+                                alert("Error de conexión al actualizar estado.");
+                            }
+                        };
 
                         // Foto
                         const fotoContainer = document.getElementById('foto-container');

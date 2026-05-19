@@ -39,13 +39,36 @@ const MapService = {
                 listContainer.innerHTML = '';
 
                 res.data.forEach(zona => {
-                    if (zona.coordenadas_poligono) {
-                        L.polygon(zona.coordenadas_poligono, {
-                            color: zona.color_hex,
-                            fillColor: zona.color_hex,
-                            fillOpacity: 0.15,
-                            dashArray: '5, 10'
-                        }).addTo(zoneLayer);
+                    let coords = zona.coordenadas_poligono;
+                    if (coords) {
+                        try {
+                            if (typeof coords === 'string') {
+                                coords = JSON.parse(coords);
+                            }
+                            zona.coordenadas_poligono = coords;
+                        } catch (e) {
+                            console.error("Error parseando coordenadas de zona " + zona.nombre + ":", e);
+                            zona.coordenadas_poligono = null;
+                        }
+                    }
+
+                    if (zona.coordenadas_poligono && Array.isArray(zona.coordenadas_poligono) && zona.coordenadas_poligono.length > 0) {
+                        // Filtrar puntos invalidos
+                        const validCoords = zona.coordenadas_poligono.filter(pt => Array.isArray(pt) && pt.length === 2 && pt[0] !== null && pt[1] !== null && !isNaN(pt[0]) && !isNaN(pt[1]));
+                        
+                        if (validCoords.length >= 3) {
+                            L.polygon(validCoords, {
+                                color: zona.color_hex,
+                                fillColor: zona.color_hex,
+                                fillOpacity: 0.15,
+                                dashArray: '5, 10'
+                            }).addTo(zoneLayer);
+                            zona.coordenadas_poligono = validCoords;
+                        } else {
+                            zona.coordenadas_poligono = null;
+                        }
+                    } else {
+                        zona.coordenadas_poligono = null;
                     }
                     
                     // Actualizar lista de UI

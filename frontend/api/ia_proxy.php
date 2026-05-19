@@ -22,7 +22,7 @@ $rol_sesion = $_SESSION['rol'] ?? '';
 
 // ── Validar acción ─────────────────────────────────────────────────────────────
 $action = $_GET['action'] ?? '';
-$acciones_permitidas = ['clasificar', 'rutas', 'reporte', 'contenedores', 'simular', 'zonas', 'migrar', 'test_db', 'normalizar', 'guardar_zona', 'guardar_contenedor', 'actualizar_nombres', 'reparar_zonas', 'borrar_zona', 'borrar_contenedor', 'crear_reporte', 'migrar_reportes', 'obtener_reportes', 'obtener_actividad', 'migrar_actividad', 'registrar_actividad', 'obtener_ajustes', 'guardar_ajustes', 'subir_foto_perfil', 'migrar_ajustes', 'imagen', 'reiniciar_simulacion'];
+$acciones_permitidas = ['clasificar', 'rutas', 'reporte', 'contenedores', 'simular', 'zonas', 'migrar', 'test_db', 'normalizar', 'guardar_zona', 'guardar_contenedor', 'actualizar_nombres', 'reparar_zonas', 'borrar_zona', 'borrar_contenedor', 'crear_reporte', 'migrar_reportes', 'obtener_reportes', 'obtener_actividad', 'migrar_actividad', 'registrar_actividad', 'obtener_ajustes', 'guardar_ajustes', 'subir_foto_perfil', 'migrar_ajustes', 'imagen', 'reiniciar_simulacion', 'actualizar_estado_reporte', 'borrar_reporte'];
 
 if (!in_array($action, $acciones_permitidas)) {
     http_response_code(400);
@@ -31,7 +31,7 @@ if (!in_array($action, $acciones_permitidas)) {
 }
 
 // Bloquear acciones administrativas si no es administrador
-$acciones_admin = ['guardar_ajustes', 'guardar_zona', 'guardar_contenedor', 'borrar_zona', 'borrar_contenedor', 'migrar', 'normalizar'];
+$acciones_admin = ['guardar_ajustes', 'guardar_zona', 'guardar_contenedor', 'borrar_zona', 'borrar_contenedor', 'migrar', 'normalizar', 'actualizar_estado_reporte', 'borrar_reporte'];
 if (in_array($action, $acciones_admin) && $rol_sesion !== 'administrador') {
     http_response_code(403);
     echo json_encode(['status' => 'error', 'message' => 'No autorizado']);
@@ -68,6 +68,8 @@ $url_backend = match($action) {
     'subir_foto_perfil'  => "$backend_base/subir_foto_perfil.php",
     'migrar_ajustes'       => "$backend_base/migration_ajustes.php",
     'reiniciar_simulacion' => "$backend_base/reiniciar_simulacion.php",
+    'actualizar_estado_reporte' => "$backend_base/actualizar_estado_reporte.php",
+    'borrar_reporte'            => "$backend_base/borrar_reporte.php",
     'imagen'               => '', // Manejado antes del match, este valor nunca se usa
 };
 

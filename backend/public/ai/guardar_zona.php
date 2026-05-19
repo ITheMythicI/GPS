@@ -22,6 +22,34 @@ try {
         throw new Exception('El nombre de la zona es obligatorio');
     }
 
+    // Normalizar coordenadas si vienen en formato plano y asegurar JSON válido
+    if (!empty($coords)) {
+        $decoded = json_decode($coords, true);
+        if ($decoded === null) {
+            // Intentar convertir formato plano "lat,lng,lat,lng" a array JSON
+            $parts = explode(',', $coords);
+            if (count($parts) >= 6 && count($parts) % 2 === 0) {
+                $newCoords = [];
+                for ($i = 0; $i < count($parts); $i += 2) {
+                    $lat = floatval(trim($parts[$i]));
+                    $lng = floatval(trim($parts[$i+1]));
+                    if ($lat !== 0.0 && $lng !== 0.0) {
+                        $newCoords[] = [$lat, $lng];
+                    }
+                }
+                if (count($newCoords) >= 3) {
+                    $coords = json_encode($newCoords);
+                } else {
+                    throw new Exception('Formato de coordenadas no válido. Debe ser un JSON válido como [[lat,lng],[lat,lng]...] o una secuencia de al menos 3 puntos separados por comas.');
+                }
+            } else {
+                throw new Exception('Formato de coordenadas no válido. Asegúrate de usar corchetes, ej: [[lat, lng], [lat, lng]...]');
+            }
+        }
+    } else {
+        $coords = '[]';
+    }
+
     if (!empty($id)) {
         // UPDATE
         $query = "UPDATE Zonas SET nombre = ?, prioridad_limpieza = ?, color_hex = ?, coordenadas_poligono = ? WHERE id_zona = ?";
