@@ -18,7 +18,7 @@ header('Content-Type: application/json');
 
 // ── Validar acción ─────────────────────────────────────────────────────────────
 $action = $_GET['action'] ?? '';
-$acciones_permitidas = ['clasificar', 'rutas', 'reporte', 'contenedores', 'simular', 'zonas', 'migrar', 'test_db', 'normalizar', 'guardar_zona', 'guardar_contenedor', 'actualizar_nombres', 'reparar_zonas', 'borrar_zona', 'borrar_contenedor', 'crear_reporte', 'migrar_reportes', 'obtener_reportes', 'obtener_actividad', 'migrar_actividad', 'registrar_actividad', 'obtener_ajustes', 'guardar_ajustes', 'subir_foto_perfil', 'migrar_ajustes'];
+$acciones_permitidas = ['clasificar', 'rutas', 'reporte', 'contenedores', 'simular', 'zonas', 'migrar', 'test_db', 'normalizar', 'guardar_zona', 'guardar_contenedor', 'actualizar_nombres', 'reparar_zonas', 'borrar_zona', 'borrar_contenedor', 'crear_reporte', 'migrar_reportes', 'obtener_reportes', 'obtener_actividad', 'migrar_actividad', 'registrar_actividad', 'obtener_ajustes', 'guardar_ajustes', 'subir_foto_perfil', 'migrar_ajustes', 'imagen', 'reiniciar_simulacion'];
 
 if (!in_array($action, $acciones_permitidas)) {
     http_response_code(400);
@@ -55,6 +55,7 @@ $url_backend = match($action) {
     'guardar_ajustes'    => "$backend_base/guardar_ajustes.php",
     'subir_foto_perfil'  => "$backend_base/subir_foto_perfil.php",
     'migrar_ajustes'     => "$backend_base/migration_ajustes.php",
+    'reiniciar_simulacion' => "$backend_base/reiniciar_simulacion.php",
 };
 
 

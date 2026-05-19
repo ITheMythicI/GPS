@@ -172,13 +172,18 @@ if (!isset($_SESSION['id_usuario'])) {
         <section class="panel-box" id="seccion-reporte-ia" style="margin-top: 24px;">
             <div class="panel-header" style="display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:12px;">
                 <h3 style="margin:0;">REPORTE INTELIGENTE (IA)</h3>
-                <div style="display:flex; gap:10px;">
+            <div style="display:flex; gap:10px;">
+                    <?php if (isset($_SESSION['rol']) && $_SESSION['rol'] === 'administrador'): ?>
+                    <button id="btn-reiniciar" onclick="triggerReinicio()" style="background: #fff3cd; color: #856404; border: 1px solid #ffc107; border-radius: 8px; padding: 9px 18px; font-family: 'Poppins', sans-serif; font-size: 13px; font-weight: 600; cursor: pointer; transition: all 0.2s;">
+                        <i class="fa-solid fa-rotate-left"></i>&nbsp; Reiniciar Datos
+                    </button>
                     <button id="btn-simular" onclick="triggerSimulacion()" style="background: #f3f4f6; color: #374151; border: 1px solid #d1d5db; border-radius: 8px; padding: 9px 18px; font-family: 'Poppins', sans-serif; font-size: 13px; font-weight: 600; cursor: pointer; transition: all 0.2s;">
                         <i class="fa-solid fa-play"></i>&nbsp; Simular Actividad
                     </button>
                     <button id="btn-generar-reporte" onclick="generarReporteIA()" style="background: linear-gradient(135deg, #6c3fc5, #3b82f6); color: #fff; border: none; border-radius: 8px; padding: 9px 18px; font-family: 'Poppins', sans-serif; font-size: 13px; font-weight: 600; cursor: pointer; box-shadow: 0 4px 14px rgba(108,63,197,0.35); transition: opacity 0.2s;">
                         <i class="fa-solid fa-robot"></i>&nbsp; Generar Reporte IA
                     </button>
+                    <?php endif; ?>
                 </div>
             </div>
 
@@ -213,13 +218,34 @@ if (!isset($_SESSION['id_usuario'])) {
         btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i>&nbsp; Simulando...';
         try {
             await API.simular();
-            await API.clasificar(); // Actualizar prioridades tras simular
+            await API.clasificar();
             await actualizarDashboard();
         } catch (err) {
             console.error(err);
         } finally {
             btn.disabled = false;
             btn.innerHTML = '<i class="fa-solid fa-play"></i>&nbsp; Simular Actividad';
+        }
+    }
+
+    async function triggerReinicio() {
+        if (!confirm('¿Reiniciar todos los contenedores simulados a estado vacío?')) return;
+        const btn = document.getElementById('btn-reiniciar');
+        btn.disabled = true;
+        btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i>&nbsp; Reiniciando...';
+        try {
+            const res = await API.fetch('reiniciar_simulacion');
+            if (res.status === 'ok') {
+                await actualizarDashboard();
+                alert('✅ Contenedores simulados reiniciados.');
+            } else {
+                alert('Error: ' + (res.message || 'No se pudo reiniciar'));
+            }
+        } catch (err) {
+            alert('Error de red: ' + err.message);
+        } finally {
+            btn.disabled = false;
+            btn.innerHTML = '<i class="fa-solid fa-rotate-left"></i>&nbsp; Reiniciar Datos';
         }
     }
 
