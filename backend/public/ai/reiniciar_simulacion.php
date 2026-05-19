@@ -7,6 +7,7 @@
 header('Content-Type: application/json');
 require_once __DIR__ . '/../../includes/database.php';
 
+// Resetear contenedores simulados: distancia alta = vacío (55cm de 60cm)
 $sql = "UPDATE Contenedores SET distanciaBoteTapa = 55 WHERE tipo_sensor = 'Simulado'";
 $result = mysqli_query($db, $sql);
 

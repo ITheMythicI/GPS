@@ -54,8 +54,9 @@ $url_backend = match($action) {
     'obtener_ajustes'    => "$backend_base/obtener_ajustes.php",
     'guardar_ajustes'    => "$backend_base/guardar_ajustes.php",
     'subir_foto_perfil'  => "$backend_base/subir_foto_perfil.php",
-    'migrar_ajustes'     => "$backend_base/migration_ajustes.php",
+    'migrar_ajustes'       => "$backend_base/migration_ajustes.php",
     'reiniciar_simulacion' => "$backend_base/reiniciar_simulacion.php",
+    'imagen'               => '', // Manejado antes del match, este valor nunca se usa
 };
 
 
