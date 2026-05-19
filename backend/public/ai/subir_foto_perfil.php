@@ -15,13 +15,20 @@ $foto_url = null;
 
 // Manejar foto si existe
 if (!empty($_FILES['foto'])) {
-    $upload_dir = __DIR__ . '/../../uploads/perfiles/';
-    if (!is_dir($upload_dir)) mkdir($upload_dir, 0777, true);
-    
-    $ext = pathinfo($_FILES['foto']['name'], PATHINFO_EXTENSION);
-    $filename = "perfil_" . $id_usuario . "_" . time() . "." . $ext;
+    // __DIR__ = /var/www/backend/public/ai/ → subir un nivel → /var/www/backend/public/uploads/
+    $upload_dir = __DIR__ . '/../uploads/perfiles/';
+    if (!is_dir($upload_dir)) mkdir($upload_dir, 0755, true);
+
+    $ext = strtolower(pathinfo($_FILES['foto']['name'], PATHINFO_EXTENSION));
+    // Validar extensión por seguridad
+    if (!in_array($ext, ['jpg', 'jpeg', 'png', 'webp', 'gif'])) {
+        echo json_encode(['status' => 'error', 'message' => 'Tipo de archivo no permitido']);
+        exit;
+    }
+
+    $filename = "perfil_" . intval($id_usuario) . "_" . time() . "." . $ext;
     $target = $upload_dir . $filename;
-    
+
     if (move_uploaded_file($_FILES['foto']['tmp_name'], $target)) {
         $foto_url = 'uploads/perfiles/' . $filename;
     }

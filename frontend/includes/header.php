@@ -23,14 +23,19 @@
         </div>
 
         <div class="user-profile-circle" onclick="toggleUserMenu(event)">
-            <?php if (isset($_SESSION['foto_perfil']) && !empty($_SESSION['foto_perfil'])): ?>
-                <img src="api/ia_proxy.php?action=imagen&path=<?php echo urlencode($_SESSION['foto_perfil']); ?>" 
-                     onerror="this.style.display='none'; this.nextElementSibling.style.display='block';" 
-                     style="width:100%; height:100%; border-radius:50%; object-fit:cover;">
-                <i class="fa-solid fa-user" style="display:none;"></i>
-            <?php else: ?>
-                <i class="fa-solid fa-user"></i>
-            <?php endif; ?>
+        <?php 
+            $nombre_sesion = $_SESSION['nombre'] ?? 'U';
+            $inicial = strtoupper(mb_substr($nombre_sesion, 0, 1));
+        ?>
+        <?php if (isset($_SESSION['foto_perfil']) && !empty($_SESSION['foto_perfil'])): ?>
+            <img src="api/image_proxy.php?path=<?php echo urlencode($_SESSION['foto_perfil']); ?>"
+                 class="user-profile-img"
+                 alt="Foto de perfil"
+                 onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+            <span class="user-avatar-initials" style="display:none;"><?php echo $inicial; ?></span>
+        <?php else: ?>
+            <span class="user-avatar-initials"><?php echo $inicial; ?></span>
+        <?php endif; ?>
 
             
             <div class="user-dropdown" id="userDropdown">

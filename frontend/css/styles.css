@@ -114,13 +114,13 @@ body {
 
 }
 
-body.settings-page {
-    transition: background-color 1.5s ease, color 1.5s ease;
+/* Transición suave de tema en TODAS las páginas */
+body {
+    transition: background-color 0.8s ease, color 0.8s ease;
 }
 
-/* Transición suave para tema oscuro en todos los elementos (solo en ajustes) */
-body.settings-page *:not(.slider):not(.slider:before) {
-    transition: background-color 1.5s ease, color 1.5s ease, border-color 1.5s ease, box-shadow 1.5s ease;
+body *:not(.slider):not(.slider::before):not(#map):not(#map *) {
+    transition: background-color 0.8s ease, color 0.8s ease, border-color 0.8s ease, box-shadow 0.8s ease;
 }
 
 /* ======================
@@ -864,7 +864,7 @@ ORDEN DE TRABAJO
 
 .ot-side {
 
-    background: #fafafa;
+    background: var(--bg-panel);
 
     border: 1px solid var(--border);
 
@@ -903,12 +903,14 @@ ORDEN DE TRABAJO
 
     border: 1px solid var(--border);
 
-    background: #f3f2f1;
+    background: var(--bg-header);
+
+    color: var(--text-main);
 }
 
 .ot-actions button:hover {
 
-    background: #eaeaea;
+    background: var(--accent-soft);
 }
 
 .total-box {
@@ -1034,7 +1036,7 @@ MAPA
 }
 
 .card-hr {
-    border-color: #000000;
+    border-color: var(--border);
 }
 
 .header-card {
@@ -1129,4 +1131,56 @@ MAPA
 
 .rotated {
     transform: rotate(180deg);
+}
+
+/* ======================
+IMAGEN / AVATAR PLACEHOLDER
+====================== */
+
+/* Imagen de perfil en el header */
+.user-profile-img {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    object-fit: cover;
+    display: block;
+}
+
+/* Avatar con inicial cuando no hay foto */
+.user-avatar-initials {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    font-weight: 700;
+    background-color: var(--primary);
+    color: white;
+    text-transform: uppercase;
+    user-select: none;
+}
+
+/* Placeholder para imágenes de evidencia rotas en tablas */
+.img-evidencia {
+    width: 60px;
+    height: 60px;
+    object-fit: cover;
+    border-radius: 6px;
+    border: 1px solid var(--border);
+    background: var(--bg-header);
+}
+
+.img-evidencia-placeholder {
+    width: 60px;
+    height: 60px;
+    border-radius: 6px;
+    border: 1px dashed var(--border);
+    background: var(--bg-header);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--text-sub);
+    font-size: 20px;
 }
