@@ -7,9 +7,21 @@
 header('Content-Type: application/json');
 require_once __DIR__ . '/../../includes/database.php';
 
-// Resetear contenedores simulados: distancia alta = vacío (55cm de 60cm)
-$sql = "UPDATE Contenedores SET distanciaBoteTapa = 55 WHERE tipo_sensor = 'Simulado'";
-$result = mysqli_query($db, $sql);
+// 1. Borrar resultados IA de los contenedores simulados
+$sql1 = "DELETE r FROM ResultadosIA r
+         INNER JOIN Contenedores c ON r.id_contenedor = c.id_contenedor
+         WHERE c.tipo_sensor = 'Simulado'";
+mysqli_query($db, $sql1);
+
+// 2. Borrar lecturas de los contenedores simulados
+$sql2 = "DELETE l FROM LecturasSensores l
+         INNER JOIN Contenedores c ON l.id_sensor = c.id_contenedor
+         WHERE c.tipo_sensor = 'Simulado'";
+mysqli_query($db, $sql2);
+
+// 3. Resetear estado en la tabla Contenedores
+$sql3 = "UPDATE Contenedores SET estado = 'Vacío' WHERE tipo_sensor = 'Simulado'";
+$result = mysqli_query($db, $sql3);
 
 if ($result) {
     $afectados = mysqli_affected_rows($db);

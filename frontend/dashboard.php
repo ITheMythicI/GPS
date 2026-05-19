@@ -298,7 +298,8 @@ if (!isset($_SESSION['id_usuario'])) {
                 else { donaMap['normal']++; }
 
                 labelsB.push(c.ubicacion);
-                const dist = parseInt(c.distancia) || 0;
+                // Si la distancia es null (no hay lecturas), asumimos 60cm (vacío al 0%)
+                const dist = c.distancia !== null && c.distancia !== undefined ? parseInt(c.distancia) : 60;
                 // Cálculo de porcentaje basado en 60cm de altura total
                 const fillingPct = Math.min(100, Math.max(0, ((60 - dist) / 60) * 100));
                 dataB.push(fillingPct.toFixed(1));
