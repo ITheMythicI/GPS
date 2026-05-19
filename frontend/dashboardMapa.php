@@ -81,22 +81,23 @@ $datos_contenedores = $data['data'];
         #btn-ruta-ia:active { transform: translateY(0); }
         #btn-ruta-ia:disabled { opacity: 0.55; cursor: default; }
 
-        /* ── Info panel ruta IA ── */
         #ruta-info {
             position: absolute;
             bottom: 62px;
             right: 12px;
             z-index: 999;
-            background: rgba(255,255,255,0.96);
+            background: var(--bg-panel, rgba(255,255,255,0.96));
+            color: var(--text-main, #333);
+            border: 1px solid var(--border, transparent);
             border-radius: 8px;
             padding: 10px 14px;
             font-family: 'Poppins', sans-serif;
             font-size: 12px;
-            box-shadow: 0 4px 16px rgba(0,0,0,0.15);
+            box-shadow: var(--shadow, 0 4px 16px rgba(0,0,0,0.15));
             max-width: 220px;
             display: none;
         }
-        #ruta-info strong { color: #6c3fc5; }
+        #ruta-info strong { color: var(--st-ia, #6c3fc5); }
 
         /* ── Modal Reporte ── */
         .modal {

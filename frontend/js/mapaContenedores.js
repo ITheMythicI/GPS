@@ -168,7 +168,7 @@ const MapService = {
             iconAnchor: [15, 15]
         });
 
-        truckMarker = L.marker(coords[0], { icon: truckIcon }).addTo(map);
+        truckMarker = L.marker(coords[0], { icon: truckIcon, interactive: false }).addTo(map);
         
         let i = 0;
         const move = setInterval(() => {

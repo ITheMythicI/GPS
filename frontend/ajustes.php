@@ -174,7 +174,7 @@ $rol = $_SESSION['rol'];
             if (res.status === 'ok') {
                 alert("Ajustes globales guardados");
             } else {
-                alert("Error al guardar ajustes");
+                alert("Error al guardar ajustes: " + (res.message || JSON.stringify(res)));
             }
         }
 

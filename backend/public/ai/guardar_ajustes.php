@@ -16,12 +16,27 @@ if (!isset($_SESSION['rol']) || $_SESSION['rol'] !== 'administrador') {
 }
 
 $errores = [];
+$claves_permitidas = ['velocidad_simulacion', 'simulador_activo', 'umbral_llenado', 'umbral_bateria'];
+
 foreach ($_POST as $clave => $valor) {
-    $query = "INSERT INTO AjustesSistema (clave, valor) VALUES (?, ?) ON DUPLICATE KEY UPDATE valor = ?";
-    $stmt = mysqli_prepare($db, $query);
-    mysqli_stmt_bind_param($stmt, 'sss', $clave, $valor, $valor);
-    if (!mysqli_stmt_execute($stmt)) {
-        $errores[] = mysqli_error($db);
+    if (!in_array($clave, $claves_permitidas)) {
+        continue;
+    }
+    
+    try {
+        $query = "INSERT INTO AjustesSistema (clave, valor) VALUES (?, ?) ON DUPLICATE KEY UPDATE valor = ?";
+        $stmt = mysqli_prepare($db, $query);
+        if ($stmt) {
+            mysqli_stmt_bind_param($stmt, 'sss', $clave, $valor, $valor);
+            if (!mysqli_stmt_execute($stmt)) {
+                $errores[] = "$clave: " . mysqli_stmt_error($stmt);
+            }
+            mysqli_stmt_close($stmt);
+        } else {
+            $errores[] = "$clave: " . mysqli_error($db);
+        }
+    } catch (Throwable $e) {
+        $errores[] = "$clave: " . $e->getMessage();
     }
 }
 
