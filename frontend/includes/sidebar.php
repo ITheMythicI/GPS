@@ -1,5 +1,5 @@
+<div id="sidebar-overlay" class="sidebar-overlay" aria-hidden="true"></div>
 <aside id="sidebar">
-    <div id="sidebar-overlay" class="sidebar-overlay" aria-hidden="true"></div>
     <div class="nav-section">GENERAL</div>
 
     <div class="menu-item">
