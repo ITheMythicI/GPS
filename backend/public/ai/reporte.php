@@ -81,9 +81,22 @@ curl_setopt($ch, CURLOPT_POST, true);
 curl_setopt($ch, CURLOPT_POSTFIELDS, $payload);
 curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 curl_setopt($ch, CURLOPT_HTTPHEADER, ['Content-Type: application/json']);
+curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 10);
+curl_setopt($ch, CURLOPT_TIMEOUT, 20);
 $response = curl_exec($ch);
 $status = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+$curl_error = curl_error($ch);
 curl_close($ch);
+
+if ($response === false) {
+    http_response_code(504);
+    echo json_encode([
+        'status' => 'error',
+        'message' => 'No se pudo contactar a Gemini dentro del tiempo límite',
+        'detalle' => $curl_error
+    ]);
+    exit;
+}
 
 if ($status !== 200) {
     echo json_encode(['status' => 'error', 'message' => 'Error API', 'detalle' => json_decode($response, true)]);
