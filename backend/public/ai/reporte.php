@@ -76,8 +76,6 @@ $payload = json_encode(['contents' => [['parts' => [['text' => $prompt]]]]]);
 $intentos_modelo = [
     ['api_version' => 'v1', 'modelo' => 'gemini-2.5-flash'],
     ['api_version' => 'v1', 'modelo' => 'gemini-2.0-flash'],
-    ['api_version' => 'v1beta', 'modelo' => 'gemini-2.5-flash'],
-    ['api_version' => 'v1beta', 'modelo' => 'gemini-2.0-flash'],
 ];
 $ultimo_error = null;
 
@@ -90,8 +88,8 @@ foreach ($intentos_modelo as $intento) {
     curl_setopt($ch, CURLOPT_POSTFIELDS, $payload);
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
     curl_setopt($ch, CURLOPT_HTTPHEADER, ['Content-Type: application/json']);
-    curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 10);
-    curl_setopt($ch, CURLOPT_TIMEOUT, 20);
+    curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 5);
+    curl_setopt($ch, CURLOPT_TIMEOUT, 12);
     $response = curl_exec($ch);
     $status = curl_getinfo($ch, CURLINFO_HTTP_CODE);
     $curl_error = curl_error($ch);
