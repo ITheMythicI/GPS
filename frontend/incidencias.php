@@ -75,7 +75,7 @@ if (!isset($_SESSION['id_usuario']) || $_SESSION['rol'] !== 'administrador') {
         }
     </style>
 </head>
-<body class="<?= isset($_SESSION['dark_mode']) && $_SESSION['dark_mode'] ? 'dark-theme' : '' ?>">
+<body class="app-shell <?= isset($_SESSION['dark_mode']) && $_SESSION['dark_mode'] ? 'dark-theme' : '' ?>">
     <?php include 'includes/header.php'; ?>
     <?php include 'includes/sidebar.php'; ?>
     
@@ -143,7 +143,8 @@ if (!isset($_SESSION['id_usuario']) || $_SESSION['rol'] !== 'administrador') {
                     listaRep.innerHTML = '<p style="text-align:center; padding:40px; color:#999;">No hay reportes registrados.</p>';
                 } else {
                     listaRep.innerHTML = `
-                        <table style="width:100%; border-collapse:collapse; font-size:13px;">
+                        <div class="table-box">
+                        <table style="width:100%; border-collapse:collapse; font-size:13px; min-width:900px;">
                             <thead style="background:var(--bg-header); border-bottom:2px solid var(--border);">
                                 <tr>
                                     <th style="padding:15px; text-align:left;">Fecha</th>
@@ -186,6 +187,7 @@ if (!isset($_SESSION['id_usuario']) || $_SESSION['rol'] !== 'administrador') {
                                 }).join('')}
                             </tbody>
                         </table>
+                        </div>
                     `;
                 }
             }

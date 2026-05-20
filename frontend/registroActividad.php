@@ -15,7 +15,7 @@ if (!isset($_SESSION['id_usuario']) || $_SESSION['rol'] !== 'administrador') {
     <link rel="stylesheet" href="css/styles.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
-<body class="<?= isset($_SESSION['dark_mode']) && $_SESSION['dark_mode'] ? 'dark-theme' : '' ?>">
+<body class="app-shell <?= isset($_SESSION['dark_mode']) && $_SESSION['dark_mode'] ? 'dark-theme' : '' ?>">
     <?php include 'includes/header.php'; ?>
     <?php include 'includes/sidebar.php'; ?>
     

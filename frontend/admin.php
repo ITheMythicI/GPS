@@ -21,7 +21,7 @@ if (($_SESSION['rol'] ?? '') !== 'administrador') {
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
 </head>
-<body class="admin-page <?= isset($_SESSION['dark_mode']) && $_SESSION['dark_mode'] ? 'dark-theme' : '' ?>">
+<body class="app-shell admin-page <?= isset($_SESSION['dark_mode']) && $_SESSION['dark_mode'] ? 'dark-theme' : '' ?>">
     <?php include_once 'includes/header.php'; ?>
     <?php include_once 'includes/sidebar.php'; ?>
 

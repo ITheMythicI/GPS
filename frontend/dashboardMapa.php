@@ -126,7 +126,7 @@ $datos_contenedores = $data['data'];
 
 </head>
 
-<body>
+<body class="app-shell <?= isset($_SESSION['dark_mode']) && $_SESSION['dark_mode'] ? 'dark-theme' : '' ?>">
     <?php include_once 'includes/header.php'; ?>
 
     <!-- SIDEBAR -->

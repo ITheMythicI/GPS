@@ -22,7 +22,7 @@ if (!isset($_SESSION['id_usuario'])) {
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
 </head>
 
-<body class="<?= isset($_SESSION['dark_mode']) && $_SESSION['dark_mode'] ? 'dark-theme' : '' ?>">
+<body class="app-shell <?= isset($_SESSION['dark_mode']) && $_SESSION['dark_mode'] ? 'dark-theme' : '' ?>">
     <?php include_once 'includes/header.php'; ?>
 
     <!-- SIDEBAR -->
