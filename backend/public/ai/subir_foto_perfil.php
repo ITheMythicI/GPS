@@ -11,6 +11,7 @@ if (!$id_usuario) {
 
 
 $dark_mode = $_POST['dark_mode'] ?? 0;
+$nombre = trim($_POST['nombre'] ?? '');
 $foto_url = null;
 
 // Manejar foto si existe
@@ -35,14 +36,30 @@ if (!empty($_FILES['foto'])) {
 }
 
 // Actualizar BD
-if ($foto_url) {
+if ($foto_url && $nombre !== '') {
+    $query = "UPDATE Usuarios SET nombre = ?, foto_perfil = ?, config_oscuro = ? WHERE id_usuario = ?";
+    $stmt = mysqli_prepare($db, $query);
+    if ($stmt) {
+        mysqli_stmt_bind_param($stmt, 'ssii', $nombre, $foto_url, $dark_mode, $id_usuario);
+    }
+} elseif ($foto_url) {
     $query = "UPDATE Usuarios SET foto_perfil = ?, config_oscuro = ? WHERE id_usuario = ?";
     $stmt = mysqli_prepare($db, $query);
-    if ($stmt) mysqli_stmt_bind_param($stmt, 'sii', $foto_url, $dark_mode, $id_usuario);
+    if ($stmt) {
+        mysqli_stmt_bind_param($stmt, 'sii', $foto_url, $dark_mode, $id_usuario);
+    }
+} elseif ($nombre !== '') {
+    $query = "UPDATE Usuarios SET nombre = ?, config_oscuro = ? WHERE id_usuario = ?";
+    $stmt = mysqli_prepare($db, $query);
+    if ($stmt) {
+        mysqli_stmt_bind_param($stmt, 'sii', $nombre, $dark_mode, $id_usuario);
+    }
 } else {
     $query = "UPDATE Usuarios SET config_oscuro = ? WHERE id_usuario = ?";
     $stmt = mysqli_prepare($db, $query);
-    if ($stmt) mysqli_stmt_bind_param($stmt, 'ii', $dark_mode, $id_usuario);
+    if ($stmt) {
+        mysqli_stmt_bind_param($stmt, 'ii', $dark_mode, $id_usuario);
+    }
 }
 
 if (!$stmt) {

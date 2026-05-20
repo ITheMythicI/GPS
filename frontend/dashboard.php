@@ -168,12 +168,12 @@ if (!isset($_SESSION['id_usuario'])) {
             </table>
         </section>
 
+        <?php if (isset($_SESSION['rol']) && $_SESSION['rol'] === 'administrador'): ?>
         <!-- REPORTE IA -->
         <section class="panel-box" id="seccion-reporte-ia" style="margin-top: 24px;">
             <div class="panel-header" style="display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:12px;">
                 <h3 style="margin:0;">REPORTE INTELIGENTE (IA)</h3>
             <div style="display:flex; gap:10px;">
-                    <?php if (isset($_SESSION['rol']) && $_SESSION['rol'] === 'administrador'): ?>
                     <button id="btn-reiniciar" onclick="triggerReinicio()" style="background: #fff3cd; color: #856404; border: 1px solid #ffc107; border-radius: 8px; padding: 9px 18px; font-family: 'Poppins', sans-serif; font-size: 13px; font-weight: 600; cursor: pointer; transition: all 0.2s;">
                         <i class="fa-solid fa-rotate-left"></i>&nbsp; Reiniciar Datos
                     </button>
@@ -183,7 +183,6 @@ if (!isset($_SESSION['id_usuario'])) {
                     <button id="btn-generar-reporte" onclick="generarReporteIA()" style="background: linear-gradient(135deg, #6c3fc5, #3b82f6); color: #fff; border: none; border-radius: 8px; padding: 9px 18px; font-family: 'Poppins', sans-serif; font-size: 13px; font-weight: 600; cursor: pointer; box-shadow: 0 4px 14px rgba(108,63,197,0.35); transition: opacity 0.2s;">
                         <i class="fa-solid fa-robot"></i>&nbsp; Generar Reporte IA
                     </button>
-                    <?php endif; ?>
                 </div>
             </div>
 
@@ -197,6 +196,7 @@ if (!isset($_SESSION['id_usuario'])) {
                 </span>
             </div>
         </section>
+        <?php endif; ?>
     </main>
 
     <!-- SCRIPTS -->
@@ -212,6 +212,8 @@ if (!isset($_SESSION['id_usuario'])) {
     <script src="js/graficas.js"></script>
 
     <script>
+    let ultimosContenedores = [];
+
     async function triggerSimulacion() {
         const btn = document.getElementById('btn-simular');
         btn.disabled = true;
@@ -263,7 +265,16 @@ if (!isset($_SESSION['id_usuario'])) {
         resumen.style.display   = 'none';
 
         try {
-            const data = await API.generarReporte();
+            const criterios = [
+                'Humedad > 45% y Densidad > 300 kg/m3 => ORGÁNICO',
+                'Humedad < 30% y Densidad < 80 kg/m3 => PLÁSTICO',
+                'Humedad < 30% y Densidad < 180 kg/m3 => PAPEL/CARTÓN',
+                'Humedad < 35% y Densidad > 250 kg/m3 => VIDRIO/METAL'
+            ];
+            const data = await API.generarReporte({
+                clasificaciones: ultimosContenedores,
+                criterios: criterios
+            });
             if (data.status !== 'ok') throw new Error(data.message || 'Error');
             contenido.textContent = data.reporte;
             contenido.style.display = 'block';
@@ -288,6 +299,7 @@ if (!isset($_SESSION['id_usuario'])) {
             const data = await API.obtenerContenedores();
             if (data.status !== 'ok') return;
             const contenedores = data.data;
+            ultimosContenedores = contenedores;
             const tbody = document.getElementById('tbody-contenedores');
             let html = '';
             let labelsB = [], dataB = [], donaMap = { 'alta': 0, 'media': 0, 'normal': 0 };

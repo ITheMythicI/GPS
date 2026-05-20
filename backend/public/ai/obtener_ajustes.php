@@ -26,10 +26,10 @@ if (empty($ajustes)) {
 
 // Obtener info del usuario
 $id_usuario = $_GET['id_usuario'] ?? 0;
-$user_data = ['foto_perfil' => null, 'config_oscuro' => 0];
+$user_data = ['nombre' => null, 'rol' => null, 'foto_perfil' => null, 'config_oscuro' => 0];
 
 if ($id_usuario > 0) {
-    $user_res = mysqli_query($db, "SELECT foto_perfil, config_oscuro FROM Usuarios WHERE id_usuario = $id_usuario");
+    $user_res = mysqli_query($db, "SELECT nombre, rol, foto_perfil, config_oscuro FROM Usuarios WHERE id_usuario = $id_usuario");
     if ($user_res) {
         $user_data = mysqli_fetch_assoc($user_res) ?: $user_data;
     }

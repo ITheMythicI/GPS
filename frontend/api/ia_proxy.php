@@ -20,9 +20,15 @@ session_start();
 $id_usuario_sesion = $_SESSION['id_usuario'] ?? 0;
 $rol_sesion = $_SESSION['rol'] ?? '';
 
+if ($id_usuario_sesion <= 0) {
+    http_response_code(401);
+    echo json_encode(['status' => 'error', 'message' => 'Sesión no iniciada']);
+    exit;
+}
+
 // ── Validar acción ─────────────────────────────────────────────────────────────
 $action = $_GET['action'] ?? '';
-$acciones_permitidas = ['clasificar', 'rutas', 'reporte', 'contenedores', 'simular', 'zonas', 'migrar', 'test_db', 'normalizar', 'guardar_zona', 'guardar_contenedor', 'actualizar_nombres', 'reparar_zonas', 'borrar_zona', 'borrar_contenedor', 'crear_reporte', 'migrar_reportes', 'obtener_reportes', 'obtener_actividad', 'migrar_actividad', 'registrar_actividad', 'obtener_ajustes', 'guardar_ajustes', 'subir_foto_perfil', 'migrar_ajustes', 'imagen', 'reiniciar_simulacion', 'actualizar_estado_reporte', 'borrar_reporte'];
+$acciones_permitidas = ['clasificar', 'rutas', 'reporte', 'contenedores', 'simular', 'zonas', 'migrar', 'test_db', 'normalizar', 'guardar_zona', 'guardar_contenedor', 'actualizar_nombres', 'reparar_zonas', 'borrar_zona', 'borrar_contenedor', 'crear_reporte', 'migrar_reportes', 'obtener_reportes', 'obtener_actividad', 'migrar_actividad', 'registrar_actividad', 'obtener_ajustes', 'guardar_ajustes', 'subir_foto_perfil', 'cambiar_password', 'migrar_ajustes', 'imagen', 'reiniciar_simulacion', 'actualizar_estado_reporte', 'borrar_reporte'];
 
 if (!in_array($action, $acciones_permitidas)) {
     http_response_code(400);
@@ -31,7 +37,7 @@ if (!in_array($action, $acciones_permitidas)) {
 }
 
 // Bloquear acciones administrativas si no es administrador
-$acciones_admin = ['guardar_ajustes', 'guardar_zona', 'guardar_contenedor', 'borrar_zona', 'borrar_contenedor', 'migrar', 'normalizar', 'actualizar_estado_reporte', 'borrar_reporte'];
+$acciones_admin = ['guardar_ajustes', 'guardar_zona', 'guardar_contenedor', 'borrar_zona', 'borrar_contenedor', 'migrar', 'normalizar', 'actualizar_estado_reporte', 'borrar_reporte', 'simular', 'reiniciar_simulacion', 'reporte'];
 if (in_array($action, $acciones_admin) && $rol_sesion !== 'administrador') {
     http_response_code(403);
     echo json_encode(['status' => 'error', 'message' => 'No autorizado']);
@@ -66,6 +72,7 @@ $url_backend = match($action) {
     'obtener_ajustes'    => "$backend_base/obtener_ajustes.php",
     'guardar_ajustes'    => "$backend_base/guardar_ajustes.php",
     'subir_foto_perfil'  => "$backend_base/subir_foto_perfil.php",
+    'cambiar_password'   => "$backend_base/cambiar_password.php",
     'migrar_ajustes'       => "$backend_base/migration_ajustes.php",
     'reiniciar_simulacion' => "$backend_base/reiniciar_simulacion.php",
     'actualizar_estado_reporte' => "$backend_base/actualizar_estado_reporte.php",
@@ -142,6 +149,9 @@ if (json_last_error() === JSON_ERROR_NONE) {
         $resObj = json_decode($response, true);
         if (isset($resObj['status']) && $resObj['status'] === 'ok') {
             $_SESSION['dark_mode'] = $_POST['dark_mode'] ?? 0;
+            if (!empty($_POST['nombre'])) {
+                $_SESSION['nombre'] = trim($_POST['nombre']);
+            }
             if (!empty($resObj['foto_url'])) {
                 $_SESSION['foto_perfil'] = $resObj['foto_url'];
             }

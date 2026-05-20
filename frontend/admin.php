@@ -4,6 +4,11 @@ if (!isset($_SESSION['id_usuario'])) {
     header('Location: login.php');
     exit;
 }
+if (($_SESSION['rol'] ?? '') !== 'administrador') {
+    http_response_code(403);
+    header('Location: dashboard.php');
+    exit;
+}
 ?>
 <!DOCTYPE html>
 <html lang="es">

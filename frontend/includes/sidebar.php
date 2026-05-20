@@ -59,8 +59,14 @@
     <div class="nav-section">CONFIGURACIÓN</div>
 
     <div class="menu-item">
-        <a href="ajustes.php" class="menu-btn">
-            <span><i class="fa-solid fa-gear"></i> Ajustes del Sistema</span>
+        <a href="perfil.php" class="menu-btn <?php echo basename($_SERVER['PHP_SELF']) == 'perfil.php' ? 'active' : ''; ?>">
+            <span><i class="fa-solid fa-id-card"></i> Mi Perfil</span>
+        </a>
+    </div>
+
+    <div class="menu-item">
+        <a href="ajustes.php" class="menu-btn <?php echo basename($_SERVER['PHP_SELF']) == 'ajustes.php' ? 'active' : ''; ?>">
+            <span><i class="fa-solid fa-gear"></i> Ajustes</span>
         </a>
     </div>
 

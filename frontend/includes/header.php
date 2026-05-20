@@ -11,7 +11,9 @@
 
     <div class="header-right">
         <div class="tool-icons">
+            <?php if (isset($_SESSION['rol']) && $_SESSION['rol'] === 'administrador'): ?>
             <a href="dashboard.php#seccion-reporte-ia" title="Generar Reporte" style="color: #6c3fc5;"><i class="fa-regular fa-note-sticky"></i></a>
+            <?php endif; ?>
             <a href="dashboard.php#tabla-contenedores" title="Alertas Críticas" style="color: #cf222e;">
                 <i class="fa-solid fa-triangle-exclamation">
                     <span class="notification-dot" style="display: none;"></span>
@@ -39,7 +41,7 @@
 
             
             <div class="user-dropdown" id="userDropdown">
-                <a href="ajustes.php"><i class="fa-solid fa-circle-user"></i> Ver Perfil</a>
+                <a href="perfil.php"><i class="fa-solid fa-circle-user"></i> Ver Perfil</a>
                 <a href="ajustes.php"><i class="fa-solid fa-sliders"></i> Ajustes</a>
                 <hr>
                 <a href="logout.php" style="color: #e74c3c;"><i class="fa-solid fa-power-off"></i> Cerrar Sesión</a>

@@ -31,8 +31,8 @@ const API = {
         }
     },
 
-    async generarReporte() {
-        return this.fetch('reporte');
+    async generarReporte(payload = {}) {
+        return this.fetch('reporte', payload);
     },
 
     async clasificar() {
@@ -93,6 +93,10 @@ const API = {
 
     async subirFotoPerfil(formData) {
         return this.fetch('subir_foto_perfil', formData);
+    },
+
+    async cambiarPassword(datos) {
+        return this.fetch('cambiar_password', datos);
     },
 
     async actualizarEstadoReporte(idReporte, estado) {
