@@ -37,7 +37,7 @@ if (!in_array($action, $acciones_permitidas)) {
 }
 
 // Bloquear acciones administrativas si no es administrador
-$acciones_admin = ['guardar_ajustes', 'guardar_zona', 'guardar_contenedor', 'borrar_zona', 'borrar_contenedor', 'migrar', 'normalizar', 'actualizar_estado_reporte', 'borrar_reporte', 'simular', 'reiniciar_simulacion', 'reporte'];
+$acciones_admin = ['guardar_ajustes', 'guardar_zona', 'guardar_contenedor', 'borrar_zona', 'borrar_contenedor', 'migrar', 'normalizar', 'actualizar_estado_reporte', 'borrar_reporte', 'simular', 'reiniciar_simulacion', 'reporte', 'obtener_actividad', 'obtener_reportes'];
 if (in_array($action, $acciones_admin) && $rol_sesion !== 'administrador') {
     http_response_code(403);
     echo json_encode(['status' => 'error', 'message' => 'No autorizado']);

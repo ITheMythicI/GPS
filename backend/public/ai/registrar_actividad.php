@@ -8,10 +8,27 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     exit;
 }
 
-$id_usuario = $_POST['id_usuario'] ?? null;
-$accion = $_POST['accion'] ?? 'Actividad Desconocida';
-$descripcion = $_POST['descripcion'] ?? '';
-$ip = $_POST['ip'] ?? $_SERVER['REMOTE_ADDR'];
+mysqli_query($db, "
+    CREATE TABLE IF NOT EXISTS RegistroActividad (
+        id_log INT AUTO_INCREMENT PRIMARY KEY,
+        id_usuario INT,
+        accion VARCHAR(100),
+        descripcion TEXT,
+        ip_address VARCHAR(45),
+        fecha_hora DATETIME DEFAULT CURRENT_TIMESTAMP,
+        FOREIGN KEY (id_usuario) REFERENCES Usuarios(id_usuario)
+    )
+");
+
+$id_usuario = (int)($_POST['id_usuario'] ?? 0);
+$accion = trim((string)($_POST['accion'] ?? 'Actividad Desconocida'));
+$descripcion = trim((string)($_POST['descripcion'] ?? ''));
+$ip = trim((string)($_POST['ip'] ?? $_SERVER['REMOTE_ADDR'] ?? ''));
+
+if ($id_usuario <= 0) {
+    echo json_encode(['status' => 'error', 'message' => 'id_usuario requerido']);
+    exit;
+}
 
 $query = "INSERT INTO RegistroActividad (id_usuario, accion, descripcion, ip_address) VALUES (?, ?, ?, ?)";
 $stmt = mysqli_prepare($db, $query);
