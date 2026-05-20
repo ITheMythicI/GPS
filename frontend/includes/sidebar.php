@@ -1,3 +1,4 @@
+<div id="sidebar-overlay" class="sidebar-overlay" aria-hidden="true"></div>
 <aside id="sidebar">
     <div class="nav-section">GENERAL</div>
 
