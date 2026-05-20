@@ -9,32 +9,11 @@ if (!isset($_SESSION['id_usuario'])) {
 <html lang="es">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Ajustes | BIN</title>
+    <link rel="stylesheet" href="css/normalize.css">
     <link rel="stylesheet" href="css/styles.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <style>
-        .settings-container { max-width: 820px; margin: 30px auto; display: grid; gap: 25px; }
-        .settings-card { background: var(--bg-panel); border-radius: 15px; box-shadow: var(--shadow); padding: 25px; }
-        .settings-card h4 { margin-top: 0; color: var(--text-main); display: flex; align-items: center; gap: 10px; border-bottom: 1px solid var(--border); padding-bottom: 15px; margin-bottom: 20px; }
-        .form-group { margin-bottom: 18px; }
-        .form-group label { display: block; margin-bottom: 8px; font-weight: 600; font-size: 14px; color: var(--text-sub); }
-        .form-group input { width: 100%; padding: 12px; border: 1px solid var(--border); border-radius: 8px; font-size: 14px; background: var(--bg-input); color: var(--text-main); }
-        .toggle-switch { display: flex; align-items: center; gap: 15px; cursor: pointer; }
-        .switch { position: relative; display: inline-block; width: 50px; height: 26px; }
-        .switch input { opacity: 0; width: 0; height: 0; }
-        .slider { position: absolute; cursor: pointer; inset: 0; background-color: #ccc; transition: .3s; border-radius: 34px; }
-        .slider:before { position: absolute; content: ""; height: 18px; width: 18px; left: 4px; bottom: 4px; background-color: white; transition: .3s; border-radius: 50%; }
-        input:checked + .slider { background-color: var(--primary); }
-        input:checked + .slider:before { transform: translateX(24px); }
-        .profile-preview { display: flex; align-items: center; gap: 18px; }
-        .profile-img { width: 90px; height: 90px; border-radius: 50%; object-fit: cover; border: 3px solid var(--primary); }
-        .btn-update, .btn-toggle-password {
-            border: none; padding: 12px 25px; border-radius: 8px; cursor: pointer; font-weight: 600; transition: opacity .2s;
-        }
-        .btn-update { background: var(--primary); color: #fff; width: 100%; }
-        .btn-toggle-password { background: #f3f4f6; color: #374151; width: 100%; margin-top: 8px; }
-        .password-form { display: none; margin-top: 15px; }
-    </style>
 </head>
 <body class="settings-page <?= isset($_SESSION['dark_mode']) && $_SESSION['dark_mode'] ? 'dark-theme' : '' ?>">
     <?php include 'includes/header.php'; ?>

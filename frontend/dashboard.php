@@ -32,7 +32,7 @@ if (!isset($_SESSION['id_usuario'])) {
     <main id="content">
 
         <!-- KPI CARDS -->
-        <section class="stats-grid" style="grid-template-columns: repeat(3, 1fr); gap: 30px; margin-bottom: 40px;">
+        <section class="stats-grid">
             <div class="card">
                 <div>
                     <div class="card-label">TOTAL CONTENEDORES</div>
@@ -89,21 +89,21 @@ if (!isset($_SESSION['id_usuario'])) {
         </section>
 
         <!-- ANALYTICS (Tamaño Optimizado) -->
-        <section class="analytics-row" style="margin-bottom: 30px;">
-            <div class="panel-box" style="padding: 15px;">
-                <div class="panel-header" style="margin-bottom: 10px;">
-                    <h3 style="font-size: 14px;">PORCENTAJE DE LLENADO</h3>
+        <section class="analytics-row">
+            <div class="panel-box chart-panel">
+                <div class="panel-header">
+                    <h3>PORCENTAJE DE LLENADO</h3>
                 </div>
-                <div style="height: 220px; position: relative;">
+                <div class="chart-wrap">
                     <canvas id="tabla_barras"></canvas>
                 </div>
             </div>
 
-            <div class="panel-box" style="padding: 15px;">
-                <div class="panel-header" style="margin-bottom: 10px;">
-                    <h3 style="font-size: 14px;">ESTADOS DE LOS CONTENEDORES</h3>
+            <div class="panel-box chart-panel">
+                <div class="panel-header">
+                    <h3>ESTADOS DE LOS CONTENEDORES</h3>
                 </div>
-                <div style="height: 220px; position: relative; display: flex; justify-content: center;">
+                <div class="chart-wrap chart-wrap--dona">
                     <canvas id="tabla_dona"></canvas>
                 </div>
             </div>
@@ -150,7 +150,7 @@ if (!isset($_SESSION['id_usuario'])) {
         </section>
 
         <!-- LISTADO -->
-        <section class="table-box" id="tabla-contenedores">
+        <section class="table-box scroll-anchor-section" id="tabla-contenedores">
             <table>
                 <thead>
                     <tr>
@@ -170,7 +170,7 @@ if (!isset($_SESSION['id_usuario'])) {
 
         <?php if (isset($_SESSION['rol']) && $_SESSION['rol'] === 'administrador'): ?>
         <!-- REPORTE IA -->
-        <section class="panel-box" id="seccion-reporte-ia" style="margin-top: 24px;">
+        <section class="panel-box scroll-anchor-section" id="seccion-reporte-ia" style="margin-top: 24px;">
             <div class="panel-header" style="display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:12px;">
                 <h3 style="margin:0;">REPORTE INTELIGENTE (IA)</h3>
             <div style="display:flex; gap:10px;">

@@ -9,45 +9,11 @@ if (!isset($_SESSION['id_usuario'])) {
 <html lang="es">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Perfil | BIN</title>
+    <link rel="stylesheet" href="css/normalize.css">
     <link rel="stylesheet" href="css/styles.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <style>
-        .profile-page { max-width: 760px; margin: 35px auto; }
-        .profile-card {
-            background: var(--bg-panel);
-            border-radius: 18px;
-            box-shadow: var(--shadow);
-            padding: 28px;
-            text-align: center;
-        }
-        .profile-photo {
-            width: 170px;
-            height: 170px;
-            margin: 0 auto 20px;
-            border-radius: 50%;
-            overflow: hidden;
-            border: 4px solid var(--primary);
-            background: var(--bg-input);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 62px;
-            color: var(--text-sub);
-        }
-        .profile-photo img { width: 100%; height: 100%; object-fit: cover; }
-        .profile-name { margin: 0 0 8px; color: var(--text-main); font-size: 30px; }
-        .profile-role {
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            border-radius: 999px;
-            padding: 8px 16px;
-            background: var(--accent-soft);
-            color: var(--primary);
-            font-weight: 700;
-        }
-    </style>
 </head>
 <body class="<?= isset($_SESSION['dark_mode']) && $_SESSION['dark_mode'] ? 'dark-theme' : '' ?>">
     <?php include 'includes/header.php'; ?>

@@ -9,7 +9,9 @@ if (!isset($_SESSION['id_usuario']) || $_SESSION['rol'] !== 'administrador') {
 <html lang="es">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Registro de Actividad | BIN</title>
+    <link rel="stylesheet" href="css/normalize.css">
     <link rel="stylesheet" href="css/styles.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
@@ -56,6 +58,7 @@ if (!isset($_SESSION['id_usuario']) || $_SESSION['rol'] !== 'administrador') {
                 }
 
                 lista.innerHTML = `
+                    <div class="activity-table-wrap">
                     <table style="width:100%; border-collapse:collapse; font-size:13px;">
                         <thead style="background:var(--bg-header); border-bottom:2px solid var(--border);">
                             <tr>
@@ -78,6 +81,7 @@ if (!isset($_SESSION['id_usuario']) || $_SESSION['rol'] !== 'administrador') {
                             `).join('')}
                         </tbody>
                     </table>
+                    </div>
                 `;
             } catch (err) {
                 lista.innerHTML = '<p style="text-align:center; padding:40px; color:#cf222e;">Error de red al cargar actividad.</p>';

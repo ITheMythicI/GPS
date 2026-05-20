@@ -66,8 +66,15 @@ const Charts = {
 };
 
 // Inicialización con datos de PHP (inyectados en el HTML)
+function resizeCharts() {
+    if (barChart) barChart.resize();
+    if (doughnutChart) doughnutChart.resize();
+}
+
 document.addEventListener('DOMContentLoaded', () => {
     if (typeof labelsBarras !== 'undefined') {
         Charts.init(labelsBarras, dataBarras, labelsDona, dataDona);
     }
+    window.addEventListener('resize', resizeCharts);
+    document.addEventListener('sidebarToggled', resizeCharts);
 });
