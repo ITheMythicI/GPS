@@ -73,11 +73,18 @@ $prompt = "Actúa como el Analista del Sistema BIN. Genera un reporte ejecutivo 
           "Instrucciones: Provee un resumen breve, identifica contenedores críticos, da una recomendación operativa y agrega una sección llamada 'Predicción de tipo de residuo por contenedor' aplicando explícitamente esos criterios a cada contenedor listado.";
 
 $payload = json_encode(['contents' => [['parts' => [['text' => $prompt]]]]]);
-$modelos = ['gemini-2.5-flash', 'gemini-1.5-flash'];
+$intentos_modelo = [
+    ['api_version' => 'v1', 'modelo' => 'gemini-2.5-flash'],
+    ['api_version' => 'v1', 'modelo' => 'gemini-2.0-flash'],
+    ['api_version' => 'v1beta', 'modelo' => 'gemini-2.5-flash'],
+    ['api_version' => 'v1beta', 'modelo' => 'gemini-2.0-flash'],
+];
 $ultimo_error = null;
 
-foreach ($modelos as $modelo) {
-    $gemini_url = "https://generativelanguage.googleapis.com/v1/models/{$modelo}:generateContent?key={$api_key}";
+foreach ($intentos_modelo as $intento) {
+    $modelo = $intento['modelo'];
+    $api_version = $intento['api_version'];
+    $gemini_url = "https://generativelanguage.googleapis.com/{$api_version}/models/{$modelo}:generateContent?key={$api_key}";
     $ch = curl_init($gemini_url);
     curl_setopt($ch, CURLOPT_POST, true);
     curl_setopt($ch, CURLOPT_POSTFIELDS, $payload);
@@ -91,14 +98,20 @@ foreach ($modelos as $modelo) {
     curl_close($ch);
 
     if ($response === false) {
-        $ultimo_error = ['modelo' => $modelo, 'message' => 'Timeout/conexión fallida', 'detalle' => $curl_error];
+        $ultimo_error = ['modelo' => $modelo, 'api_version' => $api_version, 'message' => 'Timeout/conexión fallida', 'detalle' => $curl_error];
         continue;
     }
 
     if ($status === 200) {
         $data = json_decode($response, true);
         $texto = $data['candidates'][0]['content']['parts'][0]['text'] ?? "Sin respuesta";
-        echo json_encode(['status' => 'ok', 'reporte' => $texto, 'fecha' => date('d/m/Y H:i'), 'modelo' => $modelo]);
+        echo json_encode([
+            'status' => 'ok',
+            'reporte' => $texto,
+            'fecha' => date('d/m/Y H:i'),
+            'modelo' => $modelo,
+            'api_version' => $api_version
+        ]);
         exit;
     }
 
@@ -106,6 +119,7 @@ foreach ($modelos as $modelo) {
     $api_message = $error_json['error']['message'] ?? 'Error API';
     $ultimo_error = [
         'modelo' => $modelo,
+        'api_version' => $api_version,
         'status_http' => $status,
         'message' => $api_message,
         'detalle' => $error_json ?: $response
