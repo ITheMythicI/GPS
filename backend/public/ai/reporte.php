@@ -72,36 +72,49 @@ $prompt = "Actúa como el Analista del Sistema BIN. Genera un reporte ejecutivo 
           "Criterios de inferencia vigentes:\n$criterios_texto\n" .
           "Instrucciones: Provee un resumen breve, identifica contenedores críticos, da una recomendación operativa y agrega una sección llamada 'Predicción de tipo de residuo por contenedor' aplicando explícitamente esos criterios a cada contenedor listado.";
 
-$gemini_url = "https://generativelanguage.googleapis.com/v1/models/gemini-2.5-flash:generateContent?key={$api_key}";
-
 $payload = json_encode(['contents' => [['parts' => [['text' => $prompt]]]]]);
+$modelos = ['gemini-2.5-flash', 'gemini-1.5-flash'];
+$ultimo_error = null;
 
-$ch = curl_init($gemini_url);
-curl_setopt($ch, CURLOPT_POST, true);
-curl_setopt($ch, CURLOPT_POSTFIELDS, $payload);
-curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-curl_setopt($ch, CURLOPT_HTTPHEADER, ['Content-Type: application/json']);
-curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 10);
-curl_setopt($ch, CURLOPT_TIMEOUT, 20);
-$response = curl_exec($ch);
-$status = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-$curl_error = curl_error($ch);
-curl_close($ch);
+foreach ($modelos as $modelo) {
+    $gemini_url = "https://generativelanguage.googleapis.com/v1/models/{$modelo}:generateContent?key={$api_key}";
+    $ch = curl_init($gemini_url);
+    curl_setopt($ch, CURLOPT_POST, true);
+    curl_setopt($ch, CURLOPT_POSTFIELDS, $payload);
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    curl_setopt($ch, CURLOPT_HTTPHEADER, ['Content-Type: application/json']);
+    curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 10);
+    curl_setopt($ch, CURLOPT_TIMEOUT, 20);
+    $response = curl_exec($ch);
+    $status = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+    $curl_error = curl_error($ch);
+    curl_close($ch);
 
-if ($response === false) {
-    http_response_code(504);
-    echo json_encode([
-        'status' => 'error',
-        'message' => 'No se pudo contactar a Gemini dentro del tiempo límite',
-        'detalle' => $curl_error
-    ]);
-    exit;
+    if ($response === false) {
+        $ultimo_error = ['modelo' => $modelo, 'message' => 'Timeout/conexión fallida', 'detalle' => $curl_error];
+        continue;
+    }
+
+    if ($status === 200) {
+        $data = json_decode($response, true);
+        $texto = $data['candidates'][0]['content']['parts'][0]['text'] ?? "Sin respuesta";
+        echo json_encode(['status' => 'ok', 'reporte' => $texto, 'fecha' => date('d/m/Y H:i'), 'modelo' => $modelo]);
+        exit;
+    }
+
+    $error_json = json_decode($response, true);
+    $api_message = $error_json['error']['message'] ?? 'Error API';
+    $ultimo_error = [
+        'modelo' => $modelo,
+        'status_http' => $status,
+        'message' => $api_message,
+        'detalle' => $error_json ?: $response
+    ];
 }
 
-if ($status !== 200) {
-    echo json_encode(['status' => 'error', 'message' => 'Error API', 'detalle' => json_decode($response, true)]);
-} else {
-    $data = json_decode($response, true);
-    $texto = $data['candidates'][0]['content']['parts'][0]['text'] ?? "Sin respuesta";
-    echo json_encode(['status' => 'ok', 'reporte' => $texto, 'fecha' => date('d/m/Y H:i')]);
-}
+http_response_code(502);
+echo json_encode([
+    'status' => 'error',
+    'message' => 'Error API Gemini',
+    'detalle' => $ultimo_error
+]);

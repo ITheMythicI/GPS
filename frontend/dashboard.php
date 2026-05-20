@@ -275,7 +275,10 @@ if (!isset($_SESSION['id_usuario'])) {
                 clasificaciones: ultimosContenedores,
                 criterios: criterios
             });
-            if (data.status !== 'ok') throw new Error(data.message || 'Error');
+            if (data.status !== 'ok') {
+                const detalle = data.detalle ? (' | Detalle: ' + (typeof data.detalle === 'string' ? data.detalle : JSON.stringify(data.detalle))) : '';
+                throw new Error((data.message || 'Error') + detalle);
+            }
             contenido.textContent = data.reporte;
             contenido.style.display = 'block';
             if (data.resumen) {
