@@ -78,6 +78,7 @@ $intentos_modelo = [
     ['api_version' => 'v1', 'modelo' => 'gemini-2.0-flash'],
 ];
 $ultimo_error = null;
+$ultimo_429 = null;
 
 foreach ($intentos_modelo as $intento) {
     $modelo = $intento['modelo'];
@@ -122,6 +123,67 @@ foreach ($intentos_modelo as $intento) {
         'message' => $api_message,
         'detalle' => $error_json ?: $response
     ];
+
+    if ($status === 429) {
+        $ultimo_429 = $ultimo_error;
+    }
+}
+
+if ($ultimo_429 !== null) {
+    $lineas = [];
+    $prioridad_alta = 0;
+    $prioridad_media = 0;
+    $prioridad_baja = 0;
+
+    foreach ($clasificaciones as $c) {
+        $ubicacion = $c['ubicacion'] ?? 'Sin ubicación';
+        $humedad = (float)($c['humedad'] ?? 0);
+        $densidad = (float)($c['peso_kg'] ?? 0);
+        $prio = strtolower((string)($c['prioridad'] ?? 'normal'));
+
+        if ($prio === 'alta') {
+            $prioridad_alta++;
+        } elseif ($prio === 'media') {
+            $prioridad_media++;
+        } else {
+            $prioridad_baja++;
+        }
+
+        $tipo = 'MIXTO';
+        if ($humedad > 45 && $densidad > 300) {
+            $tipo = 'ORGÁNICO';
+        } elseif ($humedad < 30 && $densidad < 80) {
+            $tipo = 'PLÁSTICO';
+        } elseif ($humedad < 30 && $densidad < 180) {
+            $tipo = 'PAPEL/CARTÓN';
+        } elseif ($humedad < 35 && $densidad > 250) {
+            $tipo = 'VIDRIO/METAL';
+        }
+        $lineas[] = "- {$ubicacion}: Predicción {$tipo}, prioridad " . strtoupper($prio);
+    }
+
+    $reporte_local = "**REPORTE EJECUTIVO DEL SISTEMA BIN**\n" .
+        "**Fecha:** {$fecha_actual}\n" .
+        "**Analista:** {$nombre_analista}\n" .
+        "**Rol del solicitante:** {$rol_analista}\n\n" .
+        "Resumen operativo (fallback local por cuota Gemini agotada):\n" .
+        "- Contenedores analizados: " . count($clasificaciones) . "\n" .
+        "- Prioridad alta: {$prioridad_alta}\n" .
+        "- Prioridad media: {$prioridad_media}\n" .
+        "- Prioridad baja/normal: {$prioridad_baja}\n\n" .
+        "Predicción de tipo de residuo por contenedor:\n" .
+        (empty($lineas) ? "- Sin datos para analizar." : implode("\n", $lineas)) . "\n\n" .
+        "Recomendación: atender primero contenedores de prioridad ALTA, luego MEDIA, y reintentar generación IA cuando la cuota se restablezca.";
+
+    echo json_encode([
+        'status' => 'ok',
+        'reporte' => $reporte_local,
+        'fecha' => date('d/m/Y H:i'),
+        'modelo' => 'fallback-local',
+        'api_version' => 'local',
+        'warning' => 'Gemini con cuota agotada; se devolvió reporte local.'
+    ]);
+    exit;
 }
 
 http_response_code(502);
