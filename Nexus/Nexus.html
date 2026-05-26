@@ -1,0 +1,583 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Nexus Solutions — Soluciones tecnológicas de gestión y control</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,300..800&family=Manrope:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/styles2.css">
+<style>
+  :root{
+    --purple:#7353AB;
+    --purple-deep:#3c2a5e;
+    --purple-dark:#241738;
+    --lavender:#BABAFB;
+    --gray:#98959C;
+    --ink:#160e26;
+    --paper:#f4f1f7;
+    --paper-dim:#d9d3e2;
+    --line:rgba(186,186,251,.16);
+    --display:'Bricolage Grotesque',sans-serif;
+    --body:'Manrope',sans-serif;
+    --mono:'JetBrains Mono',monospace;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{
+    font-family:var(--body);
+    background:var(--ink);
+    color:var(--paper);
+    line-height:1.6;
+    overflow-x:hidden;
+    -webkit-font-smoothing:antialiased;
+  }
+  /* grain */
+  body::after{
+    content:"";position:fixed;inset:0;pointer-events:none;z-index:9999;opacity:.04;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='4'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+  ::selection{background:var(--lavender);color:var(--ink)}
+
+  /* ---------- NAV ---------- */
+  nav{
+    position:fixed;top:0;left:0;right:0;z-index:1000;
+    display:flex;align-items:center;justify-content:space-between;
+    padding:18px clamp(20px,5vw,64px);
+    background:rgba(22,14,38,.55);
+    backdrop-filter:blur(14px);
+    border-bottom:1px solid var(--line);
+    transition:padding .3s ease;
+  }
+  .brand{display:flex;align-items:center;gap:12px;font-family:var(--display);font-weight:700;letter-spacing:-.02em;font-size:1.15rem}
+  .logo-mark{
+    display:inline-flex;align-items:center;justify-content:center;
+    width:40px;height:40px;flex-shrink:0;
+    font-family:var(--mono);font-weight:700;font-size:.95rem;
+    color:var(--lavender);
+    border:1.5px solid var(--purple);border-radius:9px;
+    background:linear-gradient(140deg,rgba(115,83,171,.35),rgba(186,186,251,.05));
+    position:relative;
+  }
+  .logo-mark span{transform:translateY(-3px)}
+  .logo-mark sup{font-size:.6rem;color:var(--gray)}
+  .nav-links{display:flex;gap:28px;align-items:center}
+  .nav-links a{
+    color:var(--paper-dim);text-decoration:none;font-size:.82rem;font-weight:500;
+    letter-spacing:.01em;transition:color .2s;position:relative;
+  }
+  .nav-links a::after{content:"";position:absolute;left:0;bottom:-5px;width:0;height:1.5px;background:var(--lavender);transition:width .25s}
+  .nav-links a:hover{color:var(--paper)}
+  .nav-links a:hover::after{width:100%}
+  .nav-toggle{display:none;background:none;border:none;color:var(--paper);cursor:pointer;flex-direction:column;gap:5px}
+  .nav-toggle span{width:24px;height:2px;background:var(--paper);transition:.3s}
+
+  /* ---------- LAYOUT ---------- */
+  section{position:relative;padding:clamp(70px,11vw,150px) clamp(20px,5vw,64px)}
+  .wrap{max-width:1180px;margin:0 auto}
+  .eyebrow{
+    font-family:var(--mono);font-size:.72rem;letter-spacing:.32em;text-transform:uppercase;
+    color:var(--lavender);display:inline-flex;align-items:center;gap:10px;margin-bottom:22px;
+  }
+  .eyebrow::before{content:"[";color:var(--purple);font-size:1.1rem}
+  .eyebrow::after{content:"]";color:var(--purple);font-size:1.1rem}
+  h2.title{
+    font-family:var(--display);font-weight:600;letter-spacing:-.03em;line-height:1.02;
+    font-size:clamp(2rem,5vw,3.5rem);margin-bottom:28px;
+  }
+  .lead{font-size:clamp(1rem,1.5vw,1.18rem);color:var(--paper-dim);max-width:62ch}
+
+  /* reveal */
+  .reveal{opacity:0;transform:translateY(34px);transition:opacity .8s cubic-bezier(.2,.7,.2,1),transform .8s cubic-bezier(.2,.7,.2,1)}
+  .reveal.in{opacity:1;transform:none}
+
+  /* ---------- HERO ---------- */
+  .hero{
+    min-height:100vh;display:flex;flex-direction:column;justify-content:center;
+    padding-top:120px;position:relative;overflow:hidden;
+  }
+  .hero-glow{
+    position:absolute;border-radius:50%;filter:blur(90px);opacity:.55;z-index:0;
+  }
+  .g1{width:520px;height:520px;background:var(--purple);top:-160px;right:-120px}
+  .g2{width:420px;height:420px;background:var(--purple-deep);bottom:-150px;left:-100px;opacity:.7}
+  .hero-grid{
+    position:absolute;inset:0;z-index:0;opacity:.4;
+    background-image:linear-gradient(var(--line) 1px,transparent 1px),linear-gradient(90deg,var(--line) 1px,transparent 1px);
+    background-size:64px 64px;
+    mask-image:radial-gradient(ellipse 80% 70% at 50% 40%,#000 30%,transparent 75%);
+  }
+  .hero-inner{position:relative;z-index:2;max-width:1180px;margin:0 auto;width:100%}
+  .hero-tag{font-family:var(--mono);font-size:.78rem;letter-spacing:.28em;text-transform:uppercase;color:var(--lavender);margin-bottom:26px}
+  .hero h1{
+    font-family:var(--display);font-weight:700;letter-spacing:-.04em;line-height:.92;
+    font-size:clamp(3.2rem,11vw,8.5rem);margin-bottom:30px;
+  }
+  .hero h1 .br{color:var(--purple);font-weight:300}
+  .hero h1 em{font-style:normal;color:var(--lavender)}
+  .hero p{font-size:clamp(1.05rem,1.8vw,1.4rem);color:var(--paper-dim);max-width:54ch;margin-bottom:40px}
+  .cta-row{display:flex;gap:16px;flex-wrap:wrap}
+  .btn{
+    font-family:var(--body);font-weight:600;font-size:.92rem;text-decoration:none;
+    padding:15px 30px;border-radius:50px;transition:.25s;display:inline-flex;align-items:center;gap:9px;
+  }
+  .btn-primary{background:var(--lavender);color:var(--ink)}
+  .btn-primary:hover{background:#fff;transform:translateY(-2px)}
+  .btn-ghost{border:1.5px solid var(--line);color:var(--paper)}
+  .btn-ghost:hover{border-color:var(--lavender);background:rgba(186,186,251,.07)}
+  .scroll-hint{position:absolute;bottom:34px;left:50%;transform:translateX(-50%);font-family:var(--mono);font-size:.68rem;letter-spacing:.2em;color:var(--gray);text-transform:uppercase;z-index:2;animation:bob 2.4s ease-in-out infinite}
+  @keyframes bob{50%{transform:translate(-50%,8px)}}
+
+  /* ---------- MISIÓN / VISIÓN ---------- */
+  .mv-grid{display:grid;grid-template-columns:1fr 1fr;gap:30px;margin-top:40px}
+  .mv-card{
+    border:1px solid var(--line);border-radius:20px;padding:42px;position:relative;overflow:hidden;
+    background:linear-gradient(160deg,rgba(115,83,171,.12),rgba(255,255,255,.01));
+    transition:.35s;
+  }
+  .mv-card:hover{transform:translateY(-5px);border-color:rgba(186,186,251,.4)}
+  .mv-card .num{font-family:var(--mono);font-size:.75rem;color:var(--purple);letter-spacing:.2em}
+  .mv-card h3{font-family:var(--display);font-size:1.7rem;font-weight:600;margin:14px 0 16px}
+  .mv-card p{color:var(--paper-dim);font-size:1rem}
+  .mv-card .corner{position:absolute;top:24px;right:28px;font-family:var(--mono);color:var(--purple);font-size:1.4rem;opacity:.5}
+
+  /* ---------- FILOSOFÍA ---------- */
+  #filosofia{background:linear-gradient(180deg,transparent,rgba(60,42,94,.25),transparent)}
+  .phil-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;margin-top:50px}
+  .phil{
+    border-left:2px solid var(--purple);padding:8px 0 8px 28px;position:relative;transition:.3s;
+  }
+  .phil:hover{border-color:var(--lavender)}
+  .phil .q{font-family:var(--display);font-size:1.32rem;font-weight:600;line-height:1.25;margin-bottom:14px;color:#fff}
+  .phil p{color:var(--gray);font-size:.95rem}
+  .phil .mark{font-family:var(--display);font-size:3rem;color:var(--purple);line-height:.5;opacity:.6;position:absolute;top:14px;left:18px}
+
+  /* ---------- VALORES ---------- */
+  .val-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;margin-top:50px}
+  .val{
+    padding:34px 30px;border:1px solid var(--line);border-radius:16px;transition:.3s;position:relative;overflow:hidden;
+    background:rgba(255,255,255,.012);
+  }
+  .val::before{content:"";position:absolute;inset:0;background:radial-gradient(circle at 0% 0%,rgba(115,83,171,.25),transparent 60%);opacity:0;transition:.35s}
+  .val:hover{transform:translateY(-4px);border-color:rgba(186,186,251,.35)}
+  .val:hover::before{opacity:1}
+  .val .vn{font-family:var(--mono);font-size:.72rem;color:var(--purple);letter-spacing:.18em}
+  .val h4{font-family:var(--display);font-size:1.35rem;font-weight:600;margin:10px 0 12px;position:relative}
+  .val p{color:var(--paper-dim);font-size:.93rem;position:relative}
+
+  /* ---------- POLÍTICAS ---------- */
+  .pol-tabs{display:flex;gap:12px;margin:40px 0 36px;flex-wrap:wrap}
+  .pol-tab{
+    font-family:var(--mono);font-size:.78rem;letter-spacing:.08em;text-transform:uppercase;
+    padding:12px 24px;border-radius:50px;border:1px solid var(--line);background:none;color:var(--paper-dim);
+    cursor:pointer;transition:.25s;
+  }
+  .pol-tab.active{background:var(--purple);color:#fff;border-color:var(--purple)}
+  .pol-panel{display:none;grid-template-columns:1fr 1fr;gap:16px}
+  .pol-panel.active{display:grid}
+  .pol-item{
+    display:flex;gap:16px;padding:22px 24px;border:1px solid var(--line);border-radius:14px;transition:.3s;
+    background:rgba(255,255,255,.012);align-items:flex-start;
+  }
+  .pol-item:hover{border-color:rgba(186,186,251,.35);transform:translateX(4px)}
+  .pol-item .idx{font-family:var(--mono);font-weight:700;color:var(--purple);font-size:1.05rem;flex-shrink:0}
+  .pol-item h5{font-family:var(--display);font-size:1.05rem;font-weight:600;margin-bottom:6px}
+  .pol-item p{color:var(--gray);font-size:.88rem;line-height:1.5}
+
+  /* ---------- ORGANIGRAMA ---------- */
+  #equipo{background:linear-gradient(180deg,transparent,rgba(60,42,94,.2),transparent)}
+  .org-photo{
+    margin-top:44px;border:2px dashed rgba(186,186,251,.35);border-radius:22px;
+    min-height:340px;display:flex;flex-direction:column;align-items:center;justify-content:center;
+    gap:14px;text-align:center;padding:50px 30px;
+    background:repeating-linear-gradient(135deg,rgba(115,83,171,.05),rgba(115,83,171,.05) 14px,transparent 14px,transparent 28px);
+    transition:.3s;
+  }
+  .org-photo:hover{border-color:var(--lavender);background:rgba(115,83,171,.08)}
+  .org-photo .ic{font-size:2.6rem;opacity:.6}
+  .org-photo .t{font-family:var(--display);font-size:1.4rem;font-weight:600}
+  .org-photo .s{font-family:var(--mono);font-size:.75rem;color:var(--gray);letter-spacing:.12em;max-width:48ch}
+  .org-photo code{background:rgba(186,186,251,.12);padding:2px 8px;border-radius:5px;color:var(--lavender)}
+  .roles{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-top:34px}
+  .role{padding:26px;border:1px solid var(--line);border-radius:16px;transition:.3s;background:rgba(255,255,255,.012)}
+  .role:hover{transform:translateY(-4px);border-color:rgba(186,186,251,.35)}
+  .role .avatar{
+    width:54px;height:54px;border-radius:50%;margin-bottom:16px;display:flex;align-items:center;justify-content:center;
+    font-family:var(--display);font-weight:700;font-size:1.2rem;color:#fff;
+    background:linear-gradient(140deg,var(--purple),var(--purple-deep));
+  }
+  .role h5{font-family:var(--display);font-size:1.12rem;font-weight:600}
+  .role .pos{font-family:var(--mono);font-size:.74rem;color:var(--lavender);letter-spacing:.06em;margin:4px 0 10px}
+  .role p{color:var(--gray);font-size:.86rem}
+
+  /* ---------- PROBLEMÁTICA ---------- */
+  .prob-wrap{display:grid;grid-template-columns:.9fr 1.1fr;gap:50px;align-items:center;margin-top:30px}
+  .prob-visual{
+    border:1px solid var(--line);border-radius:22px;padding:44px;position:relative;overflow:hidden;
+    background:linear-gradient(160deg,rgba(115,83,171,.18),transparent);
+  }
+  .prob-stat{margin-bottom:30px}
+  .prob-stat:last-child{margin-bottom:0}
+  .prob-stat .big{font-family:var(--display);font-size:2.6rem;font-weight:700;color:var(--lavender);line-height:1}
+  .prob-stat .lbl{font-size:.9rem;color:var(--gray);margin-top:6px}
+  .prob-list{list-style:none;margin-top:24px}
+  .prob-list li{padding:14px 0;border-bottom:1px solid var(--line);display:flex;gap:14px;color:var(--paper-dim);font-size:.97rem}
+  .prob-list li::before{content:"→";color:var(--purple);font-family:var(--mono);flex-shrink:0}
+
+  /* ---------- PROPUESTAS ---------- */
+  .prop-stack{display:flex;flex-direction:column;gap:28px;margin-top:50px}
+  .prop{
+    border:1px solid var(--line);border-radius:22px;overflow:hidden;transition:.35s;
+    background:rgba(255,255,255,.012);
+  }
+  .prop:hover{border-color:rgba(186,186,251,.4)}
+  .prop-head{
+    display:flex;align-items:center;gap:22px;padding:32px 38px;cursor:pointer;
+    background:linear-gradient(120deg,rgba(115,83,171,.14),transparent);
+  }
+  .prop-head .pidx{
+    font-family:var(--display);font-weight:700;font-size:2rem;color:var(--purple);flex-shrink:0;
+    width:62px;height:62px;border:1.5px solid var(--purple);border-radius:14px;
+    display:flex;align-items:center;justify-content:center;
+  }
+  .prop-head .ph-txt{flex:1}
+  .prop-head h3{font-family:var(--display);font-size:1.5rem;font-weight:600;line-height:1.1}
+  .prop-head .ph-tag{font-family:var(--mono);font-size:.72rem;letter-spacing:.16em;color:var(--lavender);text-transform:uppercase;margin-top:6px}
+  .prop-head .chev{font-size:1.5rem;color:var(--gray);transition:.3s}
+  .prop.open .chev{transform:rotate(45deg);color:var(--lavender)}
+  .prop-body{max-height:0;overflow:hidden;transition:max-height .5s ease}
+  .prop.open .prop-body{max-height:900px}
+  .prop-inner{padding:8px 38px 38px;display:grid;grid-template-columns:repeat(3,1fr);gap:26px}
+  .prop-col h6{font-family:var(--mono);font-size:.74rem;letter-spacing:.14em;text-transform:uppercase;color:var(--purple);margin-bottom:12px}
+  .prop-col p{color:var(--paper-dim);font-size:.93rem;line-height:1.6}
+  .prop-tags{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px}
+  .prop-tags span{font-family:var(--mono);font-size:.68rem;padding:5px 11px;border-radius:50px;background:rgba(186,186,251,.1);color:var(--lavender);border:1px solid var(--line)}
+
+  /* ---------- CONTACTO / FOOTER ---------- */
+  footer{padding:clamp(70px,9vw,120px) clamp(20px,5vw,64px) 50px;border-top:1px solid var(--line);position:relative;overflow:hidden}
+  .foot-glow{position:absolute;width:600px;height:300px;background:var(--purple);filter:blur(120px);opacity:.25;bottom:-150px;left:50%;transform:translateX(-50%)}
+  .foot-cta{text-align:center;position:relative;z-index:2;margin-bottom:70px}
+  .foot-cta h2{font-family:var(--display);font-size:clamp(2.2rem,6vw,4.5rem);font-weight:700;letter-spacing:-.03em;line-height:1;margin-bottom:24px}
+  .foot-cta h2 em{font-style:normal;color:var(--lavender)}
+  .foot-info{display:grid;grid-template-columns:repeat(3,1fr);gap:30px;max-width:900px;margin:0 auto 60px;position:relative;z-index:2}
+  .foot-info .fi{text-align:center}
+  .foot-info .fi .k{font-family:var(--mono);font-size:.7rem;letter-spacing:.18em;text-transform:uppercase;color:var(--gray);margin-bottom:8px}
+  .foot-info .fi .v{font-size:1rem;color:var(--paper)}
+  .foot-bottom{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:16px;position:relative;z-index:2;border-top:1px solid var(--line);padding-top:30px}
+  .foot-bottom .brand{font-size:1rem}
+  .foot-bottom p{font-size:.8rem;color:var(--gray)}
+
+  /* ---------- RESPONSIVE ---------- */
+  @media(max-width:860px){
+    .nav-links{
+      position:fixed;top:73px;right:0;bottom:0;width:min(78vw,320px);flex-direction:column;align-items:flex-start;
+      gap:8px;padding:34px 30px;background:rgba(22,14,38,.97);backdrop-filter:blur(20px);
+      transform:translateX(100%);transition:transform .35s ease;border-left:1px solid var(--line);
+    }
+    .nav-links.open{transform:none}
+    .nav-links a{font-size:1.05rem;padding:8px 0}
+    .nav-toggle{display:flex}
+    .nav-toggle.active span:nth-child(1){transform:translateY(7px) rotate(45deg)}
+    .nav-toggle.active span:nth-child(2){opacity:0}
+    .nav-toggle.active span:nth-child(3){transform:translateY(-7px) rotate(-45deg)}
+    .mv-grid,.phil-grid,.val-grid,.pol-panel.active,.roles,.prob-wrap,.prop-inner,.foot-info{grid-template-columns:1fr}
+    .prop-head{padding:24px 22px;gap:16px}
+    .prop-inner{padding:8px 22px 30px}
+    .prop-head h3{font-size:1.25rem}
+  }
+  @media(max-width:560px){
+    .phil-grid,.roles{grid-template-columns:1fr}
+    .hero h1{font-size:clamp(2.6rem,15vw,4rem)}
+  }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a href="#hero" class="brand"><span class="logo-mark"><span>n</span><sup>s</sup></span> Nexus Solutions</a>
+  <div class="nav-links" id="navLinks">
+    <a href="#nosotros">Nosotros</a>
+    <a href="#filosofia">Filosofía</a>
+    <a href="#valores">Valores</a>
+    <a href="#politicas">Políticas</a>
+    <a href="#equipo">Equipo</a>
+    <a href="#problematica">Problemática</a>
+    <a href="#propuestas">Propuestas</a>
+    <a href="#contacto">Contacto</a>
+  </div>
+  <button class="nav-toggle" id="navToggle" aria-label="Menú"><span></span><span></span><span></span></button>
+</nav>
+
+<!-- HERO -->
+<header class="hero" id="hero">
+  <div class="hero-glow g1"></div>
+  <div class="hero-glow g2"></div>
+  <div class="hero-grid"></div>
+  <div class="hero-inner">
+    <p class="hero-tag reveal">Desarrollo de software · Torreón, Coahuila</p>
+    <h1 class="reveal"><span class="br">[</span> Nexus <em>Solutions</em> <span class="br">]</span></h1>
+    <p class="reveal">Soluciones tecnológicas integrales de gestión y control que convierten datos dispersos en decisiones inteligentes.</p>
+    <div class="cta-row reveal">
+      <a href="#propuestas" class="btn btn-primary">Ver propuestas →</a>
+      <a href="#nosotros" class="btn btn-ghost">Conócenos</a>
+    </div>
+  </div>
+  <div class="scroll-hint">Desliza ↓</div>
+</header>
+
+<!-- NOSOTROS / MISIÓN-VISIÓN -->
+<section id="nosotros">
+  <div class="wrap">
+    <span class="eyebrow reveal">Quiénes somos</span>
+    <h2 class="title reveal">Tecnología con propósito,<br>gestión con inteligencia.</h2>
+    <p class="lead reveal">Somos una empresa dedicada al desarrollo de software, enfocada en sistemas de gestión y control que optimizan recursos, automatizan procesos y potencian la toma de decisiones de las organizaciones.</p>
+    <div class="mv-grid">
+      <div class="mv-card reveal">
+        <span class="corner">[ ]</span>
+        <div class="num">01 / MISIÓN</div>
+        <h3>Nuestra Misión</h3>
+        <p>Brindar soluciones tecnológicas integrales de gestión y control que permitan registrar de manera precisa la información de las organizaciones, generar reportes detallados y apoyar sus procesos administrativos, contribuyendo a la optimización de recursos, la mejora en la toma de decisiones y el incremento de la productividad empresarial.</p>
+      </div>
+      <div class="mv-card reveal">
+        <span class="corner">[ ]</span>
+        <div class="num">02 / VISIÓN</div>
+        <h3>Nuestra Visión</h3>
+        <p>Ser una empresa líder a nivel regional y nacional en el desarrollo de sistemas de gestión y control administrativo, reconocida por su innovación tecnológica, confiabilidad y calidad, impulsando la transformación digital de las empresas y convirtiéndose en un aliado estratégico para la administración organizacional.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FILOSOFÍA -->
+<section id="filosofia">
+  <div class="wrap">
+    <span class="eyebrow reveal">Lo que nos mueve</span>
+    <h2 class="title reveal">Filosofía de la empresa</h2>
+    <p class="lead reveal">Tres ideas guían cada línea de código y cada relación que construimos.</p>
+    <div class="phil-grid">
+      <div class="phil reveal">
+        <span class="mark">“</span>
+        <div class="q">No solo crear tecnología, crear confianza.</div>
+        <p>Nuestro enfoque combina innovación, transparencia y calidad para construir relaciones sólidas con nuestros clientes.</p>
+      </div>
+      <div class="phil reveal">
+        <span class="mark">“</span>
+        <div class="q">Hacerlo bien, hacerlo claro, hacerlo mejor.</div>
+        <p>Cada solución se desarrolla con responsabilidad, honestidad y altos estándares de calidad.</p>
+      </div>
+      <div class="phil reveal">
+        <span class="mark">“</span>
+        <div class="q">La calidad no viene del producto, sino del trabajo.</div>
+        <p>Damos a nuestro equipo los recursos y el tiempo necesarios para lograr un balance sano entre la vida laboral y la personal.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- VALORES -->
+<section id="valores">
+  <div class="wrap">
+    <span class="eyebrow reveal">Principios</span>
+    <h2 class="title reveal">Nuestros valores</h2>
+    <div class="val-grid">
+      <div class="val reveal"><div class="vn">V01</div><h4>Innovación</h4><p>Fomentar la creatividad y el uso de nuevas tecnologías para desarrollar soluciones modernas y eficientes que respondan al mercado.</p></div>
+      <div class="val reveal"><div class="vn">V02</div><h4>Responsabilidad</h4><p>Cumplir los compromisos adquiridos con clientes y usuarios, garantizando puntualidad, eficiencia y calidad en los servicios.</p></div>
+      <div class="val reveal"><div class="vn">V03</div><h4>Transparencia</h4><p>Manejar la información y los procesos de forma clara, segura y accesible, generando confianza en clientes y usuarios.</p></div>
+      <div class="val reveal"><div class="vn">V04</div><h4>Honestidad</h4><p>Actuar con ética, integridad y respeto en todas las actividades y relaciones con clientes, colaboradores y proveedores.</p></div>
+      <div class="val reveal"><div class="vn">V05</div><h4>Compromiso</h4><p>Trabajar con dedicación para apoyar a las empresas en la mejora de sus procesos administrativos y de control.</p></div>
+      <div class="val reveal"><div class="vn">V06</div><h4>Calidad</h4><p>Ofrecer productos y servicios confiables, seguros y con altos estándares tecnológicos, buscando la mejora continua.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- POLÍTICAS -->
+<section id="politicas">
+  <div class="wrap">
+    <span class="eyebrow reveal">Marco de actuación</span>
+    <h2 class="title reveal">Políticas de la empresa</h2>
+    <div class="pol-tabs reveal">
+      <button class="pol-tab active" data-panel="internas">Internas</button>
+      <button class="pol-tab" data-panel="externas">Externas</button>
+    </div>
+    <div class="pol-panel active" id="internas">
+      <div class="pol-item reveal"><span class="idx">01</span><div><h5>Ética y conducta profesional</h5><p>Actuar con honestidad, respeto y ética; evitar conflictos de interés y proteger la confianza del equipo, clientes y proveedores.</p></div></div>
+      <div class="pol-item reveal"><span class="idx">02</span><div><h5>Responsabilidad laboral</h5><p>Cumplir horarios, entregables y compromisos, comunicando a tiempo cualquier situación que afecte los proyectos.</p></div></div>
+      <div class="pol-item reveal"><span class="idx">03</span><div><h5>Uso de recursos tecnológicos</h5><p>Los equipos, software y accesos se usan solo para fines laborales, sin poner en riesgo la seguridad de la información.</p></div></div>
+      <div class="pol-item reveal"><span class="idx">04</span><div><h5>Confidencialidad de la información</h5><p>Toda la información técnica, administrativa y estratégica es confidencial y no se divulga sin autorización previa.</p></div></div>
+      <div class="pol-item reveal"><span class="idx">05</span><div><h5>Innovación y mejora continua</h5><p>Se fomenta la creatividad, el aprendizaje constante y la propuesta de nuevas ideas, metodologías y herramientas.</p></div></div>
+      <div class="pol-item reveal"><span class="idx">06</span><div><h5>Trabajo en equipo y comunicación</h5><p>Ambiente colaborativo y respetuoso, abierto al diálogo y a la retroalimentación constructiva.</p></div></div>
+      <div class="pol-item reveal"><span class="idx">07</span><div><h5>Bienestar laboral</h5><p>Equilibrio entre carga de trabajo y bienestar físico y mental, con respeto a los tiempos personales.</p></div></div>
+    </div>
+    <div class="pol-panel" id="externas">
+      <div class="pol-item reveal"><span class="idx">01</span><div><h5>Atención al cliente</h5><p>Atención profesional, clara y oportuna a clientes y usuarios, dentro de los tiempos establecidos.</p></div></div>
+      <div class="pol-item reveal"><span class="idx">02</span><div><h5>Transparencia con clientes</h5><p>Información veraz sobre servicios, alcances, tiempos y costos; cualquier cambio se comunica oportunamente.</p></div></div>
+      <div class="pol-item reveal"><span class="idx">03</span><div><h5>Calidad en productos y servicios</h5><p>Sistemas con estándares de calidad, seguridad y funcionamiento, validados mediante pruebas y mejoras continuas.</p></div></div>
+      <div class="pol-item reveal"><span class="idx">04</span><div><h5>Protección de datos y privacidad</h5><p>Manejo seguro y confidencial de los datos de clientes y usuarios conforme a las leyes aplicables.</p></div></div>
+      <div class="pol-item reveal"><span class="idx">05</span><div><h5>Cumplimiento legal</h5><p>Operación bajo las leyes, normas y reglamentos vigentes en materia tecnológica, laboral y administrativa.</p></div></div>
+      <div class="pol-item reveal"><span class="idx">06</span><div><h5>Relación con proveedores</h5><p>Relaciones profesionales, éticas y transparentes, seleccionando con base en calidad, confiabilidad y beneficio mutuo.</p></div></div>
+      <div class="pol-item reveal"><span class="idx">07</span><div><h5>Responsabilidad social</h5><p>Soluciones que generan impacto positivo en la sociedad y promueven el uso responsable de la tecnología.</p></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- EQUIPO / ORGANIGRAMA -->
+<section id="equipo">
+  <div class="wrap">
+    <span class="eyebrow reveal">Estructura</span>
+    <h2 class="title reveal">Organigrama y equipo</h2>
+    <p class="lead reveal">Una estructura clara de responsabilidades que hace posible cada proyecto.</p>
+
+    <!-- ESPACIO PARA LA FOTO DEL ORGANIGRAMA -->
+    <div class="org-photo reveal">
+    <img src="equipo/organigrama.jpg" style="width:100%;border-radius:22px" class="reveal"></div>
+
+    <div class="roles">
+      <div class="role reveal"><div class="avatar"><img src="equipo/erick2.jpg" alt="Erick"></div><h5>Erick Gabriel Pérez Castro</h5><div class="pos">Dirección General · RRHH</div><p>Estrategia, alcance, finanzas, recursos humanos, coordinación y relación con el cliente.</p></div>
+      <div class="role reveal"><div class="avatar"><img src="equipo/pp.jpg" alt="José"></div><h5>José Alberto Carrillo Torres</h5><div class="pos">Dirección Técnica · Finanzas</div><p>Arquitectura del sistema, decisiones tecnológicas y gestión financiera.</p></div>
+      <div class="role reveal"><div class="avatar"><img src="equipo/isaac.jpg" alt="Isaac"></div><h5>Isaac Esparza Holguín</h5><div class="pos">Backend Lead</div><p>API, lógica de negocio e integraciones del sistema.</p></div>
+      <div class="role reveal"><div class="avatar"><img src="equipo/laisha1.jpg" alt="Laisha"></div><h5>Laisha Jockabed Llamas Gutiérrez</h5><div class="pos">Frontend Lead · Marketing</div><p>Interfaz, paneles, experiencia de usuario y documentación.</p></div>
+      <div class="role reveal"><div class="avatar"><img src="equipo/ivan.jpg" alt="Iván"></div><h5>Jesús Iván López Valdez</h5><div class="pos">AI / IoT / QA Lead</div><p>IA básica, analítica, integración IoT y pruebas de calidad.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- PROBLEMÁTICA -->
+<section id="problematica">
+  <div class="wrap">
+    <span class="eyebrow reveal">El reto que abordamos</span>
+    <h2 class="title reveal">Problemática</h2>
+    <div class="prob-wrap">
+      <div class="prob-visual reveal">
+        <div class="prob-stat"><div class="big">∞</div><div class="lbl">Procesos manuales que se repiten día con día</div></div>
+        <div class="prob-stat"><div class="big">⌁</div><div class="lbl">Datos dispersos en sistemas que no se comunican entre sí</div></div>
+        <div class="prob-stat"><div class="big">↺</div><div class="lbl">Decisiones reactivas por falta de información en tiempo real</div></div>
+      </div>
+      <div class="reveal">
+        <p class="lead" style="margin-bottom:8px">Muchas organizaciones siguen gestionando procesos clave —asistencia, control de recursos, atención y monitoreo— mediante sistemas separados o tareas manuales. Esto provoca:</p>
+        <ul class="prob-list">
+          <li>Pérdida de tiempo y registros imprecisos en la operación diaria.</li>
+          <li>Sobrecarga del personal administrativo en labores repetitivas.</li>
+          <li>Poca capacidad de análisis sobre patrones de uso o comportamiento.</li>
+          <li>Falta de integración entre la atención digital, los registros físicos y la analítica de datos.</li>
+          <li>Gestión reactiva en lugar de anticiparse a los problemas.</li>
+        </ul>
+        <p style="margin-top:22px;color:var(--paper-dim)">Nexus Solutions ataca esta brecha integrando <strong style="color:var(--lavender)">IoT, inteligencia artificial y plataformas web</strong> en soluciones que centralizan, automatizan y vuelven inteligente la gestión.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PROPUESTAS -->
+<section id="propuestas">
+  <div class="wrap">
+    <span class="eyebrow reveal">Lo que construimos</span>
+    <h2 class="title reveal">Propuestas de proyecto</h2>
+    <p class="lead reveal">Soluciones que combinan hardware de bajo costo, software de conectividad y modelos de inteligencia artificial.</p>
+    <div class="prop-stack">
+
+      <article class="prop reveal open">
+        <div class="prop-head">
+          <div class="pidx">01</div>
+          <div class="ph-txt">
+            <h3>Plataforma Inteligente de Gestión Institucional</h3>
+            <div class="ph-tag">IoT + IA · Gestión administrativa</div>
+          </div>
+          <div class="chev">+</div>
+        </div>
+        <div class="prop-body"><div class="prop-inner">
+          <div class="prop-col"><h6>Problemática</h6><p>Las instituciones manejan asistencia, atención a usuarios, control de recursos y consultas mediante sistemas separados o procesos manuales, lo que genera pérdida de tiempo, registros imprecisos y poca capacidad de análisis.</p></div>
+          <div class="prop-col"><h6>Solución</h6><p>Plataforma con varios módulos: chatbot con IA para consultas, asistencia automática por QR o RFID y control de recursos/préstamos, todo conectado a una base de datos central y un panel con métricas. Integra dispositivos IoT como lectores QR o kioscos digitales.</p>
+            <div class="prop-tags"><span>Chatbot IA</span><span>QR / RFID</span><span>Dashboard</span><span>IoT</span></div></div>
+          <div class="prop-col"><h6>Justificación</h6><p>Centraliza y automatiza procesos institucionales clave, mejora la precisión de los registros, reduce la carga operativa y permite decisiones basadas en datos, aplicando IA e IoT en un entorno realista.</p></div>
+        </div></div>
+      </article>
+
+      <article class="prop reveal">
+        <div class="prop-head">
+          <div class="pidx">02</div>
+          <div class="ph-txt">
+            <h3>Plataforma Inteligente de Gestión de Residuos</h3>
+            <div class="ph-tag">IoT + IA · Sostenibilidad urbana</div>
+          </div>
+          <div class="chev">+</div>
+        </div>
+        <div class="prop-body"><div class="prop-inner">
+          <div class="prop-col"><h6>Problemática</h6><p>Las rutas de recolección de residuos son estáticas y dependen de calendarios fijos, sin intervención ciudadana ni priorización de zonas en caso de acumulación, generando ineficiencia de recursos y combustible.</p></div>
+          <div class="prop-col"><h6>Solución</h6><p>Sensores IoT de peso, humedad y volumen para medir el nivel de llenado de los contenedores, conectados a una plataforma web de monitoreo y alertas. La IA predice cuándo se llenarán los contenedores y optimiza las rutas; la ciudadanía reporta con imagen y ubicación.</p>
+            <div class="prop-col"><h6>Justificación</h6><p>El manejo de residuos supone un riesgo ecológico y sanitario. La solución es de bajo costo, enlaza IoT e IA para la gestión y optimización de rutas, y atiende una problemática real a gran escala.</p>
+            <a href="https://bin.nexus-solutions.lat" target="_blank" style="display:inline-block; margin-top:15px; padding:10px 25px; background:#7c3aed; color:white; border-radius:8px; text-decoration:none; font-size:14px; font-weight:600;">Ver más</a>
+          </div></div>
+      </article>
+
+      <article class="prop reveal">
+        <div class="prop-head">
+          <div class="pidx">03</div>
+          <div class="ph-txt">
+            <h3>Sistema IoT con IA para Diagnóstico Automotriz y Asistencia DIY</h3>
+            <div class="ph-tag">IoT + IA · Movilidad</div>
+          </div>
+          <div class="chev">+</div>
+        </div>
+        <div class="prop-body"><div class="prop-inner">
+          <div class="prop-col"><h6>Problemática</h6><p>Los escáneres OBD-II convencionales arrojan códigos crípticos (DTC) sin solución clara para el usuario común, generando dependencia total de talleres y gastos innecesarios o riesgos por falta de mantenimiento preventivo.</p></div>
+          <div class="prop-col"><h6>Solución</h6><p>Un dispositivo IoT (ESP32) conectado al puerto OBD-II que transmite datos por Bluetooth a una app. La IA traduce los códigos a lenguaje natural, ofrece guías de reparación paso a paso, monitoreo predictivo de variables críticas y localización de refacciones y especialistas.</p>
+            <div class="prop-tags"><span>ESP32</span><span>OBD-II</span><span>IA / NLP</span><span>Mantenimiento predictivo</span></div></div>
+          <div class="prop-col"><h6>Justificación</h6><p>Democratiza el conocimiento técnico automotriz, empodera al usuario y optimiza su economía. Aporta trazabilidad y prevención mediante datos históricos, combinando hardware de bajo costo con modelos de lenguaje.</p></div>
+        </div></div>
+      </article>
+
+    </div>
+  </div>
+</section>
+
+<!-- CONTACTO / FOOTER -->
+<footer id="contacto">
+  <div class="foot-glow"></div>
+  <div class="foot-cta">
+    <span class="eyebrow reveal" style="justify-content:center;display:flex">Hablemos</span>
+    <h2 class="reveal">Transforma tu idea<br>en <em>software inteligente</em>.</h2>
+    <a href="mailto:nexussolutions@contacto.com" class="btn btn-primary reveal">Contáctanos →</a>
+  </div>
+  <div class="foot-info">
+    <div class="fi reveal"><div class="k">Teléfono</div><div class="v">+52 871 11 15 33 02</div></div>
+    <div class="fi reveal"><div class="k">Correo</div><div class="v">nexussolutions@contacto.com</div></div>
+    <div class="fi reveal"><div class="k">Ubicación</div><div class="v">C. Río Marne 380, Navarro,<br>27010 Torreón, Coahuila</div></div>
+  </div>
+  <div class="foot-bottom">
+    <span class="brand"><span class="logo-mark"><span>n</span><sup>s</sup></span> Nexus Solutions</span>
+    <p>© 2026 Nexus Solutions · Torreón, Coahuila · Todos los derechos reservados.</p>
+  </div>
+</footer>
+
+<script>
+  // Mobile nav
+  const toggle=document.getElementById('navToggle');
+  const links=document.getElementById('navLinks');
+  toggle.addEventListener('click',()=>{toggle.classList.toggle('active');links.classList.toggle('open');});
+  links.querySelectorAll('a').forEach(a=>a.addEventListener('click',()=>{toggle.classList.remove('active');links.classList.remove('open');}));
+
+  // Reveal on scroll
+  const io=new IntersectionObserver((entries)=>{
+    entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target);}});
+  },{threshold:.12});
+  document.querySelectorAll('.reveal').forEach((el,i)=>{el.style.transitionDelay=(i%4*60)+'ms';io.observe(el);});
+
+  // Políticas tabs
+  document.querySelectorAll('.pol-tab').forEach(tab=>{
+    tab.addEventListener('click',()=>{
+      document.querySelectorAll('.pol-tab').forEach(t=>t.classList.remove('active'));
+      document.querySelectorAll('.pol-panel').forEach(p=>p.classList.remove('active'));
+      tab.classList.add('active');
+      document.getElementById(tab.dataset.panel).classList.add('active');
+    });
+  });
+
+  // Propuestas accordion
+  document.querySelectorAll('.prop-head').forEach(h=>{
+    h.addEventListener('click',()=>h.parentElement.classList.toggle('open'));
+  });
+</script>
+</body>
+</html>

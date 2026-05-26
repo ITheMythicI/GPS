@@ -480,3 +480,257 @@
     color: white;
     align-items: center;
 }
+
+/* ==================== ESTILOS RESPONSIVOS (MEDIA QUERIES) ==================== */
+
+/* --- TABLETS Y PANTALLAS MEDIANAS (<= 1024px) --- */
+@media (max-width: 1024px) {
+    .navbar {
+        padding: 15px 30px;
+    }
+
+    .hero {
+        padding: 40px 30px;
+        min-height: 45vh;
+    }
+
+    .hero-img img {
+        width: 100%;
+        max-width: 450px;
+    }
+
+    .hero-text h1 {
+        font-size: 42px;
+    }
+
+    .services-container {
+        flex-wrap: wrap;
+        gap: 30px;
+    }
+
+    .service-card {
+        width: calc(50% - 15px);
+        min-width: 280px;
+    }
+
+    .responsabilidad-izquierda h2 {
+        font-size: 2.2rem;
+    }
+
+    .registro input {
+        width: 60%;
+    }
+}
+
+/* --- TABLETS PEQUEÑAS / MÓVILES EN HORIZONTAL (<= 768px) --- */
+@media (max-width: 768px) {
+    .navbar {
+        padding: 12px 20px;
+    }
+
+    .navbar ul {
+        gap: 15px;
+    }
+
+    .hero {
+        flex-direction: column;
+        text-align: center;
+        height: auto;
+        min-height: auto;
+        padding: 50px 20px;
+    }
+
+    .hero-text {
+        max-width: 100%;
+        margin-bottom: 40px;
+    }
+
+    .hero-text h1 {
+        font-size: 36px;
+    }
+
+    .hero-text button {
+        margin-top: 20px;
+    }
+
+    .hero-img {
+        width: 100%;
+        display: flex;
+        justify-content: center;
+    }
+
+    .hero-img img {
+        max-width: 380px;
+    }
+
+    .logo img {
+        width: 220px;
+    }
+
+    .services {
+        padding: 60px 20px;
+    }
+
+    .services h2 {
+        font-size: 32px;
+        margin-bottom: 40px;
+    }
+
+    .services-container {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .service-card {
+        width: 100%;
+        max-width: 350px;
+    }
+
+    .responsabilidad {
+        padding: 60px 20px;
+    }
+
+    .responsabilidad-superior {
+        flex-direction: column;
+        background: white; /* Elimina gradiente horizontal */
+        border-radius: 15px;
+    }
+
+    .responsabilidad-izquierda {
+        padding: 40px 25px;
+        text-align: center;
+    }
+
+    .responsabilidad-izquierda h2 {
+        font-size: 2rem;
+    }
+
+    .responsabilidad-derecha {
+        padding: 40px 25px;
+        background: #4CAF50;
+    }
+
+    .responsabilidad-inferior {
+        padding: 40px 25px;
+        border-radius: 15px;
+        margin-top: 20px;
+    }
+
+    .responsabilidad-inferior h3 {
+        font-size: 22px;
+        margin-bottom: 30px;
+    }
+
+    .mediciones-grid {
+        flex-direction: column;
+        gap: 25px;
+        text-align: left;
+    }
+
+    .columna-medicion {
+        width: 100%;
+        border-bottom: 1px dashed rgba(255, 255, 255, 0.15);
+        padding-bottom: 15px;
+    }
+
+    .columna-medicion:last-child {
+        border-bottom: none;
+        padding-bottom: 0;
+    }
+
+    .bottom {
+        flex-direction: column;
+        padding: 60px 20px;
+        gap: 50px;
+        text-align: center;
+    }
+
+    .cotizacion input {
+        max-width: 450px;
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    .cotizacion button {
+        max-width: 450px;
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    .registro {
+        padding: 60px 20px;
+    }
+
+    .registro input {
+        width: 85%;
+        max-width: 400px;
+    }
+}
+
+/* --- MÓVILES PEQUEÑOS (<= 480px) --- */
+@media (max-width: 480px) {
+    .navbar {
+        padding: 10px 15px;
+    }
+
+    .brand {
+        font-size: 18px;
+    }
+
+    .hero-text h1 {
+        font-size: 28px;
+    }
+
+    .hero-text p {
+        font-size: 16px;
+    }
+
+    .hero-img img {
+        max-width: 290px;
+    }
+
+    .logo img {
+        width: 180px;
+    }
+
+    .circle {
+        width: 130px;
+        height: 130px;
+    }
+
+    .iconos img {
+        width: 90px;
+        height: 60px;
+    }
+
+    .responsabilidad-izquierda h2 {
+        font-size: 1.6rem;
+    }
+
+    .item-check {
+        gap: 10px;
+    }
+
+    .check {
+        width: 32px;
+        height: 32px;
+        font-size: 20px;
+    }
+
+    .mediciones-grid {
+        gap: 20px;
+    }
+
+    .columna-medicion p {
+        font-size: 15px;
+        margin-bottom: 12px;
+    }
+
+    .portfolio h3, .cotizacion h3 {
+        font-size: 18px;
+    }
+
+    .registro input {
+        width: 100%;
+    }
+}
