@@ -60,14 +60,21 @@ try {
     mysqli_stmt_execute($stmtRutas);
     mysqli_stmt_close($stmtRutas);
 
-    // 5. Eliminar referencias en ResultadosIA (por si acaso, aunque tenga ON DELETE CASCADE)
+    // 5. Eliminar referencias en ReportesIncidencias
+    $queryIncidencias = "DELETE FROM ReportesIncidencias WHERE id_contenedor = ?";
+    $stmtIncidencias = mysqli_prepare($db, $queryIncidencias);
+    mysqli_stmt_bind_param($stmtIncidencias, 'i', $id_contenedor);
+    mysqli_stmt_execute($stmtIncidencias);
+    mysqli_stmt_close($stmtIncidencias);
+
+    // 6. Eliminar referencias en ResultadosIA (por si acaso, aunque tenga ON DELETE CASCADE)
     $queryIA = "DELETE FROM ResultadosIA WHERE id_contenedor = ?";
     $stmtIA = mysqli_prepare($db, $queryIA);
     mysqli_stmt_bind_param($stmtIA, 'i', $id_contenedor);
     mysqli_stmt_execute($stmtIA);
     mysqli_stmt_close($stmtIA);
 
-    // 6. Eliminar finalmente el contenedor
+    // 7. Eliminar finalmente el contenedor
     $queryCont = "DELETE FROM Contenedores WHERE id_contenedor = ?";
     $stmtCont = mysqli_prepare($db, $queryCont);
     mysqli_stmt_bind_param($stmtCont, 'i', $id_contenedor);
